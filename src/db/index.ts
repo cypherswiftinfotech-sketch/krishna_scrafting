@@ -1,14 +1,12 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 
-const databaseUrl = process.env.DATABASE_URL;
-
-if (!databaseUrl) {
+const databaseUrl: string = process.env.DATABASE_URL ?? (() => {
   throw new Error(
-    "DATABASE_URL is not set. Copy .env.example to .env.local and fill in your Supabase " +
-      "connection string from Dashboard → Settings → Database → Connection string → URI."
+    "DATABASE_URL is not set. Copy .env.example to .env.local (and add it to Vercel Environment Variables). " +
+      "Use the Supabase connection string from Dashboard → Settings → Database → Connection string → URI."
   );
-}
+})();
 
 if (databaseUrl.includes("YOUR_")) {
   throw new Error(

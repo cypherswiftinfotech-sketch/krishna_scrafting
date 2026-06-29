@@ -1,14 +1,12 @@
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
 
-const JWT_SECRET = process.env.JWT_SECRET;
-
-if (!JWT_SECRET) {
+const JWT_SECRET: string = process.env.JWT_SECRET ?? (() => {
   throw new Error(
-    "JWT_SECRET is not set. Add it to .env.local. Generate one with: " +
+    "JWT_SECRET is not set. Add it to .env.local (and to Vercel Environment Variables). Generate one with: " +
       "node -e \"console.log(require('crypto').randomBytes(64).toString('base64url'))\""
   );
-}
+})();
 
 export interface JWTPayload {
   userId: number;
