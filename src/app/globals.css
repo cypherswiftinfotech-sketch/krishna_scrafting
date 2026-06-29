@@ -1,0 +1,231 @@
+@import "tailwindcss";
+
+/* ==============================
+   Cream White Global Theme
+   ============================== */
+:root {
+  --cream-white: #ffffff;
+  --cream-white-soft: #f8f8f8;
+  --cream-white-border: #e5e5e5;
+  --peacock-blue: #005f73;
+  --peacock-eye: #d4af37;
+}
+
+/* Force entire website to cream white background */
+html,
+body {
+  background-color: var(--cream-white) !important;
+  color: #1f1f1f !important;
+}
+
+/* Override dark backgrounds site-wide so the cream-white theme is consistent */
+.bg-gray-950,
+.bg-black,
+.bg-gray-900,
+.bg-gray-800,
+.bg-gray-900\/50,
+.bg-gray-900\/30 {
+  background-color: var(--cream-white) !important;
+}
+
+/* Card-like surfaces — use a soft cream tone with subtle border */
+.bg-gray-900,
+.bg-gray-800,
+.bg-gray-900\/50,
+.bg-gray-900\/30 {
+  background-color: var(--cream-white-soft) !important;
+  border-color: var(--cream-white-border) !important;
+}
+
+/* Override dark text colors for legibility on cream */
+.text-white {
+  color: #1f1f1f !important;
+}
+
+.text-gray-300,
+.text-gray-400,
+.text-gray-500 {
+  color: #4b4b4b !important;
+}
+
+/* Borders on cream */
+.border-gray-700,
+.border-gray-800 {
+  border-color: var(--cream-white-border) !important;
+}
+
+/* ==============================
+   Peacock Blue Text + Background Utility Classes
+   ============================== */
+.peacock-blue-text {
+  color: #005f73; /* Teal */
+}
+
+.peacock-blue-text:hover {
+  color: #00a8cc;
+}
+
+.peacock-eye-background {
+  background-color: #d4af37 !important; /* Sapphire */
+  color: #ffffff !important;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.peacock-eye-background:hover {
+  background-color: #f3c623 !important;
+}
+
+.peacock-eye-background:active {
+  transform: scale(0.98);
+}
+
+/* Button base class — combines peacock eye background + peacock blue text variants */
+.btn-peacock {
+  background-color: #d4af37 !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-peacock:hover {
+  background-color: #f3c623 !important;
+}
+
+.btn-peacock:active {
+  transform: scale(0.98);
+}
+
+.btn-peacock-outline {
+  background-color: transparent !important;
+  color: #005f73 !important;
+  border: 2px solid #005f73;
+  font-weight: 600;
+  padding: 0.5rem 1.15rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-peacock-outline:hover {
+  background-color: #005f73 !important;
+  color: #ffffff !important;
+}
+
+/* ==============================
+   Replace ALL Amber/Yellow with Peacock Blue
+   ============================== */
+
+/* Amber backgrounds → peacock-eye (sapphire) — used on every button */
+.bg-amber-300,
+.bg-amber-400,
+.bg-amber-500,
+.bg-amber-600,
+.bg-amber-700,
+.bg-amber-800,
+.bg-amber-900,
+.hover\:bg-amber-300:hover,
+.hover\:bg-amber-400:hover,
+.hover\:bg-amber-500:hover,
+.hover\:bg-amber-600:hover,
+.hover\:bg-amber-700:hover {
+  background-color: #d4af37 !important; /* peacock-eye */
+  color: #ffffff !important;
+}
+
+/* Amber gradient stops */
+.from-amber-300,
+.from-amber-400,
+.from-amber-500,
+.from-amber-600,
+.to-amber-300,
+.to-amber-400,
+.to-amber-500,
+.to-amber-600 {
+  --tw-gradient-from: #d4af37 !important;
+  --tw-gradient-to: #d4af37 !important;
+  --tw-gradient-stops: #d4af37, #d4af37 !important;
+}
+
+/* Amber text → peacock-blue (teal) */
+.text-amber-300,
+.text-amber-400,
+.text-amber-500,
+.text-amber-600,
+.text-amber-700,
+.hover\:text-amber-300:hover,
+.hover\:text-amber-400:hover,
+.hover\:text-amber-500:hover,
+.hover\:text-amber-600:hover {
+  color: #005f73 !important; /* peacock-blue (teal) */
+}
+
+/* Amber borders → peacock-blue */
+.border-amber-300,
+.border-amber-400,
+.border-amber-500,
+.border-amber-600,
+.border-amber-700,
+.hover\:border-amber-300:hover,
+.hover\:border-amber-400:hover,
+.hover\:border-amber-500:hover,
+.hover\:border-amber-600:hover {
+  border-color: #005f73 !important;
+}
+
+/* Amber with opacity backgrounds (e.g. bg-amber-500/20) */
+[class*="bg-amber-"] {
+  background-color: #d4af37 !important;
+  color: #ffffff !important;
+}
+
+[class*="hover:bg-amber-"]:hover {
+  background-color: #f3c623 !important;
+}
+
+[class*="text-amber-"] {
+  color: #005f73 !important;
+}
+
+[class*="hover:text-amber-"]:hover {
+  color: #00a8cc !important;
+}
+
+[class*="border-amber-"] {
+  border-color: #005f73 !important;
+}
+
+[class*="hover:border-amber-"]:hover {
+  border-color: #00a8cc !important;
+}
+
+/* Yellow Tailwind classes (just in case) */
+.bg-yellow-300,
+.bg-yellow-400,
+.bg-yellow-500,
+.hover\:bg-yellow-300:hover,
+.hover\:bg-yellow-400:hover,
+.hover\:bg-yellow-500:hover {
+  background-color: #d4af37 !important;
+  color: #ffffff !important;
+}
+
+.text-yellow-300,
+.text-yellow-400,
+.text-yellow-500 {
+  color: #005f73 !important;
+}
+

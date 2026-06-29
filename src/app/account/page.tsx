@@ -1,0 +1,249 @@
+"use client";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { User, Package, Edit, Save, X, LogOut, ShoppingBag } from "lucide-react";
+import { useAuthStore } from "@/store/authStore";
+import toast from "react-hot-toast";
+
+interface Order {
+  id: number;
+  status: string;
+  totalAmount: string;
+  createdAt: string;
+  shippingAddress: string | null;
+}
+
+export default function AccountPage() {
+  const router = useRouter();
+  const { user, setUser, logout } = useAuthStore();
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loadingOrders, setLoadingOrders] = useState(true);
+  const [editing, setEditing] = useState(false);
+  const [editForm, setEditForm] = useState({ name: "", phone: "", address: "" });
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+    setEditForm({ name: user.name, phone: user.phone || "", address: user.address || "" });
+    fetch("/api/orders")
+      .then((r) => r.json())
+      .then((d) => setOrders(d.orders || []))
+      .catch(() => {})
+      .finally(() => setLoadingOrders(false));
+  }, [user, router]);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const res = await fetch("/api/auth/update", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(editForm),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setUser({ ...user!, ...data.user });
+      toast.success("Profile updated!");
+      setEditing(false);
+    } catch {
+      toast.error("Failed to update profile");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    await fetch("/api/auth/logout", { method: "POST" });
+    logout();
+    toast.success("Logged out");
+    router.push("/");
+  };
+
+  const statusColors: Record<string, string> = {
+    pending: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
+    processing: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+    shipped: "bg-purple-500/20 text-purple-400 border-purple-500/30",
+    delivered: "bg-green-500/20 text-green-400 border-green-500/30",
+    cancelled: "bg-red-500/20 text-red-400 border-red-500/30",
+  };
+
+  if (!user) return null;
+
+  return (
+    <div className="pt-16 min-h-screen bg-gray-950">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <h1 className="text-4xl font-black text-white mb-8">
+          My <span className="text-amber-400">Account</span>
+        </h1>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Profile Card */}
+          <div className="lg:col-span-1">
+            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+              <div className="flex flex-col items-center text-center mb-6">
+                <div className="w-20 h-20 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center mb-4 shadow-lg">
+                  <span className="text-black font-black text-3xl">
+                    {user.name.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+                <h2 className="text-xl font-black text-white">{user.name}</h2>
+                <p className="text-gray-400 text-sm">{user.email}</p>
+                <span className="mt-2 text-xs bg-amber-500/20 text-amber-400 border border-amber-500/30 px-3 py-1 rounded-full capitalize">
+                  {user.role}
+                </span>
+              </div>
+
+              {editing ? (
+                <div className="space-y-4">
+                  {[
+                    { id: "name", label: "Name", type: "text" },
+                    { id: "phone", label: "Phone", type: "tel" },
+                  ].map((f) => (
+                    <div key={f.id}>
+                      <label className="block text-xs text-gray-400 mb-1">{f.label}</label>
+                      <input
+                        type={f.type}
+                        value={editForm[f.id as keyof typeof editForm]}
+                        onChange={(e) => setEditForm({ ...editForm, [f.id]: e.target.value })}
+                        className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-amber-500"
+                      />
+                    </div>
+                  ))}
+                  <div>
+                    <label className="block text-xs text-gray-400 mb-1">Address</label>
+                    <textarea
+                      rows={3}
+                      value={editForm.address}
+                      onChange={(e) => setEditForm({ ...editForm, address: e.target.value })}
+                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-amber-500 resize-none"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleSave}
+                      disabled={saving}
+                      className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-amber-500 hover:bg-amber-400 text-black font-bold text-sm rounded-lg transition-colors"
+                    >
+                      <Save className="w-4 h-4" /> {saving ? "Saving..." : "Save"}
+                    </button>
+                    <button
+                      onClick={() => setEditing(false)}
+                      className="flex items-center justify-center gap-1.5 px-3 py-2 bg-gray-800 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {[
+                    { label: "Phone", value: user.phone || "Not provided" },
+                    { label: "Address", value: user.address || "Not provided" },
+                  ].map((item) => (
+                    <div key={item.label}>
+                      <p className="text-xs text-gray-500 uppercase tracking-wider">{item.label}</p>
+                      <p className="text-gray-300 text-sm mt-0.5">{item.value}</p>
+                    </div>
+                  ))}
+                  <button
+                    onClick={() => setEditing(true)}
+                    className="w-full flex items-center justify-center gap-2 py-2.5 mt-4 border border-amber-500/50 text-amber-400 font-semibold text-sm rounded-xl hover:bg-amber-500/10 transition-colors"
+                  >
+                    <Edit className="w-4 h-4" /> Edit Profile
+                  </button>
+                </div>
+              )}
+
+              {user.role === "admin" && (
+                <Link
+                  href="/admin"
+                  className="flex items-center justify-center gap-2 w-full mt-3 py-2.5 bg-amber-500/20 border border-amber-500/30 text-amber-400 font-semibold text-sm rounded-xl hover:bg-amber-500/30 transition-colors"
+                >
+                  Admin Panel
+                </Link>
+              )}
+
+              <button
+                onClick={handleLogout}
+                className="flex items-center justify-center gap-2 w-full mt-3 py-2.5 bg-red-500/10 border border-red-500/30 text-red-400 font-semibold text-sm rounded-xl hover:bg-red-500/20 transition-colors"
+              >
+                <LogOut className="w-4 h-4" /> Logout
+              </button>
+            </div>
+          </div>
+
+          {/* Orders */}
+          <div className="lg:col-span-2">
+            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-black text-white flex items-center gap-2">
+                  <Package className="w-6 h-6 text-amber-400" /> My Orders
+                </h2>
+                <Link href="/store" className="text-amber-400 text-sm hover:text-amber-300 flex items-center gap-1">
+                  <ShoppingBag className="w-4 h-4" /> Shop More
+                </Link>
+              </div>
+
+              {loadingOrders ? (
+                <div className="space-y-4">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="h-20 bg-gray-800 rounded-xl animate-pulse" />
+                  ))}
+                </div>
+              ) : orders.length === 0 ? (
+                <div className="text-center py-12">
+                  <ShoppingBag className="w-12 h-12 text-gray-700 mx-auto mb-3" />
+                  <p className="text-gray-400">No orders yet</p>
+                  <Link href="/store" className="mt-4 inline-block text-amber-400 hover:underline text-sm">
+                    Start shopping
+                  </Link>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {orders.map((order) => (
+                    <div
+                      key={order.id}
+                      className="bg-gray-800 border border-gray-700 rounded-xl p-4 flex items-center justify-between gap-4"
+                    >
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-white font-bold text-sm">Order #{order.id}</span>
+                          <span
+                            className={`text-xs px-2 py-0.5 rounded-full border capitalize ${statusColors[order.status] || "bg-gray-700 text-gray-300 border-gray-600"}`}
+                          >
+                            {order.status}
+                          </span>
+                        </div>
+                        <p className="text-gray-400 text-xs">
+                          {new Date(order.createdAt).toLocaleDateString("en-IN", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })}
+                        </p>
+                        {order.shippingAddress && (
+                          <p className="text-gray-500 text-xs mt-1 truncate max-w-xs">
+                            📍 {order.shippingAddress}
+                          </p>
+                        )}
+                      </div>
+                      <div className="text-right flex-shrink-0">
+                        <p className="text-amber-400 font-black text-lg">
+                          ₹{Number(order.totalAmount).toLocaleString("en-IN")}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

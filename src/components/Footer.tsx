@@ -1,0 +1,94 @@
+import Link from "next/link";
+
+export default function Footer() {
+  return (
+    <footer
+      className="border-t"
+      style={{
+        backgroundColor: "#ffffff",
+        borderColor: "#e5e5e5",
+        color: "#1f1f1f",
+      }}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="md:col-span-1">
+            <div className="flex items-center gap-3 mb-4 group">
+              <div className="w-14 h-14 relative flex items-center justify-center">
+                <img src="/logo.png" alt="Sri Krishna Crafting Logo" className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" />
+              </div>
+              <span className="font-medium text-lg tracking-[0.15em] uppercase" style={{ color: "#1f1f1f" }}>
+                Sri Krishna
+              </span>
+            </div>
+            <p className="text-sm leading-relaxed" style={{ color: "#4b4b4b" }}>
+              Handcrafted epoxy resin art and decor — river tables, jewelry,
+              coasters and bespoke pieces made with love.
+            </p>
+          </div>
+
+          <div>
+            <h4 className="font-semibold mb-4" style={{ color: "#1f1f1f" }}>Quick Links</h4>
+            <ul className="space-y-2 text-sm">
+              {[
+                { label: "Home", href: "/" },
+                { label: "Store", href: "/store" },
+                { label: "Portfolio", href: "/portfolio" },
+                { label: "About Us", href: "/about" },
+              ].map((l) => (
+                <li key={l.label}>
+                  <Link
+                    href={l.href}
+                    className="hover:text-amber-600 transition-colors"
+                    style={{ color: "#4b4b4b" }}
+                  >
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-semibold mb-4" style={{ color: "#1f1f1f" }}>Services</h4>
+            <ul className="space-y-2 text-sm">
+              {[
+                { label: "Custom Orders", href: "/services?tab=custom_orders" },
+                { label: "Corporate Gifts", href: "/services?tab=corporate_gifts" },
+                { label: "Flooring", href: "/services?tab=flooring" },
+              ].map((l) => (
+                <li key={l.label}>
+                  <Link
+                    href={l.href}
+                    className="hover:text-amber-600 transition-colors"
+                    style={{ color: "#4b4b4b" }}
+                  >
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-semibold mb-4" style={{ color: "#1f1f1f" }}>Contact</h4>
+            <ul className="space-y-2 text-sm" style={{ color: "#4b4b4b" }}>
+              <li>📧 hello@Sri Krishna Crafting.com</li>
+              <li>📞 +91 98765 43210</li>
+              <li>📍 Mumbai, India</li>
+            </ul>
+          </div>
+        </div>
+
+        <div
+          className="mt-10 pt-6 border-t text-center text-sm"
+          style={{ borderColor: "#e5e5e5", color: "#4b4b4b" }}
+        >
+          <p>© {new Date().getFullYear()} Sri Krishna Crafting. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+
