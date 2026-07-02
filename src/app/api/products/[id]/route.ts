@@ -64,7 +64,9 @@ export async function PUT(
   const name = formData.get("name") as string;
   const description = formData.get("description") as string;
   const price = formData.get("price") as string;
-  const category = formData.get("category") as string;
+  const mainCategory = formData.get("mainCategory") as string;
+  const subCategory = formData.get("subCategory") as string;
+  const oldCategory = formData.get("category") as string;
   const stock = formData.get("stock") as string;
   const featured = formData.get("featured") === "true";
   const active = formData.get("active") !== "false";
@@ -91,7 +93,9 @@ export async function PUT(
       name: name || existing[0].name,
       description: description ?? existing[0].description,
       price: price || existing[0].price,
-      category: (category as "pen" | "watch" | "table" | "nameplate") || existing[0].category,
+      mainCategory: mainCategory || existing[0].mainCategory,
+      subCategory: subCategory || existing[0].subCategory,
+      category: oldCategory ? (oldCategory as any) : existing[0].category,
       stock: stock ? parseInt(stock) : existing[0].stock,
       featured,
       active,

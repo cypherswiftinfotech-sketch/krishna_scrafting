@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { Montserrat, Jost } from "next/font/google";
+import { Josefin_Sans } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Providers from "@/components/Providers";
 
-const cinzel = Montserrat({ subsets: ["latin"], weight: ["300", "400", "500", "600", "700"], variable: "--font-heading" });
-const outfit = Jost({ subsets: ["latin"], weight: ["300", "400", "500", "600"], variable: "--font-body" });
+const josefinSans = Josefin_Sans({
+  subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "600", "700"],
+  variable: "--font-josefin",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Sri Krishna Crafting",
@@ -18,7 +22,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${outfit.variable} ${cinzel.variable} font-sans antialiased`} style={{ backgroundColor: "#ffffff", color: "#1f1f1f" }}>
+      <body className={`${josefinSans.variable} font-sans antialiased`} style={{ backgroundColor: "#ffffff", color: "#1f1f1f" }}>
         <Providers>
           <Header />
           <main className="min-h-screen pt-24">{children}</main>

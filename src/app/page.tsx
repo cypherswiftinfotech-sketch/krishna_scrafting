@@ -94,6 +94,7 @@ export default function HomePage() {
         {hero?.videoUrl ? (
           <video
             src={hero.videoUrl}
+            poster="https://images.pexels.com/photos/7254419/pexels-photo-7254419.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=900&w=1600"
             autoPlay
             loop
             muted

@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
 import toast from "react-hot-toast";
+import ImageZoom from "@/components/ImageZoom";
 
 interface Product {
   id: number;
@@ -131,11 +132,11 @@ export default function ProductDetailPage() {
           <div className="space-y-4">
             <div className="relative aspect-square bg-gray-50 rounded-2xl overflow-hidden border border-gray-100">
               {product.imageUrl ? (
-                <Image
+                <ImageZoom
                   src={product.imageUrl}
                   alt={product.name}
-                  fill
-                  className="object-cover hover:scale-105 transition-transform duration-700"
+                  fill={true}
+                  className="w-full h-full"
                 />
               ) : (
                 <div className="flex items-center justify-center h-full text-8xl">

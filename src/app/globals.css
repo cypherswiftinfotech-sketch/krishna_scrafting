@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+@theme {
+  --font-family-sans: var(--font-josefin), "Josefin Sans", ui-sans-serif, system-ui, sans-serif;
+}
+
 /* ==============================
    Cream White Global Theme
    ============================== */
@@ -16,6 +20,14 @@ html,
 body {
   background-color: var(--cream-white) !important;
   color: #1f1f1f !important;
+  font-family: var(--font-josefin), "Josefin Sans", sans-serif;
+}
+
+/* Ensure Josefin Sans applies to ALL elements including inputs, buttons, selects */
+*,
+*::before,
+*::after {
+  font-family: var(--font-josefin), "Josefin Sans", sans-serif;
 }
 
 /* Override dark backgrounds site-wide so the cream-white theme is consistent */

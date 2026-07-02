@@ -6,6 +6,15 @@ import { User, Package, Edit, Save, X, LogOut, ShoppingBag } from "lucide-react"
 import { useAuthStore } from "@/store/authStore";
 import toast from "react-hot-toast";
 
+interface AuthUser {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  phone?: string | null;
+  address?: string | null;
+}
+
 interface Order {
   id: number;
   status: string;
@@ -16,25 +25,48 @@ interface Order {
 
 export default function AccountPage() {
   const router = useRouter();
-  const { user, setUser, logout } = useAuthStore();
+  const { setUser, logout } = useAuthStore();
+
+  // Use local state for the verified user (from server cookie check)
+  const [user, setLocalUser] = useState<AuthUser | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
+
   const [orders, setOrders] = useState<Order[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(true);
   const [editing, setEditing] = useState(false);
   const [editForm, setEditForm] = useState({ name: "", phone: "", address: "" });
   const [saving, setSaving] = useState(false);
 
+  // Verify session via cookie on mount — avoids hydration race condition
   useEffect(() => {
-    if (!user) {
-      router.push("/login");
-      return;
-    }
-    setEditForm({ name: user.name, phone: user.phone || "", address: user.address || "" });
-    fetch("/api/orders")
+    fetch("/api/auth/me")
       .then((r) => r.json())
-      .then((d) => setOrders(d.orders || []))
-      .catch(() => {})
-      .finally(() => setLoadingOrders(false));
-  }, [user, router]);
+      .then((d) => {
+        if (d.user) {
+          setLocalUser(d.user);
+          setUser(d.user); // sync zustand store
+          setEditForm({
+            name: d.user.name,
+            phone: d.user.phone || "",
+            address: d.user.address || "",
+          });
+          // Now fetch orders
+          return fetch("/api/orders");
+        } else {
+          router.push("/login");
+          return null;
+        }
+      })
+      .then((r) => (r ? r.json() : null))
+      .then((d) => {
+        if (d) setOrders(d.orders || []);
+      })
+      .catch(() => router.push("/login"))
+      .finally(() => {
+        setAuthChecked(true);
+        setLoadingOrders(false);
+      });
+  }, [router, setUser]);
 
   const handleSave = async () => {
     setSaving(true);
@@ -46,7 +78,9 @@ export default function AccountPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
-      setUser({ ...user!, ...data.user });
+      const updated = { ...user!, ...data.user };
+      setLocalUser(updated);
+      setUser(updated);
       toast.success("Profile updated!");
       setEditing(false);
     } catch {
@@ -59,6 +93,7 @@ export default function AccountPage() {
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
     logout();
+    setLocalUser(null);
     toast.success("Logged out");
     router.push("/");
   };
@@ -70,6 +105,15 @@ export default function AccountPage() {
     delivered: "bg-green-500/20 text-green-400 border-green-500/30",
     cancelled: "bg-red-500/20 text-red-400 border-red-500/30",
   };
+
+  // Show spinner while checking auth
+  if (!authChecked) {
+    return (
+      <div className="pt-16 min-h-screen bg-gray-950 flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-gray-700 border-t-amber-400 rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   if (!user) return null;
 

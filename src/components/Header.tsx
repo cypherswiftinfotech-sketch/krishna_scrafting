@@ -10,11 +10,14 @@ import toast from "react-hot-toast";
 
 const navLinks = [
   { label: "Home", href: "/" },
+  { label: "About Us", href: "/about" },
   { label: "Store", href: "/store" },
   { label: "Gallery", href: "/portfolio" },
   { label: "Services", href: "/services" },
   { label: "Accessories", href: "/accessories" },
-  { label: "Workshops", href: "/training" },
+  { label: "Trainings", href: "/trainings" },
+  { label: "Blogs", href: "/blogs" },
+  { label: "Contact Us", href: "/contact" },
 ];
 
 export default function Header() {

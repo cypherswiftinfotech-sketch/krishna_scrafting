@@ -7,13 +7,17 @@ import { uploadToCloudinary } from "@/lib/cloudinary";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const category = searchParams.get("category");
+  const mainCategory = searchParams.get("mainCategory");
+  const subCategory = searchParams.get("subCategory");
+  const oldCategory = searchParams.get("category");
   const featured = searchParams.get("featured");
   const active = searchParams.get("active");
 
   const conditions = [];
-  if (category) {
-    conditions.push(eq(products.category, category as "pen" | "watch" | "table" | "nameplate"));
+  if (mainCategory) conditions.push(eq(products.mainCategory, mainCategory));
+  if (subCategory) conditions.push(eq(products.subCategory, subCategory));
+  if (oldCategory) {
+    conditions.push(eq(products.category, oldCategory as any));
   }
   if (featured === "true") {
     conditions.push(eq(products.featured, true));
@@ -43,13 +47,15 @@ export async function POST(req: NextRequest) {
   const name = formData.get("name") as string;
   const description = formData.get("description") as string;
   const price = formData.get("price") as string;
-  const category = formData.get("category") as string;
+  const mainCategory = formData.get("mainCategory") as string;
+  const subCategory = formData.get("subCategory") as string;
+  const oldCategory = formData.get("category") as string; // fallback if needed
   const stock = formData.get("stock") as string;
   const featured = formData.get("featured") === "true";
   const relatedProductIds = formData.get("relatedProductIds") as string;
   const file = formData.get("image") as File | null;
 
-  if (!name || !price || !category) {
+  if (!name || !price) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
 
@@ -70,7 +76,9 @@ export async function POST(req: NextRequest) {
       name,
       description: description || null,
       price,
-      category: category as "pen" | "watch" | "table" | "nameplate",
+      category: (oldCategory || "watch") as any, // keep satisfying schema constraint
+      mainCategory: mainCategory || "Home Products",
+      subCategory: subCategory || "Others",
       stock: parseInt(stock) || 0,
       featured,
       imageUrl,

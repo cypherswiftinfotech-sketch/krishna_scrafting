@@ -1,0 +1,210 @@
+"use client";
+import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
+
+interface Training {
+  id: number;
+  title: string;
+  category: string;
+  description: string | null;
+  duration: string | null;
+  price: string;
+  language: string | null;
+  seats: number | null;
+  imageUrl: string | null;
+  videoUrl: string | null;
+  learnings: string | null;
+}
+
+const CATEGORIES = [
+  "Beginner Training",
+  "Advanced Resin Course",
+  "Business Masterclass",
+  "Online Course",
+  "Offline Workshop",
+  "Certification"
+];
+
+export default function TrainingsAdmin() {
+  const [trainings, setTrainings] = useState<Training[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isAdding, setIsAdding] = useState(false);
+  const [editTraining, setEditTraining] = useState<Training | null>(null);
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+
+  useEffect(() => {
+    fetchTrainings();
+  }, []);
+
+  const fetchTrainings = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/trainings");
+      const data = await res.json();
+      setTrainings(data.trainings || []);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSubmitLoading(true);
+
+    const formData = new FormData(e.currentTarget);
+    if (file) formData.append("image", file);
+    if (videoFile) formData.append("video", videoFile);
+
+    const url = editTraining ? `/api/trainings/${editTraining.id}` : "/api/trainings";
+    const method = editTraining ? "PUT" : "POST";
+
+    try {
+      const res = await fetch(url, {
+        method,
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error("Failed to save training");
+      
+      toast.success(editTraining ? "Training updated" : "Training added");
+      setEditTraining(null);
+      setIsAdding(false);
+      setFile(null);
+      setVideoFile(null);
+      fetchTrainings();
+    } catch (err: any) {
+      toast.error(err.message || "Error");
+    } finally {
+      setSubmitLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm("Are you sure you want to delete this training?")) return;
+    try {
+      const res = await fetch(`/api/trainings/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete training");
+      toast.success("Training deleted");
+      fetchTrainings();
+    } catch (e: any) {
+      toast.error(e.message || "Error");
+    }
+  };
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">Manage Trainings</h2>
+        <button 
+          onClick={() => { setIsAdding(!isAdding); setEditTraining(null); }} 
+          className="btn-peacock"
+        >
+          {isAdding ? "Cancel" : "Add New Training"}
+        </button>
+      </div>
+
+      {(isAdding || editTraining) && (
+        <div className="p-6 rounded-2xl shadow mb-8 bg-white border" style={{ borderColor: "var(--cream-white-border)" }}>
+          <h3 className="text-xl font-bold mb-4">{editTraining ? "Edit Training" : "Add Training"}</h3>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-semibold mb-1">Title</label>
+                <input name="title" defaultValue={editTraining?.title || ""} required className="w-full p-2 border rounded" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1">Category</label>
+                <select name="category" defaultValue={editTraining?.category || CATEGORIES[0]} className="w-full p-2 border rounded">
+                  {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+              </div>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-semibold mb-1">Description</label>
+              <textarea name="description" defaultValue={editTraining?.description || ""} rows={3} className="w-full p-2 border rounded" />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-1">
+                What You&apos;ll Learn
+                <span className="text-gray-400 font-normal text-xs ml-2">(one bullet per line — each line becomes a ✓ item)</span>
+              </label>
+              <textarea 
+                name="learnings" 
+                defaultValue={editTraining?.learnings || ""} 
+                rows={5}
+                placeholder={`Master the fundamentals of resin art\nHands-on real-world projects\nBusiness strategies for scaling\nReceive an official certificate`}
+                className="w-full p-2 border rounded font-mono text-sm" 
+              />
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div>
+                <label className="block text-sm font-semibold mb-1">Price (₹)</label>
+                <input name="price" type="number" step="0.01" defaultValue={editTraining?.price || "0"} required className="w-full p-2 border rounded" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1">Duration</label>
+                <input name="duration" placeholder="e.g. 2 Weeks" defaultValue={editTraining?.duration || ""} className="w-full p-2 border rounded" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1">Language</label>
+                <input name="language" defaultValue={editTraining?.language || "English"} className="w-full p-2 border rounded" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1">Seats</label>
+                <input name="seats" type="number" defaultValue={editTraining?.seats || 10} className="w-full p-2 border rounded" />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-1">Cover Image</label>
+              <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} className="w-full p-2 border rounded" />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-1">Background Video <span className="text-gray-400 font-normal text-xs">(plays behind the course title on the details page)</span></label>
+              {editTraining?.videoUrl && (
+                <div className="mb-2 text-xs text-green-600 font-medium">✓ Video already uploaded — upload a new one to replace it</div>
+              )}
+              <input type="file" accept="video/*" onChange={(e) => setVideoFile(e.target.files?.[0] || null)} className="w-full p-2 border rounded" />
+            </div>
+
+            <button type="submit" disabled={submitLoading} className="btn-peacock mt-4">
+              {submitLoading ? "Saving..." : "Save Training"}
+            </button>
+          </form>
+        </div>
+      )}
+
+      {loading ? (
+        <div className="text-gray-500">Loading trainings...</div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {trainings.map(training => (
+            <div key={training.id} className="bg-white border rounded-2xl p-5 flex flex-col hover:shadow-lg transition-all" style={{ borderColor: "var(--cream-white-border)" }}>
+              {training.imageUrl ? (
+                <img src={training.imageUrl} alt={training.title} className="w-full h-40 object-cover rounded-xl mb-4" />
+              ) : (
+                <div className="w-full h-40 bg-gray-100 rounded-xl mb-4 flex items-center justify-center">No Image</div>
+              )}
+              <span className="text-xs font-bold text-amber-600 uppercase tracking-widest mb-1">{training.category}</span>
+              <h3 className="font-bold text-lg mb-2 line-clamp-1">{training.title}</h3>
+              <p className="font-black text-gray-900 mb-4">₹{Number(training.price).toLocaleString("en-IN")}</p>
+              
+              <div className="mt-auto flex gap-2">
+                <button onClick={() => { setEditTraining(training); setIsAdding(false); window.scrollTo(0,0); }} className="flex-1 btn-peacock-outline !py-1.5 !text-sm">Edit</button>
+                <button onClick={() => handleDelete(training.id)} className="flex-1 bg-red-50 text-red-600 font-medium rounded-lg hover:bg-red-100 transition-colors !py-1.5 !text-sm">Delete</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
