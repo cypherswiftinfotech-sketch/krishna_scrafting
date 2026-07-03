@@ -7,14 +7,19 @@ export async function GET() {
   const rows = await db
     .select()
     .from(serviceCategories)
-    .orderBy(asc(serviceCategories.mainCategory), asc(serviceCategories.subCategory));
+    .orderBy(
+      asc(serviceCategories.mainSortOrder),
+      asc(serviceCategories.mainCategory),
+      asc(serviceCategories.subSortOrder),
+      asc(serviceCategories.subCategory)
+    );
 
   return NextResponse.json({ categories: rows });
 }
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { mainCategory, subCategory } = body;
+  const { mainCategory, subCategory, mainSortOrder, subSortOrder } = body;
 
   if (!mainCategory || !subCategory) {
     return NextResponse.json({ error: "Main and sub categories are required" }, { status: 400 });
@@ -23,18 +28,21 @@ export async function POST(req: NextRequest) {
   const existing = await db
     .select()
     .from(serviceCategories)
-    .where(
-      eq(serviceCategories.mainCategory, mainCategory)
-    )
+    .where(eq(serviceCategories.mainCategory, mainCategory))
     .then(rows => rows.filter(r => r.subCategory === subCategory));
-    
+
   if (existing.length > 0) {
-     return NextResponse.json({ item: existing[0] }, { status: 200 });
+    return NextResponse.json({ item: existing[0] }, { status: 200 });
   }
 
   const [item] = await db
     .insert(serviceCategories)
-    .values({ mainCategory, subCategory })
+    .values({
+      mainCategory,
+      subCategory,
+      mainSortOrder: mainSortOrder ?? 0,
+      subSortOrder: subSortOrder ?? 0,
+    })
     .returning();
 
   return NextResponse.json({ item }, { status: 201 });

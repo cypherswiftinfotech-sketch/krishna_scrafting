@@ -7,6 +7,7 @@ import CategoriesAdmin from "@/components/CategoriesAdmin";
 import TrainingsAdmin from "@/components/TrainingsAdmin";
 import UsersOrdersAdmin from "@/components/UsersOrdersAdmin";
 import BlogsAdmin from "@/components/BlogsAdmin";
+import HomeCategoriesAdmin from "@/components/HomeCategoriesAdmin";
 
 interface HeroSettings {
   videoUrl: string | null;
@@ -46,12 +47,15 @@ export default function AdminPage() {
   const [showPass, setShowPass] = useState(false);
   const [loginLoading, setLoginLoading] = useState(false);
 
-  const [activeTab, setActiveTab] = useState<"hero" | "products" | "categories" | "service_categories" | "gallery" | "about" | "trainings" | "users_orders" | "blogs">("products");
+  const [activeTab, setActiveTab] = useState<"hero" | "training_banner" | "instagram" | "testimonials" | "products" | "categories" | "service_categories" | "gallery" | "about" | "trainings" | "users_orders" | "blogs" | "home_categories">("products");
 
   // Hero State
   const [heroSettings, setHeroSettings] = useState<HeroSettings | null>(null);
   const [heroLoading, setHeroLoading] = useState(false);
   const [heroFile, setHeroFile] = useState<File | null>(null);
+
+  const [trainingBannerSettings, setTrainingBannerSettings] = useState<any>(null);
+  const [trainingBannerLoading, setTrainingBannerLoading] = useState(false);
 
   // Products State
   const [products, setProducts] = useState<Product[]>([]);
@@ -79,9 +83,12 @@ export default function AdminPage() {
         if (d.user && d.user.role === "admin") {
           setIsAdmin(true);
           fetchHero();
+          fetchTrainingBanner();
           fetchProducts();
           fetchCategories();
           fetchGallery();
+          fetchInstagram();
+          fetchTestimonials();
         }
       })
       .catch(() => {})
@@ -102,9 +109,12 @@ export default function AdminPage() {
       if (data.user.role !== "admin") throw new Error("Access denied. Admin only.");
       setIsAdmin(true);
       fetchHero();
+      fetchTrainingBanner();
       fetchProducts();
       fetchCategories();
       fetchGallery();
+      fetchInstagram();
+      fetchTestimonials();
       toast.success("Welcome, Admin!");
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Login failed");
@@ -173,6 +183,125 @@ export default function AdminPage() {
       toast.error(e.message || "Error");
     } finally {
       setHeroLoading(false);
+    }
+  };
+
+  const fetchTrainingBanner = async () => {
+    try {
+      const res = await fetch("/api/training-banner");
+      const data = await res.json();
+      setTrainingBannerSettings(data.settings);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const [instagramPosts, setInstagramPosts] = useState<any[]>([]);
+  const [instagramLoading, setInstagramLoading] = useState(false);
+  const [isAddingInstagram, setIsAddingInstagram] = useState(false);
+  const [instagramFile, setInstagramFile] = useState<File | null>(null);
+
+  const fetchInstagram = async () => {
+    try {
+      const res = await fetch("/api/instagram");
+      const data = await res.json();
+      setInstagramPosts(data.posts || []);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleInstagramSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setInstagramLoading(true);
+    const formData = new FormData(e.currentTarget);
+    if (instagramFile) formData.set("image", instagramFile);
+    try {
+      const res = await fetch("/api/instagram", { method: "POST", body: formData });
+      if (!res.ok) throw new Error("Failed to add Instagram post");
+      toast.success("Post added!");
+      setIsAddingInstagram(false);
+      setInstagramFile(null);
+      fetchInstagram();
+    } catch (e: any) {
+      toast.error(e.message || "Error");
+    } finally {
+      setInstagramLoading(false);
+    }
+  };
+
+  const handleDeleteInstagram = async (id: number) => {
+    if (!confirm("Delete this Instagram post?")) return;
+    try {
+      const res = await fetch(`/api/instagram/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete post");
+      toast.success("Post deleted");
+      fetchInstagram();
+    } catch (e: any) {
+      toast.error(e.message || "Error");
+    }
+  };
+
+  const [testimonialsList, setTestimonialsList] = useState<any[]>([]);
+  const [testimonialLoading, setTestimonialLoading] = useState(false);
+  const [isAddingTestimonial, setIsAddingTestimonial] = useState(false);
+  const [testimonialFile, setTestimonialFile] = useState<File | null>(null);
+
+  const fetchTestimonials = async () => {
+    try {
+      const res = await fetch("/api/testimonials");
+      const data = await res.json();
+      setTestimonialsList(data.testimonials || []);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleTestimonialSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setTestimonialLoading(true);
+    const formData = new FormData(e.currentTarget);
+    if (testimonialFile) formData.set("avatar", testimonialFile);
+    try {
+      const res = await fetch("/api/testimonials", { method: "POST", body: formData });
+      if (!res.ok) throw new Error("Failed to add testimonial");
+      toast.success("Testimonial added!");
+      setIsAddingTestimonial(false);
+      setTestimonialFile(null);
+      fetchTestimonials();
+    } catch (e: any) {
+      toast.error(e.message || "Error");
+    } finally {
+      setTestimonialLoading(false);
+    }
+  };
+
+  const handleDeleteTestimonial = async (id: number) => {
+    if (!confirm("Delete this testimonial?")) return;
+    try {
+      const res = await fetch(`/api/testimonials/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete testimonial");
+      toast.success("Testimonial deleted");
+      fetchTestimonials();
+    } catch (e: any) {
+      toast.error(e.message || "Error");
+    }
+  };
+
+  const handleTrainingBannerSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setTrainingBannerLoading(true);
+    const formData = new FormData(e.currentTarget);
+    // media is already in formData from the form
+    try {
+      const res = await fetch("/api/training-banner", { method: "PUT", body: formData });
+      if (!res.ok) throw new Error("Failed to update training banner settings");
+      toast.success("Training Banner updated!");
+      fetchTrainingBanner();
+    } catch (e: any) {
+      toast.error(e.message || "Error");
+    } finally {
+      setTrainingBannerLoading(false);
     }
   };
 
@@ -259,8 +388,15 @@ export default function AdminPage() {
       <div className="pt-16 min-h-screen flex items-center justify-center px-4" style={{ backgroundColor: "#f9f6f0" }}>
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg" style={{ background: "var(--peacock-blue)" }}>
-              <Lock className="w-8 h-8 text-white" />
+            <div className="relative inline-block mb-4">
+              {/* Gold shine glow */}
+              <div className="absolute inset-0 bg-yellow-500/30 blur-3xl rounded-full pointer-events-none"></div>
+              <img
+                src="/logo.png"
+                alt="Sri Krishna Crafting Logo"
+                className="h-24 w-auto object-contain relative z-10"
+                style={{ filter: "drop-shadow(0px 0px 20px rgba(212, 175, 55, 0.5))" }}
+              />
             </div>
             <h1 className="text-3xl font-black" style={{ fontFamily: "var(--font-heading)", color: "#1f1f1f" }}>Admin Login</h1>
             <p className="text-gray-500 mt-2 text-sm">Sri Krishna Crafting — Admin Panel</p>
@@ -329,7 +465,7 @@ export default function AdminPage() {
       </div>
 
       <div className="flex gap-4 mb-8 border-b flex-wrap" style={{ borderColor: "var(--cream-white-border)" }}>
-        {(["users_orders", "products", "categories", "service_categories", "gallery", "trainings", "blogs", "hero", "about"] as const).map((tab) => (
+        {(["users_orders", "products", "home_categories", "categories", "service_categories", "gallery", "trainings", "training_banner", "instagram", "testimonials", "blogs", "hero", "about"] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -339,10 +475,16 @@ export default function AdminPage() {
               color: activeTab === tab ? "var(--peacock-blue)" : "#4b4b4b",
             }}
           >
-            {tab === "users_orders" ? "Users & Orders" : tab === "products" ? "Manage Products" : tab === "categories" ? "Product Categories" : tab === "service_categories" ? "Service Categories" : tab === "trainings" ? "Trainings" : tab === "blogs" ? "Blogs" : tab === "gallery" ? "Gallery Upload" : tab === "hero" ? "Hero Settings" : "About Page"}
+            {tab === "users_orders" ? "Users & Orders" : tab === "products" ? "Manage Products" : tab === "home_categories" ? "Home Categories" : tab === "categories" ? "Product Categories" : tab === "service_categories" ? "Service Categories" : tab === "trainings" ? "Trainings" : tab === "training_banner" ? "Training Banner" : tab === "instagram" ? "Instagram Feed" : tab === "testimonials" ? "Testimonials" : tab === "blogs" ? "Blogs" : tab === "gallery" ? "Gallery Upload" : tab === "hero" ? "Hero Settings" : "About Page"}
           </button>
         ))}
       </div>
+
+      {activeTab === "home_categories" && (
+        <div className="p-6 rounded-2xl shadow" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
+          <HomeCategoriesAdmin />
+        </div>
+      )}
 
       {activeTab === "hero" && (
         <div className="p-6 rounded-2xl shadow" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
@@ -369,6 +511,176 @@ export default function AdminPage() {
               {heroLoading ? "Saving..." : "Save Hero Settings"}
             </button>
           </form>
+        </div>
+      )}
+
+      {activeTab === "training_banner" && (
+        <div className="p-6 rounded-2xl shadow max-w-2xl" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
+          <h2 className="text-2xl font-bold mb-6">Home Training Banner</h2>
+          <form onSubmit={handleTrainingBannerSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-semibold mb-1">Headline</label>
+              <input name="headline" defaultValue={trainingBannerSettings?.headline} required className="w-full p-2 rounded border" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-1">Subheadline</label>
+              <textarea name="subheadline" defaultValue={trainingBannerSettings?.subheadline} required rows={3} className="w-full p-2 rounded border" />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-semibold mb-1">Button Text</label>
+                <input name="ctaText" defaultValue={trainingBannerSettings?.ctaText} required className="w-full p-2 rounded border" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1">Button Link</label>
+                <input name="ctaLink" defaultValue={trainingBannerSettings?.ctaLink} required className="w-full p-2 rounded border" />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-1">Background Media (Image or Video)</label>
+              <input type="file" name="media" accept="image/*,video/mp4,video/webm" className="w-full p-2 rounded border bg-white" />
+              {trainingBannerSettings?.mediaUrl && <p className="mt-2 text-sm text-green-600 font-medium">Current media is active.</p>}
+            </div>
+            <button type="submit" disabled={trainingBannerLoading} className="btn-peacock mt-4 w-full sm:w-auto">
+              {trainingBannerLoading ? "Saving..." : "Save Training Banner"}
+            </button>
+          </form>
+        </div>
+      )}
+
+      {activeTab === "instagram" && (
+        <div>
+          {!isAddingInstagram ? (
+            <>
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold">Instagram Feed ({instagramPosts.length})</h2>
+                <button onClick={() => setIsAddingInstagram(true)} className="btn-peacock">Add Post</button>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                {instagramPosts.map((post) => (
+                  <div key={post.id} className="p-3 rounded-2xl shadow flex flex-col" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
+                    <div className="aspect-square rounded-xl overflow-hidden mb-3 relative bg-gray-100">
+                      <img src={post.imageUrl} alt="Instagram" className="w-full h-full object-cover" />
+                    </div>
+                    <a href={post.postLink} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-blue-600 truncate mb-3 hover:underline">
+                      {post.postLink}
+                    </a>
+                    <button onClick={() => handleDeleteInstagram(post.id)} className="w-full bg-red-50 text-red-600 font-medium rounded-lg hover:bg-red-100 transition-colors py-2 text-sm mt-auto">
+                      Delete Post
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className="p-6 rounded-2xl shadow max-w-xl" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold">Add Instagram Post</h2>
+                <button onClick={() => { setIsAddingInstagram(false); setInstagramFile(null); }} className="text-gray-500 hover:text-black">Cancel</button>
+              </div>
+              <form onSubmit={handleInstagramSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-semibold mb-1">Post Link URL</label>
+                  <input name="postLink" placeholder="https://instagram.com/p/..." required className="w-full p-2 rounded border focus:ring-2 outline-none transition-all" style={{ borderColor: "var(--cream-white-border)" }} />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1">Sort Order (Optional)</label>
+                  <input name="sortOrder" type="number" defaultValue={0} className="w-full p-2 rounded border focus:ring-2 outline-none transition-all" style={{ borderColor: "var(--cream-white-border)" }} />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1">Image Upload</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    required
+                    onChange={(e) => setInstagramFile(e.target.files?.[0] || null)}
+                    className="w-full p-2 rounded border bg-white"
+                  />
+                </div>
+                <button type="submit" disabled={instagramLoading} className="btn-peacock mt-4 w-full sm:w-auto">
+                  {instagramLoading ? "Adding..." : "Add Post"}
+                </button>
+              </form>
+            </div>
+          )}
+        </div>
+      )}
+
+      {activeTab === "testimonials" && (
+        <div>
+          {!isAddingTestimonial ? (
+            <>
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold">Testimonials ({testimonialsList.length})</h2>
+                <button onClick={() => setIsAddingTestimonial(true)} className="btn-peacock">Add Testimonial</button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {testimonialsList.map((testi) => (
+                  <div key={testi.id} className="p-4 rounded-2xl shadow flex flex-col gap-3" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
+                    <div className="flex items-center gap-4">
+                      {testi.avatarUrl && (
+                        <img src={testi.avatarUrl} alt={testi.name} className="w-12 h-12 rounded-full object-cover border" />
+                      )}
+                      <div>
+                        <h3 className="font-bold">{testi.name}</h3>
+                        <p className="text-sm text-gray-500">{testi.role}</p>
+                      </div>
+                    </div>
+                    <p className="text-sm italic flex-1">"{testi.content}"</p>
+                    <div className="text-xs text-yellow-500 font-bold mb-2">Rating: {testi.rating}/5</div>
+                    <button onClick={() => handleDeleteTestimonial(testi.id)} className="w-full bg-red-50 text-red-600 font-medium rounded-lg hover:bg-red-100 transition-colors py-2 text-sm mt-auto">
+                      Delete Testimonial
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className="p-6 rounded-2xl shadow max-w-xl" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold">Add Testimonial</h2>
+                <button onClick={() => { setIsAddingTestimonial(false); setTestimonialFile(null); }} className="text-gray-500 hover:text-black">Cancel</button>
+              </div>
+              <form onSubmit={handleTestimonialSubmit} className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold mb-1">Customer Name</label>
+                    <input name="name" required className="w-full p-2 rounded border focus:ring-2 outline-none transition-all" style={{ borderColor: "var(--cream-white-border)" }} />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold mb-1">Role/Title (Optional)</label>
+                    <input name="role" placeholder="e.g. Interior Designer" className="w-full p-2 rounded border focus:ring-2 outline-none transition-all" style={{ borderColor: "var(--cream-white-border)" }} />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1">Testimonial Content</label>
+                  <textarea name="content" required rows={3} className="w-full p-2 rounded border focus:ring-2 outline-none transition-all" style={{ borderColor: "var(--cream-white-border)" }} />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold mb-1">Rating (1-5)</label>
+                    <input name="rating" type="number" min={1} max={5} defaultValue={5} className="w-full p-2 rounded border focus:ring-2 outline-none transition-all" style={{ borderColor: "var(--cream-white-border)" }} />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold mb-1">Sort Order</label>
+                    <input name="sortOrder" type="number" defaultValue={0} className="w-full p-2 rounded border focus:ring-2 outline-none transition-all" style={{ borderColor: "var(--cream-white-border)" }} />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1">Customer Photo (Optional)</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setTestimonialFile(e.target.files?.[0] || null)}
+                    className="w-full p-2 rounded border bg-white"
+                  />
+                </div>
+                <button type="submit" disabled={testimonialLoading} className="btn-peacock mt-4 w-full sm:w-auto">
+                  {testimonialLoading ? "Adding..." : "Add Testimonial"}
+                </button>
+              </form>
+            </div>
+          )}
         </div>
       )}
 

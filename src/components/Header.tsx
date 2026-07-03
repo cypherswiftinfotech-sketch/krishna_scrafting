@@ -82,11 +82,14 @@ export default function Header() {
 
             {/* Center: Logo */}
             <div className="flex-[2] flex justify-center items-center">
-              <Link href="/" className="flex items-center group">
+              <Link href="/" className="flex items-center group relative">
+                {/* Gold shine glow */}
+                <div className="absolute inset-0 bg-yellow-500/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 <img 
                   src="/logo.png" 
                   alt="Sri Krishna Crafting Logo" 
-                  className="h-16 w-auto object-contain transition-transform duration-500 group-hover:scale-105" 
+                  className="h-20 w-auto object-contain transition-transform duration-500 group-hover:scale-105 relative z-10" 
+                  style={{ filter: "drop-shadow(0px 0px 15px rgba(212, 175, 55, 0.4))" }}
                 />
               </Link>
             </div>

@@ -20,7 +20,28 @@ export async function GET() {
     .where(condition)
     .orderBy(desc(orders.createdAt));
 
-  return NextResponse.json({ orders: rows });
+  // Fetch order items with product image for each order
+  const ordersWithItems = await Promise.all(
+    rows.map(async (order) => {
+      const items = await db
+        .select({
+          id: orderItems.id,
+          productId: orderItems.productId,
+          productName: orderItems.productName,
+          quantity: orderItems.quantity,
+          priceAtPurchase: orderItems.priceAtPurchase,
+          imageUrl: products.imageUrl,
+          category: products.category,
+        })
+        .from(orderItems)
+        .leftJoin(products, eq(orderItems.productId, products.id))
+        .where(eq(orderItems.orderId, order.id));
+
+      return { ...order, items };
+    })
+  );
+
+  return NextResponse.json({ orders: ordersWithItems });
 }
 
 export async function POST(req: NextRequest) {

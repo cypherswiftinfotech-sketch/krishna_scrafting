@@ -144,10 +144,47 @@ export const heroSettings = pgTable("hero_settings", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+// ─── Training Banner ──────────────────────────────────────────────────────────
+export const trainingBannerSettings = pgTable("training_banner_settings", {
+  id: serial("id").primaryKey(),
+  mediaUrl: text("media_url"),
+  mediaPublicId: text("media_public_id"),
+  headline: varchar("headline", { length: 255 }),
+  subheadline: text("subheadline"),
+  ctaText: varchar("cta_text", { length: 100 }),
+  ctaLink: varchar("cta_link", { length: 255 }).default("/trainings"),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// ─── Instagram Posts ──────────────────────────────────────────────────────────
+export const instagramPosts = pgTable("instagram_posts", {
+  id: serial("id").primaryKey(),
+  imageUrl: text("image_url").notNull(),
+  imagePublicId: text("image_public_id"),
+  postLink: varchar("post_link", { length: 255 }).notNull(),
+  sortOrder: integer("sort_order").default(0).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// ─── Testimonials ─────────────────────────────────────────────────────────────
+export const testimonials = pgTable("testimonials", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  role: varchar("role", { length: 255 }),
+  content: text("content").notNull(),
+  rating: integer("rating").default(5).notNull(),
+  avatarUrl: text("avatar_url"),
+  avatarPublicId: text("avatar_public_id"),
+  sortOrder: integer("sort_order").default(0).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export const productCategories = pgTable("product_categories", {
   id: serial("id").primaryKey(),
   mainCategory: varchar("main_category", { length: 255 }).notNull(),
   subCategory: varchar("sub_category", { length: 255 }).notNull(),
+  mainSortOrder: integer("main_sort_order").default(0).notNull(),
+  subSortOrder: integer("sub_sort_order").default(0).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -158,6 +195,8 @@ export const serviceCategories = pgTable("service_categories", {
   subCategory: varchar("sub_category", { length: 255 }).notNull(),
   imageUrl: varchar("image_url", { length: 1000 }),
   description: text("description"),
+  mainSortOrder: integer("main_sort_order").default(0).notNull(),
+  subSortOrder: integer("sub_sort_order").default(0).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -222,6 +261,20 @@ export const blogs = pgTable("blogs", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+// ─── Home Categories ──────────────────────────────────────────────────────────
+export const homeCategories = pgTable("home_categories", {
+  id: serial("id").primaryKey(),
+  label: varchar("label", { length: 255 }).notNull(),
+  description: text("description").default(""),
+  imageUrl: varchar("image_url", { length: 1000 }),
+  imagePublicId: text("image_public_id"),
+  storeQuery: varchar("store_query", { length: 500 }).default("/store"),
+  sortOrder: integer("sort_order").default(0).notNull(),
+  active: boolean("active").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
@@ -242,3 +295,5 @@ export type AboutGalleryImage = typeof aboutGalleryImages.$inferSelect;
 export type AboutPartner = typeof aboutPartners.$inferSelect;
 export type Blog = typeof blogs.$inferSelect;
 export type NewBlog = typeof blogs.$inferInsert;
+export type HomeCategory = typeof homeCategories.$inferSelect;
+export type NewHomeCategory = typeof homeCategories.$inferInsert;

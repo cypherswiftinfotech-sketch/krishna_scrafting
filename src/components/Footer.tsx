@@ -13,13 +13,17 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-1">
-            <div className="flex items-center gap-3 mb-4 group">
-              <div className="w-14 h-14 relative flex items-center justify-center">
-                <img src="/logo.png" alt="Sri Krishna Crafting Logo" className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" />
+            <div className="flex items-center gap-3 mb-4 group relative w-max">
+              {/* Gold shine glow */}
+              <div className="absolute inset-0 bg-yellow-500/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+              <div className="h-16 w-auto relative flex items-center justify-center z-10">
+                <img 
+                  src="/logo.png" 
+                  alt="Sri Krishna Crafting Logo" 
+                  className="h-full w-auto object-contain group-hover:scale-105 transition-transform duration-500" 
+                  style={{ filter: "drop-shadow(0px 0px 15px rgba(212, 175, 55, 0.4))" }}
+                />
               </div>
-              <span className="font-medium text-lg tracking-[0.15em] uppercase" style={{ color: "#1f1f1f" }}>
-                Sri Krishna
-              </span>
             </div>
             <p className="text-sm leading-relaxed" style={{ color: "#4b4b4b" }}>
               Handcrafted epoxy resin art and decor — river tables, jewelry,
@@ -74,7 +78,7 @@ export default function Footer() {
             <h4 className="font-semibold mb-4" style={{ color: "#1f1f1f" }}>Contact</h4>
             <ul className="space-y-2 text-sm" style={{ color: "#4b4b4b" }}>
               <li>📧 hello@Sri Krishna Crafting.com</li>
-              <li>📞 +91 98765 43210</li>
+              <li>📞 +91 831 966 8016</li>
               <li>📍 Mumbai, India</li>
             </ul>
           </div>

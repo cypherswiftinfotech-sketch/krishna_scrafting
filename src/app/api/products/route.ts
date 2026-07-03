@@ -12,6 +12,7 @@ export async function GET(req: NextRequest) {
   const oldCategory = searchParams.get("category");
   const featured = searchParams.get("featured");
   const active = searchParams.get("active");
+  const limitParam = searchParams.get("limit");
 
   const conditions = [];
   if (mainCategory) conditions.push(eq(products.mainCategory, mainCategory));
@@ -27,11 +28,20 @@ export async function GET(req: NextRequest) {
     conditions.push(eq(products.active, true));
   }
 
-  const rows = await db
+  let query = db
     .select()
     .from(products)
     .where(conditions.length > 0 ? and(...conditions) : undefined)
     .orderBy(desc(products.createdAt));
+
+  if (limitParam) {
+    const limit = parseInt(limitParam);
+    if (!isNaN(limit)) {
+      query = query.limit(limit) as any;
+    }
+  }
+
+  const rows = await query;
 
   return NextResponse.json({ products: rows });
 }

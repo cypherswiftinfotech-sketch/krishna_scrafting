@@ -89,7 +89,7 @@ export default function BlogsPage() {
                         src={blog.imageUrl} 
                         alt={blog.title} 
                         fill 
-                        className="object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out opacity-80 group-hover:opacity-100" 
+                        className="object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out" 
                       />
                     ) : (
                       <div className="absolute inset-0 flex items-center justify-center text-gray-700">
@@ -97,20 +97,20 @@ export default function BlogsPage() {
                       </div>
                     )}
                     
-                    {/* Dark gradient overlay for text readability at bottom */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-90" />
+                    {/* Strong dark gradient overlay — always visible for text readability */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/10" />
                     
-                    <div className="absolute top-4 left-4">
-                      <span className="px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 text-white text-[10px] font-black uppercase tracking-widest rounded-full">
+                    <div className="absolute top-4 left-4 z-10">
+                      <span className="px-3 py-1 bg-black/60 backdrop-blur-md border border-white/30 text-white text-[10px] font-black uppercase tracking-widest rounded-full">
                         {blog.category}
                       </span>
                     </div>
 
-                    <div className="absolute bottom-0 left-0 right-0 p-6 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                      <h2 className="text-xl font-bold leading-tight mb-3 text-white drop-shadow-lg line-clamp-3">
+                    <div className="absolute bottom-0 left-0 right-0 p-5 z-10">
+                      <h2 className="text-lg font-black leading-snug mb-3 line-clamp-3" style={{ color: "#ffffff", textShadow: "0 1px 4px rgba(0,0,0,1), 0 2px 12px rgba(0,0,0,1)" }}>
                         {blog.title}
                       </h2>
-                      <div className="flex items-center gap-2 text-teal-400 text-xs font-bold uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+                      <div className="flex items-center gap-2 text-teal-400 text-xs font-bold uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                         Read Story <ArrowRight className="w-4 h-4" />
                       </div>
                     </div>
