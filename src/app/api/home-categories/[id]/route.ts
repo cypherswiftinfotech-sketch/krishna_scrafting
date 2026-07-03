@@ -5,9 +5,9 @@ import { eq } from "drizzle-orm";
 import { uploadToCloudinary, deleteFromCloudinary } from "@/lib/cloudinary";
 
 // PUT — update a home category
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const id = parseInt(params.id, 10);
+    const id = parseInt((await params).id, 10);
     const formData = await req.formData();
     const label = formData.get("label") as string;
     const description = formData.get("description") as string;
@@ -47,9 +47,9 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 }
 
 // DELETE — delete a home category
-export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const id = parseInt(params.id, 10);
+    const id = parseInt((await params).id, 10);
     const [existing] = await db.select().from(homeCategories).where(eq(homeCategories.id, id));
     if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
 

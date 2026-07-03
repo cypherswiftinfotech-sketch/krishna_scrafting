@@ -4,9 +4,9 @@ import { instagramPosts } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { deleteFromCloudinary } from "@/lib/cloudinary";
 
-export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const id = parseInt(params.id, 10);
+    const id = parseInt((await params).id, 10);
     const [existing] = await db.select().from(instagramPosts).where(eq(instagramPosts.id, id));
     if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
