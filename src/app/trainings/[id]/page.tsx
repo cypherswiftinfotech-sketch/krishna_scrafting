@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { Globe, Clock, Users, Check, PlayCircle, Shield, RotateCcw, ChevronRight } from "lucide-react";
+import { Star, Globe, Clock, Users, Check, PlayCircle, Shield, RotateCcw, ChevronRight } from "lucide-react";
 import toast from "react-hot-toast";
 
 interface Training {
