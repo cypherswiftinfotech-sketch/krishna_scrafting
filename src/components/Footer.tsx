@@ -18,7 +18,7 @@ export default function Footer() {
               <div className="absolute inset-0 bg-yellow-500/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
               <div className="h-16 w-auto relative flex items-center justify-center z-10">
                 <img 
-                  src="/logo.png" 
+                  src="/logo.jpeg" 
                   alt="Sri Krishna Crafting Logo" 
                   className="h-full w-auto object-contain group-hover:scale-105 transition-transform duration-500" 
                   style={{ filter: "drop-shadow(0px 0px 15px rgba(212, 175, 55, 0.4))" }}
@@ -77,9 +77,9 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold mb-4" style={{ color: "#1f1f1f" }}>Contact</h4>
             <ul className="space-y-2 text-sm" style={{ color: "#4b4b4b" }}>
-              <li>📧 hello@Sri Krishna Crafting.com</li>
+              <li>📧 hello@srikrishnacrafting.com</li>
               <li>📞 +91 831 966 8016</li>
-              <li>📍 Mumbai, India</li>
+              <li>📍 Indore, Bengalore</li>
             </ul>
           </div>
         </div>
@@ -88,7 +88,18 @@ export default function Footer() {
           className="mt-10 pt-6 border-t text-center text-sm"
           style={{ borderColor: "#e5e5e5", color: "#4b4b4b" }}
         >
-          <p>© {new Date().getFullYear()} Sri Krishna Crafting. All rights reserved.</p>
+          <p>
+            © {new Date().getFullYear()} Sri Krishna Crafting. All rights reserved. | Developed by{" "}
+            <a
+              href="https://www.cypherswift.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold hover:underline"
+              style={{ color: "var(--peacock-blue)" }}
+            >
+              CypherSwift InfoTech
+            </a>
+          </p>
         </div>
       </div>
     </footer>

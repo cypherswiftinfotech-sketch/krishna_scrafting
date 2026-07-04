@@ -7,7 +7,7 @@ import { useCartStore } from "@/store/cartStore";
 import { useAuthStore } from "@/store/authStore";
 import toast from "react-hot-toast";
 
-const WHATSAPP_NUMBER = "917204468429"; // +91 72044 68429
+const WHATSAPP_NUMBER = "918319668016"; // +91 831 966 8016
 
 export default function CheckoutPage() {
   const router = useRouter();

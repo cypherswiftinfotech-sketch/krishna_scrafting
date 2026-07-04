@@ -44,7 +44,7 @@ export default function ContactPage() {
       }
 
       // Format WhatsApp Message
-      const waNumber = "+917204468429";
+      const waNumber = "+918319668016";
       let text = `*New Video Call / Inquiry Request*\n\n`;
       text += `*Name:* ${form.name}\n`;
       text += `*Email:* ${form.email}\n`;
@@ -89,8 +89,8 @@ export default function ContactPage() {
             <div className="space-y-6">
               {[
                 { icon: <Mail className="w-5 h-5" />, label: "Email", value: "info@srikrishnacrafting.com" },
-                { icon: <Phone className="w-5 h-5" />, label: "Phone", value: "+91 72044 68429" },
-                { icon: <MapPin className="w-5 h-5" />, label: "Address", value: "India" },
+                { icon: <Phone className="w-5 h-5" />, label: "Phone", value: "+91 831 966 8016" },
+                { icon: <MapPin className="w-5 h-5" />, label: "Address", value: "Indore, Bengalore" },
               ].map((item) => (
                 <div key={item.label} className="flex items-start gap-4">
                   <div className="w-10 h-10 bg-white border border-gray-200 shadow-sm rounded-lg flex items-center justify-center flex-shrink-0" style={{ color: "var(--peacock-blue)" }}>

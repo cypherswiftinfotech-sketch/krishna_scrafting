@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { Star, Globe, Clock, Users, Check, PlayCircle, Shield, RotateCcw, ChevronRight } from "lucide-react";
+import { Globe, Clock, Users, Check, PlayCircle, Shield, RotateCcw, ChevronRight } from "lucide-react";
 import toast from "react-hot-toast";
 
 interface Training {
@@ -63,9 +63,14 @@ export default function TrainingDetailsPage() {
     );
   if (!course) return null;
 
-  const originalPrice = (Number(course.price) * 1.5).toLocaleString("en-IN");
-  const learningBullets = course.learnings
-    ? course.learnings.split("\n").map((l) => l.trim()).filter(Boolean)
+  const learningsRaw = course.learnings || "";
+  // Split on "---" separator: first part = what you'll learn; second = sidebar includes
+  const [learningsPart, includesPart] = learningsRaw.split(/^---$/m);
+  const learningBullets = learningsPart
+    ? learningsPart.split("\n").map((l) => l.trim()).filter(Boolean)
+    : [];
+  const includesBullets = includesPart
+    ? includesPart.split("\n").map((l) => l.trim()).filter(Boolean)
     : [];
 
   return (
@@ -85,7 +90,7 @@ export default function TrainingDetailsPage() {
             <source src={course.videoUrl} />
           </video>
         )}
-        {/* Semi-transparent overlay — dark enough for text, light enough to see the video */}
+        {/* Semi-transparent overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/20 pointer-events-none" />
 
         <div className="relative max-w-7xl mx-auto flex flex-col lg:flex-row">
@@ -101,17 +106,7 @@ export default function TrainingDetailsPage() {
               <p className="text-lg text-white/80 mb-6 line-clamp-2 drop-shadow">{course.description}</p>
             )}
 
-            <div className="flex flex-wrap items-center gap-4 text-sm mb-4">
-              <div className="flex items-center gap-1 text-amber-400 font-bold drop-shadow">
-                4.8
-                <div className="flex">
-                  {[1,2,3,4,5].map((s) => <Star key={s} className="w-4 h-4 fill-amber-400" />)}
-                </div>
-              </div>
-              <span className="text-white underline drop-shadow">(1,245 ratings)</span>
-              <span className="text-white/80 drop-shadow">15,340 students</span>
-            </div>
-
+            {/* Dynamic metadata row — no hardcoded ratings */}
             <div className="flex flex-wrap items-center gap-6 text-sm text-white/80">
               {course.language && <span className="flex items-center gap-1.5 drop-shadow"><Globe className="w-4 h-4" /> {course.language}</span>}
               {course.duration && <span className="flex items-center gap-1.5 drop-shadow"><Clock className="w-4 h-4" /> {course.duration}</span>}
@@ -124,7 +119,7 @@ export default function TrainingDetailsPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative">
 
         {/* Floating Right Card */}
-        <div className="lg:absolute lg:right-8 lg:-top-64 w-full lg:w-[340px] bg-white border border-gray-200 rounded-lg shadow-xl mb-10 lg:mb-0 z-10 overflow-hidden">
+        <div className="lg:absolute lg:right-8 lg:-top-64 w-full lg:w-[340px] bg-white border border-gray-200 rounded-2xl shadow-xl mb-10 lg:mb-0 z-10 overflow-hidden">
           <div className="relative aspect-video bg-gray-900 group cursor-pointer">
             {course.imageUrl ? (
               <Image src={course.imageUrl} alt={course.title} fill className="object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
@@ -145,7 +140,8 @@ export default function TrainingDetailsPage() {
 
             <button
               onClick={handleBookSlot}
-              className="w-full py-4 bg-[#a435f0] hover:bg-[#8710d8] text-white font-bold text-lg rounded-md transition-colors mb-4"
+              className="w-full py-4 font-bold text-lg rounded-xl transition-all mb-3"
+              style={{ background: "var(--peacock-blue)", color: "#fff" }}
             >
               Book Slot
             </button>
@@ -153,10 +149,19 @@ export default function TrainingDetailsPage() {
 
             <div className="space-y-3 text-sm text-gray-700">
               <p className="font-bold text-gray-900">This course includes:</p>
-              {course.duration && <p className="flex items-center gap-3"><PlayCircle className="w-4 h-4" /> {course.duration} on-demand video</p>}
-              {course.language && <p className="flex items-center gap-3"><Globe className="w-4 h-4" /> Taught in {course.language}</p>}
-              <p className="flex items-center gap-3"><Shield className="w-4 h-4" /> Certificate of completion</p>
-              <p className="flex items-center gap-3"><RotateCcw className="w-4 h-4" /> Full lifetime access</p>
+              {/* Dynamic inclusions from learnings field (after --- separator) */}
+              {includesBullets.length > 0 ? (
+                includesBullets.map((item, i) => (
+                  <p key={i} className="flex items-center gap-3"><Check className="w-4 h-4 text-green-600 flex-shrink-0" /> {item}</p>
+                ))
+              ) : (
+                <>
+                  {course.duration && <p className="flex items-center gap-3"><PlayCircle className="w-4 h-4" /> {course.duration} on-demand video</p>}
+                  {course.language && <p className="flex items-center gap-3"><Globe className="w-4 h-4" /> Taught in {course.language}</p>}
+                  <p className="flex items-center gap-3"><Shield className="w-4 h-4" /> Certificate of completion</p>
+                  <p className="flex items-center gap-3"><RotateCcw className="w-4 h-4" /> Full lifetime access</p>
+                </>
+              )}
             </div>
           </div>
         </div>

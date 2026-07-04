@@ -419,93 +419,69 @@ export default function HomePage() {
           </div>
 
           {/* Fixed grid — categories from DB */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
             {homeCats.map((cat, idx) => {
               const isActive = idx === activeCard;
-              const accentColors = ["#b8860b","#059669","#9333ea","#d97706","#dc2626","#0284c7"];
-              const accent = accentColors[idx % accentColors.length];
+              const matchCat = featuredCategories.find(fc => fc.label === cat.label);
+              const icon = matchCat?.icon || <Sparkles className="w-8 h-8 text-[#d4af37]" />;
+              
               return (
                 <button
                   key={cat.id}
                   onClick={() => { goToCard(idx); startTimer(); }}
-                  className="relative rounded-2xl overflow-hidden text-center flex flex-col items-center transition-all duration-500 cursor-pointer"
+                  className="group relative rounded-2xl overflow-hidden text-center flex flex-col items-center transition-all duration-500 cursor-pointer bg-white"
                   style={{
-                    padding: "0",
-                    minHeight: "260px",
+                    minHeight: "280px",
                     border: isActive
-                      ? "2px solid var(--peacock-blue)"
-                      : "2px solid var(--cream-white-border)",
-                    animation: isActive ? "cardPulse 2s ease-in-out infinite" : "none",
+                      ? "2px solid var(--peacock-eye)"
+                      : "1px solid var(--cream-white-border)",
+                    boxShadow: isActive ? "0 10px 30px -10px rgba(212,175,55,0.4)" : "0 4px 20px -10px rgba(0,0,0,0.05)",
+                    transform: isActive ? "translateY(-4px)" : "translateY(0)",
                   }}
                 >
-                  {/* Background: image if available, else gradient */}
-                  {cat.imageUrl ? (
-                    <>
-                      <img
-                        src={cat.imageUrl}
-                        alt={cat.label}
-                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700"
-                        style={{ transform: isActive ? "scale(1.08)" : "scale(1)" }}
-                      />
-                      <div
-                        className="absolute inset-0"
-                        style={{
-                          background: isActive
-                            ? "linear-gradient(to top, rgba(0,95,115,0.9) 0%, rgba(0,95,115,0.5) 60%, transparent 100%)"
-                            : "linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)",
-                        }}
-                      />
-                    </>
-                  ) : (
-                    <div
-                      className="absolute inset-0"
-                      style={{
-                        background: isActive
-                          ? "linear-gradient(145deg, var(--peacock-blue) 0%, #003d4a 100%)"
-                          : "linear-gradient(135deg, var(--cream-white-soft) 0%, var(--cream-white) 100%)",
-                      }}
-                    />
+                  {/* Subtle Top Gradient for active state */}
+                  {isActive && (
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[var(--peacock-blue)] to-[var(--peacock-eye)]" />
                   )}
 
-                  {/* Gold shimmer sweep */}
-                  <div
-                    className="absolute inset-0 pointer-events-none z-10"
-                    style={{
-                      background: "linear-gradient(105deg, transparent 40%, rgba(212,175,55,0.18) 50%, transparent 60%)",
-                      animationName: "shimmerSweep",
-                      animationDuration: isActive ? "2.2s" : "3.8s",
-                      animationTimingFunction: "ease-in-out",
-                      animationIterationCount: "infinite",
-                      animationDelay: `${idx * 0.35}s`,
-                    }}
-                  />
+                  <div className="relative z-20 flex flex-col items-center p-8 w-full h-full">
+                    {/* Icon Container */}
+                    <div 
+                      className="w-20 h-20 rounded-full flex items-center justify-center mb-6 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3"
+                      style={{
+                        background: isActive ? "rgba(212,175,55,0.05)" : "rgba(15,82,186,0.03)",
+                        border: isActive ? "1px solid rgba(212,175,55,0.2)" : "1px solid rgba(15,82,186,0.1)",
+                      }}
+                    >
+                      {icon}
+                    </div>
 
-                  <div className="relative z-20 flex flex-col items-center justify-end w-full h-full p-6" style={{ minHeight: "260px" }}>
                     <h3
-                      className="font-black text-base md:text-lg mb-2 leading-tight drop-shadow-md transition-colors"
-                      style={{ color: (cat.imageUrl || isActive) ? "#ffffff" : "#1f1f1f" }}
+                      className="font-black text-xl mb-3 leading-tight transition-colors"
+                      style={{ color: isActive ? "var(--peacock-blue)" : "#1f1f1f" }}
                     >
                       {cat.label}
                     </h3>
+                    
                     <p
-                      className="text-xs md:text-sm leading-relaxed mb-5 transition-colors"
-                      style={{ color: (cat.imageUrl || isActive) ? "rgba(255,255,255,0.85)" : "#4b4b4b" }}
+                      className="text-sm leading-relaxed mb-8 flex-grow transition-colors"
+                      style={{ color: "#6b7280" }}
                     >
                       {cat.description}
                     </p>
+                    
                     <Link
                       href={cat.storeQuery || "/store"}
                       onClick={e => e.stopPropagation()}
-                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl font-bold text-xs md:text-sm transition-all hover:scale-105 mt-auto"
+                      className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full font-bold text-sm transition-all hover:scale-105 mt-auto w-full justify-center"
                       style={{
-                        background: isActive ? "var(--peacock-eye)" : (cat.imageUrl ? "rgba(255,255,255,0.1)" : "transparent"),
-                        color: isActive ? "#ffffff" : (cat.imageUrl ? "#ffffff" : "var(--peacock-blue)"),
-                        border: isActive ? "none" : (cat.imageUrl ? "1px solid rgba(255,255,255,0.2)" : "1px solid var(--peacock-blue)"),
-                        boxShadow: isActive ? "0 6px 20px rgba(212,175,55,0.3)" : "none",
-                        backdropFilter: isActive ? "none" : "blur(4px)"
+                        background: isActive ? "var(--peacock-eye)" : "transparent",
+                        color: isActive ? "#ffffff" : "var(--peacock-blue)",
+                        border: isActive ? "none" : "1px solid var(--peacock-blue)",
+                        boxShadow: isActive ? "0 4px 15px rgba(212,175,55,0.3)" : "none",
                       }}
                     >
-                      Explore <ArrowRight className="w-3.5 h-3.5" />
+                      Explore <ArrowRight className="w-4 h-4" />
                     </Link>
                   </div>
                 </button>

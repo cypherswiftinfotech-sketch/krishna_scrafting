@@ -392,7 +392,7 @@ export default function AdminPage() {
               {/* Gold shine glow */}
               <div className="absolute inset-0 bg-yellow-500/30 blur-3xl rounded-full pointer-events-none"></div>
               <img
-                src="/logo.png"
+                src="/logo.jpeg"
                 alt="Sri Krishna Crafting Logo"
                 className="h-24 w-auto object-contain relative z-10"
                 style={{ filter: "drop-shadow(0px 0px 20px rgba(212, 175, 55, 0.5))" }}

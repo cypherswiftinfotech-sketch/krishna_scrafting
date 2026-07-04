@@ -155,7 +155,7 @@ export default function AccountPage() {
                 <div className="relative inline-block mb-4">
                   <div className="absolute inset-0 bg-yellow-500/20 blur-2xl rounded-full pointer-events-none"></div>
                   <img
-                    src="/logo.png"
+                    src="/logo.jpeg"
                     alt="Sri Krishna Crafting Logo"
                     className="h-16 w-auto object-contain relative z-10"
                     style={{ filter: "drop-shadow(0px 0px 12px rgba(212, 175, 55, 0.5))" }}
