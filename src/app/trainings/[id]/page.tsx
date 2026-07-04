@@ -72,6 +72,7 @@ export default function TrainingDetailsPage() {
   const includesBullets = includesPart
     ? includesPart.split("\n").map((l) => l.trim()).filter(Boolean)
     : [];
+  const originalPrice = (Number(course.price) * 1.5).toLocaleString("en-IN");
 
   return (
     <div className="bg-white min-h-screen">
