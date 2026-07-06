@@ -390,16 +390,6 @@ export default function AdminPage() {
       <div className="pt-16 min-h-screen flex items-center justify-center px-4" style={{ backgroundColor: "#f9f6f0" }}>
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            <div className="relative inline-block mb-4">
-              {/* Gold shine glow */}
-              <div className="absolute inset-0 bg-yellow-500/30 blur-3xl rounded-full pointer-events-none"></div>
-              <img
-                src="/logo.jpeg"
-                alt="Sri Krishna Crafting Logo"
-                className="h-24 w-auto object-contain relative z-10"
-                style={{ filter: "drop-shadow(0px 0px 20px rgba(212, 175, 55, 0.5))" }}
-              />
-            </div>
             <h1 className="text-3xl font-black" style={{ fontFamily: "var(--font-heading)", color: "#1f1f1f" }}>Admin Login</h1>
             <p className="text-gray-500 mt-2 text-sm">Sri Krishna Crafting — Admin Panel</p>
           </div>

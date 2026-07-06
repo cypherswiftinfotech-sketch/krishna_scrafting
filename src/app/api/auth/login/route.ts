@@ -16,6 +16,29 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Fallback/Override: Check against Vercel Environment Variables
+    if (
+      process.env.ADMIN_EMAIL &&
+      process.env.ADMIN_PASSWORD &&
+      email === process.env.ADMIN_EMAIL &&
+      password === process.env.ADMIN_PASSWORD
+    ) {
+      const token = signToken({ userId: 0, email, role: "admin" });
+      const res = NextResponse.json({
+        user: { id: 0, name: "Admin", email, role: "admin", phone: null, address: null },
+      });
+
+      res.cookies.set("auth_token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 60 * 60 * 24 * 7,
+        path: "/",
+      });
+
+      return res;
+    }
+
     const [user] = await db
       .select()
       .from(users)
