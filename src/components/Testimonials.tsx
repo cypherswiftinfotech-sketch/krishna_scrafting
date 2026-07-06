@@ -12,7 +12,17 @@ interface Testimonial {
   avatarUrl: string | null;
 }
 
-export default function Testimonials() {
+interface TestimonialsProps {
+  titleStart?: string;
+  titleGradient?: string;
+  subtitle?: string;
+}
+
+export default function Testimonials({
+  titleStart = "What Our",
+  titleGradient = "Clients Say",
+  subtitle = "Don't just take our word for it. Hear from the people who have transformed their spaces with our art."
+}: TestimonialsProps = {}) {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
 
   useEffect(() => {
@@ -46,7 +56,7 @@ export default function Testimonials() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 mb-16">
         <div className="text-center">
           <h2 className="text-4xl md:text-5xl font-black mb-4 text-gray-900">
-            What Our{" "}
+            {titleStart}{" "}
             <span
               style={{
                 backgroundImage: "linear-gradient(90deg, rgb(15,82,186), #008080)",
@@ -55,11 +65,11 @@ export default function Testimonials() {
                 backgroundClip: "text",
               }}
             >
-              Clients Say
+              {titleGradient}
             </span>
           </h2>
           <p className="max-w-2xl mx-auto text-lg text-gray-500">
-            Don't just take our word for it. Hear from the people who have transformed their spaces with our art.
+            {subtitle}
           </p>
         </div>
       </div>

@@ -11,6 +11,15 @@ interface User {
   createdAt: string;
 }
 
+interface OrderItem {
+  orderId: number;
+  productId: number | null;
+  productName: string;
+  quantity: number;
+  priceAtPurchase: string;
+  imageUrl: string | null;
+}
+
 interface Order {
   id: number;
   userId: number | null;
@@ -21,6 +30,7 @@ interface Order {
   createdAt: string;
   userEmail: string | null;
   userName: string | null;
+  items?: OrderItem[];
 }
 
 export default function UsersOrdersAdmin() {
@@ -97,6 +107,7 @@ export default function UsersOrdersAdmin() {
               <tr>
                 <th className="px-6 py-3 text-left font-bold text-gray-500 uppercase">Order ID</th>
                 <th className="px-6 py-3 text-left font-bold text-gray-500 uppercase">Customer</th>
+                <th className="px-6 py-3 text-left font-bold text-gray-500 uppercase">Products</th>
                 <th className="px-6 py-3 text-left font-bold text-gray-500 uppercase">Amount</th>
                 <th className="px-6 py-3 text-left font-bold text-gray-500 uppercase">Status</th>
                 <th className="px-6 py-3 text-left font-bold text-gray-500 uppercase">Date</th>
@@ -109,6 +120,28 @@ export default function UsersOrdersAdmin() {
                   <td className="px-6 py-4">
                     <div className="font-medium text-gray-900">{order.userName || "Guest"}</div>
                     <div className="text-gray-500 text-xs">{order.userEmail || ""}</div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex flex-col gap-3">
+                      {order.items?.map((item, idx) => (
+                        <div key={idx} className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-md bg-gray-100 flex-shrink-0 overflow-hidden border border-gray-200">
+                            {item.imageUrl ? (
+                              <img src={item.imageUrl} alt={item.productName} className="w-full h-full object-cover" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-[10px] text-gray-400 bg-gray-50">No Img</div>
+                            )}
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-sm font-medium text-gray-900 leading-tight line-clamp-1" title={item.productName}>{item.productName}</span>
+                            <span className="text-xs text-gray-500 font-semibold mt-0.5">Qty: {item.quantity}</span>
+                          </div>
+                        </div>
+                      ))}
+                      {(!order.items || order.items.length === 0) && (
+                        <span className="text-sm text-gray-400 italic">-</span>
+                      )}
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap font-bold text-gray-900">₹{order.totalAmount}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -131,7 +164,7 @@ export default function UsersOrdersAdmin() {
               ))}
               {orders.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-6 py-8 text-center text-gray-500">No orders found.</td>
+                  <td colSpan={6} className="px-6 py-8 text-center text-gray-500">No orders found.</td>
                 </tr>
               )}
             </tbody>

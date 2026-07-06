@@ -37,13 +37,13 @@ export default function InstagramFeed() {
                 strokeWidth="2" 
                 strokeLinecap="round" 
                 strokeLinejoin="round" 
-                className="text-pink-600"
+                style={{ color: "var(--peacock-blue)" }}
               >
                 <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
                 <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
                 <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
               </svg>
-              <span className="text-sm font-bold tracking-wider text-pink-600 uppercase">
+              <span className="text-sm font-bold tracking-wider uppercase" style={{ color: "var(--peacock-blue)" }}>
                 Follow Us
               </span>
             </div>
@@ -51,7 +51,7 @@ export default function InstagramFeed() {
               On{" "}
               <span
                 style={{
-                  backgroundImage: "linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)",
+                  backgroundImage: "var(--blue-gradient)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   backgroundClip: "text",
@@ -68,7 +68,7 @@ export default function InstagramFeed() {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-bold transition-all hover:-translate-y-1"
             style={{
-              backgroundColor: "rgb(15,82,186)",
+              background: "var(--blue-gradient)",
               color: "#ffffff",
               boxShadow: "0 4px 14px rgba(15,82,186,0.3)",
             }}

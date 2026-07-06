@@ -275,6 +275,30 @@ export const homeCategories = pgTable("home_categories", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+// ─── Menu Settings ──────────────────────────────────────────────────────────────
+export const menuSettings = pgTable("menu_settings", {
+  id: serial("id").primaryKey(),
+  key: varchar("key", { length: 255 }).notNull().unique(),
+  visible: boolean("visible").default(true).notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// ─── Contact Requests ──────────────────────────────────────────────────────────
+export const contactRequests = pgTable("contact_requests", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull(),
+  phone: varchar("phone", { length: 50 }),
+  country: varchar("country", { length: 100 }),
+  city: varchar("city", { length: 100 }),
+  productInterest: varchar("product_interest", { length: 255 }),
+  budget: varchar("budget", { length: 100 }),
+  appointmentDate: varchar("appointment_date", { length: 100 }),
+  message: text("message"),
+  imageUrl: text("image_url"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
@@ -297,3 +321,6 @@ export type Blog = typeof blogs.$inferSelect;
 export type NewBlog = typeof blogs.$inferInsert;
 export type HomeCategory = typeof homeCategories.$inferSelect;
 export type NewHomeCategory = typeof homeCategories.$inferInsert;
+export type MenuSetting = typeof menuSettings.$inferSelect;
+export type ContactRequest = typeof contactRequests.$inferSelect;
+export type NewContactRequest = typeof contactRequests.$inferInsert;

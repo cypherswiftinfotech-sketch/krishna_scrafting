@@ -8,6 +8,8 @@ import TrainingsAdmin from "@/components/TrainingsAdmin";
 import UsersOrdersAdmin from "@/components/UsersOrdersAdmin";
 import BlogsAdmin from "@/components/BlogsAdmin";
 import HomeCategoriesAdmin from "@/components/HomeCategoriesAdmin";
+import MenuAdmin from "@/components/MenuAdmin";
+import ContactRequestsAdmin from "@/components/ContactRequestsAdmin";
 
 interface HeroSettings {
   videoUrl: string | null;
@@ -47,7 +49,7 @@ export default function AdminPage() {
   const [showPass, setShowPass] = useState(false);
   const [loginLoading, setLoginLoading] = useState(false);
 
-  const [activeTab, setActiveTab] = useState<"hero" | "training_banner" | "instagram" | "testimonials" | "products" | "categories" | "service_categories" | "gallery" | "about" | "trainings" | "users_orders" | "blogs" | "home_categories">("products");
+  const [activeTab, setActiveTab] = useState<"hero" | "training_banner" | "instagram" | "testimonials" | "products" | "categories" | "service_categories" | "gallery" | "about" | "trainings" | "users_orders" | "blogs" | "home_categories" | "menu_settings" | "contact_requests">("products");
 
   // Hero State
   const [heroSettings, setHeroSettings] = useState<HeroSettings | null>(null);
@@ -465,7 +467,7 @@ export default function AdminPage() {
       </div>
 
       <div className="flex gap-4 mb-8 border-b flex-wrap" style={{ borderColor: "var(--cream-white-border)" }}>
-        {(["users_orders", "products", "home_categories", "categories", "service_categories", "gallery", "trainings", "training_banner", "instagram", "testimonials", "blogs", "hero", "about"] as const).map((tab) => (
+        {(["users_orders", "contact_requests", "products", "home_categories", "categories", "service_categories", "gallery", "trainings", "training_banner", "instagram", "testimonials", "blogs", "hero", "about", "menu_settings"] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -475,10 +477,20 @@ export default function AdminPage() {
               color: activeTab === tab ? "var(--peacock-blue)" : "#4b4b4b",
             }}
           >
-            {tab === "users_orders" ? "Users & Orders" : tab === "products" ? "Manage Products" : tab === "home_categories" ? "Home Categories" : tab === "categories" ? "Product Categories" : tab === "service_categories" ? "Service Categories" : tab === "trainings" ? "Trainings" : tab === "training_banner" ? "Training Banner" : tab === "instagram" ? "Instagram Feed" : tab === "testimonials" ? "Testimonials" : tab === "blogs" ? "Blogs" : tab === "gallery" ? "Gallery Upload" : tab === "hero" ? "Hero Settings" : "About Page"}
+            {tab === "users_orders" ? "Users & Orders" : tab === "contact_requests" ? "Form Submissions" : tab === "products" ? "Manage Products" : tab === "home_categories" ? "Home Categories" : tab === "categories" ? "Product Categories" : tab === "service_categories" ? "Service Categories" : tab === "trainings" ? "Trainings" : tab === "training_banner" ? "Training Banner" : tab === "instagram" ? "Instagram Feed" : tab === "testimonials" ? "Testimonials" : tab === "blogs" ? "Blogs" : tab === "gallery" ? "Gallery Upload" : tab === "hero" ? "Hero Settings" : tab === "menu_settings" ? "Menu Visibility" : "About Page"}
           </button>
         ))}
       </div>
+
+      {activeTab === "contact_requests" && (
+        <ContactRequestsAdmin />
+      )}
+
+      {activeTab === "menu_settings" && (
+        <div className="p-6 rounded-2xl shadow" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
+          <MenuAdmin />
+        </div>
+      )}
 
       {activeTab === "home_categories" && (
         <div className="p-6 rounded-2xl shadow" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>

@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Star, ChevronRight, PlayCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Testimonials from "@/components/Testimonials";
 
 interface Training {
   id: number;
@@ -168,6 +169,15 @@ export default function TrainingsPage() {
           </div>
         )}
 
+      </div>
+
+      {/* People Got Trained Section */}
+      <div className="mt-10">
+        <Testimonials 
+          titleStart="People Got" 
+          titleGradient="Trained" 
+          subtitle="Hear from our students who have mastered the art of epoxy resin through our training programs." 
+        />
       </div>
     </div>
   );

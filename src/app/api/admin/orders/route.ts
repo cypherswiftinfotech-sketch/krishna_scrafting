@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/db";
-import { orders, users } from "@/db/schema";
+import { orders, users, orderItems, products } from "@/db/schema";
 import { getServerUser } from "@/lib/auth";
 import { eq, desc } from "drizzle-orm";
 
@@ -26,5 +26,22 @@ export async function GET() {
     .leftJoin(users, eq(orders.userId, users.id))
     .orderBy(desc(orders.createdAt));
 
-  return NextResponse.json({ orders: rows });
+  const items = await db
+    .select({
+      orderId: orderItems.orderId,
+      productId: orderItems.productId,
+      productName: orderItems.productName,
+      quantity: orderItems.quantity,
+      priceAtPurchase: orderItems.priceAtPurchase,
+      imageUrl: products.imageUrl,
+    })
+    .from(orderItems)
+    .leftJoin(products, eq(orderItems.productId, products.id));
+
+  const ordersWithItems = rows.map((order) => ({
+    ...order,
+    items: items.filter((i) => i.orderId === order.id),
+  }));
+
+  return NextResponse.json({ orders: ordersWithItems });
 }

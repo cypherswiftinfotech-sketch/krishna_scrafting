@@ -43,6 +43,16 @@ export default function ContactPage() {
         }
       }
 
+      // Save to database
+      await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...form,
+          imageUrl
+        })
+      }).catch(console.error);
+
       // Format WhatsApp Message
       const waNumber = "+918319668016";
       let text = `*New Video Call / Inquiry Request*\n\n`;

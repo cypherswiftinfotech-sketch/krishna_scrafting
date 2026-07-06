@@ -13,6 +13,7 @@
   --cream-white-border: #e5e5e5;
   --peacock-blue: #0f52ba;
   --peacock-eye: #d4af37;
+  --blue-gradient: linear-gradient(to right, #0f52ba, #0891b2);
 }
 
 /* Force entire website to cream white background */
@@ -77,16 +78,21 @@ body {
   color: #2563eb;
 }
 
+.bg-peacock-blue {
+  background: var(--blue-gradient) !important;
+  color: #ffffff !important;
+}
+
 .peacock-eye-background {
-  background-color: #d4af37 !important; /* Sapphire */
+  background: var(--blue-gradient) !important;
   color: #ffffff !important;
   border: none;
   cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.1s ease;
+  transition: opacity 0.2s ease, transform 0.1s ease;
 }
 
 .peacock-eye-background:hover {
-  background-color: #f3c623 !important;
+  opacity: 0.9 !important;
 }
 
 .peacock-eye-background:active {
@@ -95,14 +101,14 @@ body {
 
 /* Button base class — combines peacock eye background + peacock blue text variants */
 .btn-peacock {
-  background-color: #d4af37 !important;
+  background: var(--blue-gradient) !important;
   color: #ffffff !important;
   font-weight: 600;
   padding: 0.625rem 1.25rem;
   border-radius: 0.5rem;
   border: none;
   cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.1s ease;
+  transition: opacity 0.2s ease, transform 0.1s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -110,7 +116,7 @@ body {
 }
 
 .btn-peacock:hover {
-  background-color: #f3c623 !important;
+  opacity: 0.9 !important;
 }
 
 .btn-peacock:active {
@@ -154,7 +160,7 @@ body {
 .hover\:bg-amber-500:hover,
 .hover\:bg-amber-600:hover,
 .hover\:bg-amber-700:hover {
-  background-color: #d4af37 !important; /* peacock-eye */
+  background: var(--blue-gradient) !important;
   color: #ffffff !important;
 }
 
@@ -200,12 +206,12 @@ body {
 
 /* Amber with opacity backgrounds (e.g. bg-amber-500/20) */
 [class*="bg-amber-"] {
-  background-color: #d4af37 !important;
+  background: var(--blue-gradient) !important;
   color: #ffffff !important;
 }
 
 [class*="hover:bg-amber-"]:hover {
-  background-color: #f3c623 !important;
+  opacity: 0.9 !important;
 }
 
 [class*="text-amber-"] {
@@ -231,7 +237,7 @@ body {
 .hover\:bg-yellow-300:hover,
 .hover\:bg-yellow-400:hover,
 .hover\:bg-yellow-500:hover {
-  background-color: #d4af37 !important;
+  background: var(--blue-gradient) !important;
   color: #ffffff !important;
 }
 

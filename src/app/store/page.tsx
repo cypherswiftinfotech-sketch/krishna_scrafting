@@ -3,7 +3,7 @@ import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingCart, Search, X, ChevronRight, Tags } from "lucide-react";
+import { ShoppingCart, Search, X, ChevronRight, Tags, Plus } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
 import { cn } from "@/lib/utils";
 import toast from "react-hot-toast";
@@ -129,7 +129,7 @@ function StoreContent() {
                       ? "bg-peacock-blue text-white shadow-md"
                       : "bg-gray-50 text-gray-700 hover:bg-gray-100"
                   )}
-                  style={{ backgroundColor: activeMainCat === mainCat ? "var(--peacock-blue)" : undefined }}
+                  style={{ background: activeMainCat === mainCat ? "var(--blue-gradient)" : undefined }}
                 >
                   {mainCat}
                   {activeMainCat === mainCat && <ChevronRight className="w-4 h-4 hidden lg:block" />}
@@ -149,6 +149,7 @@ function StoreContent() {
             <div className="relative max-w-md">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
+                suppressHydrationWarning
                 type="text"
                 placeholder="Search products..."
                 value={search}
@@ -286,7 +287,7 @@ function StoreContent() {
                         disabled={product.stock === 0}
                         className="p-3 bg-gray-900 hover:bg-black disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed text-white rounded-xl transition-all hover:-translate-y-0.5 hover:shadow-lg"
                       >
-                        <ShoppingCart className="w-5 h-5" />
+                        <Plus className="w-5 h-5" />
                       </button>
                     </div>
                   </div>

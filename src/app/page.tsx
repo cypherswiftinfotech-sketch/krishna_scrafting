@@ -19,6 +19,7 @@ import OurProcess from "@/components/OurProcess";
 import TrainingBanner from "@/components/TrainingBanner";
 import Testimonials from "@/components/Testimonials";
 import InstagramFeed from "@/components/InstagramFeed";
+import { cn } from "@/lib/utils";
 
 interface HeroSettings {
   videoUrl: string | null;
@@ -188,6 +189,8 @@ export default function HomePage() {
   const [homeCats, setHomeCats] = useState<HomeCategory[]>([]);
   const [activeCard, setActiveCard] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const carouselTimer = useRef<ReturnType<typeof setInterval> | null>(null);
   const addItem = useCartStore((s) => s.addItem);
 
@@ -213,20 +216,11 @@ export default function HomePage() {
   }, [startTimer]);
 
   useEffect(() => {
-    fetch("/api/hero")
-      .then((r) => r.json())
-      .then((d) => setHero(d.settings))
-      .catch(() => {});
-
-    fetch("/api/products?featured=true")
-      .then((r) => r.json())
-      .then((d) => setFeatured((d.products || []).slice(0, 6)))
-      .catch(() => {});
-
-    fetch("/api/home-categories")
-      .then((r) => r.json())
-      .then((d) => setHomeCats(d.categories || []))
-      .catch(() => {});
+    Promise.all([
+      fetch("/api/hero").then((r) => r.json()).then((d) => setHero(d.settings)).catch(() => {}),
+      fetch("/api/products?featured=true").then((r) => r.json()).then((d) => setFeatured((d.products || []).slice(0, 6))).catch(() => {}),
+      fetch("/api/home-categories").then((r) => r.json()).then((d) => setHomeCats(d.categories || [])).catch(() => {})
+    ]).finally(() => setIsDataLoaded(true));
   }, []);
 
   const handleAddToCart = (product: Product) => {
@@ -240,8 +234,22 @@ export default function HomePage() {
     toast.success(`${product.name} added to cart!`);
   };
 
+  // Determine if loader should be shown
+  const showLoader = !isDataLoaded || (hero?.videoUrl && !isVideoLoaded);
+
   return (
     <div>
+      {/* ── Global Preloader ──────────────────────────────────── */}
+      <div 
+        className={cn(
+          "fixed inset-0 z-[999] flex flex-col items-center justify-center bg-white transition-opacity duration-700 pointer-events-none",
+          showLoader ? "opacity-100" : "opacity-0"
+        )}
+      >
+        <div className="w-16 h-16 border-4 border-gray-200 border-t-peacock-blue rounded-full animate-spin mb-4" style={{ borderTopColor: "var(--peacock-blue)" }}></div>
+        <p className="text-gray-500 font-medium animate-pulse tracking-wide uppercase text-sm">Preparing Your Experience...</p>
+      </div>
+
       {/* ── Hero Section ─────────────────────────────────────── */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         {/* Video / Fallback background */}
@@ -252,6 +260,8 @@ export default function HomePage() {
             loop
             muted
             playsInline
+            onLoadedData={() => setIsVideoLoaded(true)}
+            onError={() => setIsVideoLoaded(true)} // Fail-safe
             className="absolute inset-0 w-full h-full object-cover"
           />
         ) : (
@@ -281,8 +291,7 @@ export default function HomePage() {
             {hero?.headline || "Where Art Meets"}{" "}
             <span
               style={{
-                backgroundImage:
-                  "linear-gradient(to right, #a5f3fc, #5eead4)",
+                backgroundImage: "var(--blue-gradient)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
@@ -294,7 +303,7 @@ export default function HomePage() {
 
           <p
             className="text-xl md:text-2xl mb-10 max-w-2xl mx-auto leading-relaxed"
-            style={{ color: "#e0f2fe" }}
+            style={{ color: "#ffffff" }}
           >
             {hero?.subheadline ||
               "Stunning handcrafted epoxy resin creations — from ocean-inspired river tables to wearable art. Each piece is one of a kind."}
@@ -305,8 +314,8 @@ export default function HomePage() {
               href="/store"
               className="inline-flex items-center gap-2 px-8 py-4 font-bold rounded-xl transition-all hover:scale-105"
               style={{
-                backgroundColor: "#ffffff",
-                color: "rgb(15, 82, 186)",
+                background: "var(--blue-gradient)",
+                color: "#ffffff",
                 boxShadow: "0 10px 30px rgba(0, 0, 0, 0.25)",
               }}
             >

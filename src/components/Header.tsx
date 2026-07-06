@@ -8,16 +8,16 @@ import { ShoppingCart, User, LogOut, Settings, X, MapPin, Menu } from "lucide-re
 import { cn } from "@/lib/utils";
 import toast from "react-hot-toast";
 
-const navLinks = [
-  { label: "Home", href: "/" },
-  { label: "About Us", href: "/about" },
-  { label: "Store", href: "/store" },
-  { label: "Gallery", href: "/portfolio" },
-  { label: "Services", href: "/services" },
-  { label: "Accessories", href: "/accessories" },
-  { label: "Trainings", href: "/trainings" },
-  { label: "Blogs", href: "/blogs" },
-  { label: "Contact Us", href: "/contact" },
+const defaultNavLinks = [
+  { key: "home", label: "Home", href: "/" },
+  { key: "store", label: "Store", href: "/store" },
+  { key: "portfolio", label: "Portfolio", href: "/portfolio" },
+  { key: "custom_services", label: "Custom Services", href: "/services" },
+  { key: "training_academy", label: "Training Academy", href: "/trainings" },
+  { key: "accessories", label: "Accessories", href: "/accessories" },
+  { key: "blogs", label: "Blogs", href: "/blogs" },
+  { key: "about_us", label: "About Us", href: "/about" },
+  { key: "contact_us", label: "Contact Us", href: "/contact" },
 ];
 
 export default function Header() {
@@ -29,11 +29,20 @@ export default function Header() {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [menuSettings, setMenuSettings] = useState<{key: string, visible: boolean}[]>([]);
 
   useEffect(() => {
     setIsMounted(true);
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll);
+    
+    fetch("/api/menu-settings")
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setMenuSettings(data);
+      })
+      .catch(console.error);
+      
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
@@ -56,6 +65,11 @@ export default function Header() {
   };
 
   const count = totalItems();
+
+  const visibleNavLinks = defaultNavLinks.filter(link => {
+    const setting = menuSettings.find(s => s.key === link.key);
+    return setting ? setting.visible : true; // Default to visible if not found
+  });
 
   return (
     <>
@@ -174,7 +188,7 @@ export default function Header() {
         <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setMenuOpen(false)}></div>
         
         {/* Drawer panel */}
-        <div className={cn("absolute top-0 left-0 bottom-0 w-80 max-w-[85vw] bg-white shadow-2xl transition-transform duration-300 flex flex-col", menuOpen ? "translate-x-0" : "-translate-x-full")}>
+        <div className={cn("absolute top-0 left-0 bottom-0 w-64 max-w-[85vw] bg-white shadow-2xl transition-transform duration-300 flex flex-col", menuOpen ? "translate-x-0" : "-translate-x-full")}>
           <div className="p-6 border-b border-gray-100 flex items-center justify-start">
             <button onClick={() => setMenuOpen(false)} className="flex items-center gap-2 text-black hover:text-gray-600 transition-colors group">
               <X className="w-5 h-5 stroke-[1.5]" />
@@ -183,7 +197,7 @@ export default function Header() {
           </div>
           
           <div className="flex-1 overflow-y-auto p-8 flex flex-col gap-6">
-            {navLinks.map((link) => (
+            {visibleNavLinks.map((link) => (
               <Link
                 key={link.label}
                 href={link.href}
