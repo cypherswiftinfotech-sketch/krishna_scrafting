@@ -24,6 +24,19 @@ interface Product {
 const WHATSAPP_NUMBER = "+917204468429";
 const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER.replace(/\D/g, '')}`;
 
+const getCategoryIcon = (categoryName: string) => {
+  const name = categoryName.toLowerCase();
+  if (name.includes("bulk") || name.includes("corporate") || name.includes("order")) return "📦";
+  if (name.includes("counter") || name.includes("kitchen") || name.includes("top")) return "🍳";
+  if (name.includes("floor") || name.includes("tile")) return "🧊";
+  if (name.includes("mandir") || name.includes("temple")) return "🕉️";
+  if (name.includes("table") || name.includes("furniture") || name.includes("desk")) return "🪑";
+  if (name.includes("wall") || name.includes("art") || name.includes("decor")) return "🖼️";
+  if (name.includes("gift") || name.includes("souvenir")) return "🎁";
+  if (name.includes("jewelry") || name.includes("accessory") || name.includes("ring")) return "💍";
+  return "✨";
+};
+
 function ServicesContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -122,7 +135,7 @@ function ServicesContent() {
                   style={{ borderColor: "var(--cream-white-border)" }}
                 >
                   <div className="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <span className="text-2xl" style={{ color: "var(--peacock-blue)" }}>✨</span>
+                    <span className="text-2xl" style={{ color: "var(--peacock-blue)" }}>{getCategoryIcon(cat.subCategory)}</span>
                   </div>
                   <h3 className="text-lg font-bold text-gray-900">{cat.subCategory}</h3>
                 </Link>
