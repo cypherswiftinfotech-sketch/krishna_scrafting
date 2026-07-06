@@ -23,7 +23,6 @@ const defaultNavLinks = [
 export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
-  const totalItems = useCartStore((s) => s.totalItems);
   const { user, setUser, logout } = useAuthStore();
   const [menuOpen, setMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -64,7 +63,8 @@ export default function Header() {
     router.push("/");
   };
 
-  const count = totalItems();
+  const items = useCartStore((s) => s.items);
+  const count = items.reduce((sum, i) => sum + i.quantity, 0);
 
   const visibleNavLinks = defaultNavLinks.filter(link => {
     const setting = menuSettings.find(s => s.key === link.key);

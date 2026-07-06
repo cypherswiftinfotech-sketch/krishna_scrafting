@@ -4,7 +4,7 @@ import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  ShoppingCart, ArrowLeft, Plus, Minus, Star, Package,
+  ShoppingCart, ArrowLeft, ArrowRight, Plus, Minus, Star, Package,
   Share2, Heart, CheckCircle, Truck, Shield, RotateCcw
 } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
@@ -227,11 +227,11 @@ export default function ProductDetailPage() {
                 <div className="flex gap-3 mb-6">
                   <button
                     onClick={handleAddToCart}
-                    className="flex-1 flex items-center justify-center gap-3 py-4 font-bold text-white rounded-xl transition-all hover:opacity-90 shadow-lg"
-                    style={{ backgroundColor: "#1f1f1f" }}
+                    className="flex-1 flex items-center justify-center gap-3 py-4 text-lg font-bold text-white rounded-xl transition-all hover:scale-[1.02] shadow-lg"
+                    style={{ background: "var(--blue-gradient)" }}
                   >
-                    <ShoppingCart className="w-5 h-5" />
-                    Add to Cart — ₹{(Number(product.price) * qty).toLocaleString("en-IN")}
+                    Shop — ₹{(Number(product.price) * qty).toLocaleString("en-IN")}
+                    <ArrowRight className="w-5 h-5" />
                   </button>
                   <button
                     onClick={() => setWishlisted(!wishlisted)}
