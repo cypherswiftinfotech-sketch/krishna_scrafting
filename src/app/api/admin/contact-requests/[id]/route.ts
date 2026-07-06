@@ -6,7 +6,7 @@ import { eq } from "drizzle-orm";
 
 export async function PUT(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const user = await getServerUser();
   if (!user || user.role !== "admin") {
@@ -14,7 +14,8 @@ export async function PUT(
   }
 
   try {
-    const id = parseInt(params.id, 10);
+    const { id: paramId } = await params;
+    const id = parseInt(paramId, 10);
     const body = await req.json();
     
     await db
