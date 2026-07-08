@@ -10,6 +10,8 @@ import BlogsAdmin from "@/components/BlogsAdmin";
 import HomeCategoriesAdmin from "@/components/HomeCategoriesAdmin";
 import MenuAdmin from "@/components/MenuAdmin";
 import ContactRequestsAdmin from "@/components/ContactRequestsAdmin";
+import CustomSolutionsAdmin from "@/components/CustomSolutionsAdmin";
+import AccessoriesAdmin from "@/components/AccessoriesAdmin";
 
 interface HeroSettings {
   videoUrl: string | null;
@@ -49,7 +51,7 @@ export default function AdminPage() {
   const [showPass, setShowPass] = useState(false);
   const [loginLoading, setLoginLoading] = useState(false);
 
-  const [activeTab, setActiveTab] = useState<"hero" | "training_banner" | "instagram" | "testimonials" | "products" | "categories" | "service_categories" | "gallery" | "about" | "trainings" | "users_orders" | "blogs" | "home_categories" | "menu_settings" | "contact_requests">("products");
+  const [activeTab, setActiveTab] = useState<"hero" | "training_banner" | "instagram" | "testimonials" | "products" | "categories" | "service_categories" | "gallery" | "about" | "trainings" | "users_orders" | "blogs" | "home_categories" | "menu_settings" | "contact_requests" | "custom_solutions">("products");
 
   // Hero State
   const [heroSettings, setHeroSettings] = useState<HeroSettings | null>(null);
@@ -456,24 +458,33 @@ export default function AdminPage() {
         </button>
       </div>
 
-      <div className="flex gap-4 mb-8 border-b flex-wrap" style={{ borderColor: "var(--cream-white-border)" }}>
-        {(["users_orders", "contact_requests", "products", "home_categories", "categories", "service_categories", "gallery", "trainings", "training_banner", "instagram", "testimonials", "blogs", "hero", "about", "menu_settings"] as const).map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 font-semibold transition-colors whitespace-nowrap ${activeTab === tab ? "border-b-2" : ""}`}
-            style={{
-              borderColor: activeTab === tab ? "var(--peacock-blue)" : "transparent",
-              color: activeTab === tab ? "var(--peacock-blue)" : "#4b4b4b",
-            }}
-          >
-            {tab === "users_orders" ? "Users & Orders" : tab === "contact_requests" ? "Form Submissions" : tab === "products" ? "Manage Products" : tab === "home_categories" ? "Home Categories" : tab === "categories" ? "Product Categories" : tab === "service_categories" ? "Service Categories" : tab === "trainings" ? "Trainings" : tab === "training_banner" ? "Training Banner" : tab === "instagram" ? "Instagram Feed" : tab === "testimonials" ? "Testimonials" : tab === "blogs" ? "Blogs" : tab === "gallery" ? "Gallery Upload" : tab === "hero" ? "Hero Settings" : tab === "menu_settings" ? "Menu Visibility" : "About Page"}
-          </button>
-        ))}
-      </div>
+      <div className="flex flex-col md:flex-row gap-8">
+        {/* Sidebar Menu */}
+        <div className="w-full md:w-64 flex-shrink-0 bg-white rounded-2xl shadow p-4 h-fit sticky top-24" style={{ border: "1px solid var(--cream-white-border)" }}>
+          <div className="flex flex-col gap-1">
+            {(["users_orders", "contact_requests", "products", "home_categories", "categories", "service_categories", "gallery", "trainings", "training_banner", "instagram", "testimonials", "blogs", "hero", "about", "menu_settings", "custom_solutions", "accessories"] as const).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-4 py-3 text-left font-semibold rounded-xl transition-all ${activeTab === tab ? "bg-[#135db6] text-white shadow-md translate-x-1" : "text-gray-600 hover:bg-gray-50 hover:translate-x-1"}`}
+              >
+                {tab === "users_orders" ? "Users & Orders" : tab === "contact_requests" ? "Form Submissions" : tab === "products" ? "Manage Products" : tab === "home_categories" ? "Home Categories" : tab === "categories" ? "Product Categories" : tab === "service_categories" ? "Service Categories" : tab === "trainings" ? "Trainings" : tab === "training_banner" ? "Training Banner" : tab === "instagram" ? "Instagram Feed" : tab === "testimonials" ? "Testimonials" : tab === "blogs" ? "Blogs" : tab === "gallery" ? "Gallery Upload" : tab === "hero" ? "Hero Settings" : tab === "menu_settings" ? "Menu Visibility" : tab === "custom_solutions" ? "Custom Solutions" : tab === "accessories" ? "Accessories Page" : "About Page"}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Main Content Area */}
+        <div className="flex-1 min-w-0">
 
       {activeTab === "contact_requests" && (
         <ContactRequestsAdmin />
+      )}
+
+      {activeTab === "custom_solutions" && (
+        <div className="p-6 rounded-2xl shadow" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
+          <CustomSolutionsAdmin />
+        </div>
       )}
 
       {activeTab === "menu_settings" && (
@@ -896,6 +907,16 @@ export default function AdminPage() {
       {activeTab === "blogs" && (
         <BlogsAdmin />
       )}
+
+      {activeTab === "custom_solutions" && (
+        <CustomSolutionsAdmin />
+      )}
+
+      {activeTab === "accessories" && (
+        <AccessoriesAdmin />
+      )}
+        </div>
+      </div>
     </div>
   );
 }

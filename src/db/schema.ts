@@ -324,3 +324,115 @@ export type NewHomeCategory = typeof homeCategories.$inferInsert;
 export type MenuSetting = typeof menuSettings.$inferSelect;
 export type ContactRequest = typeof contactRequests.$inferSelect;
 export type NewContactRequest = typeof contactRequests.$inferInsert;
+
+// ─── Custom Solutions ────────────────────────────────────────────────────────
+export const customSolutionsSettings = pgTable("custom_solutions_settings", {
+  id: serial("id").primaryKey(),
+  heroVideoUrl: text("hero_video_url"),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const solutions = pgTable("solutions", {
+  id: serial("id").primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  imageUrl: text("image_url"),
+  sortOrder: integer("sort_order").default(0).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const recentProjects = pgTable("recent_projects", {
+  id: serial("id").primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  city: varchar("city", { length: 255 }),
+  costRange: varchar("cost_range", { length: 255 }),
+  timeTaken: varchar("time_taken", { length: 255 }),
+  description: text("description"),
+  beforeImageUrl: text("before_image_url"),
+  afterImageUrl: text("after_image_url"),
+  sortOrder: integer("sort_order").default(0).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const customerReviews = pgTable("customer_reviews", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  rating: integer("rating").default(5).notNull(),
+  text: text("text").notNull(),
+  avatarUrl: text("avatar_url"),
+  sortOrder: integer("sort_order").default(0).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const customSolutionsInquiries = pgTable("custom_solutions_inquiries", {
+  id: serial("id").primaryKey(),
+  type: varchar("type", { length: 50 }).notNull(), // 'quote' or 'visit'
+  name: varchar("name", { length: 255 }),
+  phone: varchar("phone", { length: 50 }),
+  email: varchar("email", { length: 255 }),
+  city: varchar("city", { length: 100 }),
+  state: varchar("state", { length: 100 }),
+  projectType: varchar("project_type", { length: 255 }),
+  area: varchar("area", { length: 100 }),
+  budget: varchar("budget", { length: 100 }),
+  preferredDate: varchar("preferred_date", { length: 100 }),
+  preferredTime: varchar("preferred_time", { length: 100 }),
+  address: text("address"),
+  mapLocation: text("map_location"),
+  description: text("description"),
+  imageUrl: text("image_url"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export type CustomSolutionsSetting = typeof customSolutionsSettings.$inferSelect;
+export type Solution = typeof solutions.$inferSelect;
+export type NewSolution = typeof solutions.$inferInsert;
+export type RecentProject = typeof recentProjects.$inferSelect;
+export type NewRecentProject = typeof recentProjects.$inferInsert;
+export type CustomerReview = typeof customerReviews.$inferSelect;
+export type NewCustomerReview = typeof customerReviews.$inferInsert;
+export type CustomSolutionsInquiry = typeof customSolutionsInquiries.$inferSelect;
+export type NewCustomSolutionsInquiry = typeof customSolutionsInquiries.$inferInsert;
+
+// ─── Accessories Page ────────────────────────────────────────────────────────
+export const accessoriesSettings = pgTable("accessories_settings", {
+  id: serial("id").primaryKey(),
+  heroVideoUrl: text("hero_video_url"),
+  heroVideoPublicId: text("hero_video_public_id"),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const accessoriesKits = pgTable("accessories_kits", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  contains: text("contains").notNull(), // JSON string or comma-separated
+  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  imageUrl: text("image_url"),
+  imagePublicId: text("image_public_id"),
+  sortOrder: integer("sort_order").default(0).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const learningGuides = pgTable("learning_guides", {
+  id: serial("id").primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  content: text("content").notNull(),
+  imageUrl: text("image_url"),
+  imagePublicId: text("image_public_id"),
+  sortOrder: integer("sort_order").default(0).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const newsletterSubscribers = pgTable("newsletter_subscribers", {
+  id: serial("id").primaryKey(),
+  email: varchar("email", { length: 255 }).notNull().unique(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export type AccessoriesSetting = typeof accessoriesSettings.$inferSelect;
+export type AccessoriesKit = typeof accessoriesKits.$inferSelect;
+export type NewAccessoriesKit = typeof accessoriesKits.$inferInsert;
+export type LearningGuide = typeof learningGuides.$inferSelect;
+export type NewLearningGuide = typeof learningGuides.$inferInsert;
+export type NewsletterSubscriber = typeof newsletterSubscribers.$inferSelect;
+export type NewNewsletterSubscriber = typeof newsletterSubscribers.$inferInsert;

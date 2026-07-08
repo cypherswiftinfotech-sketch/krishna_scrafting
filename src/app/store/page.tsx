@@ -31,8 +31,8 @@ function StoreContent() {
   const router = useRouter();
   const addItem = useCartStore((s) => s.addItem);
 
-  const initialMainCat = searchParams.get("main") || "Home Products";
-  const initialSubCat = searchParams.get("sub") || "";
+  const initialMainCat = searchParams.get("main") || searchParams.get("mainCategory") || "Home Products";
+  const initialSubCat = searchParams.get("sub") || searchParams.get("subCategory") || "";
   
   const [activeMainCat, setActiveMainCat] = useState(initialMainCat);
   const [activeSubCat, setActiveSubCat] = useState(initialSubCat);

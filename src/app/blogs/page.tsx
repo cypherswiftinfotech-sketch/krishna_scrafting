@@ -97,11 +97,11 @@ export default function BlogsPage() {
                       </div>
                     )}
                     
-                    {/* Strong dark gradient overlay — always visible for text readability */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/10" />
+                    {/* Softer dark gradient overlay for text readability without hiding the image */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
                     
                     <div className="absolute top-4 left-4 z-10">
-                      <span className="px-3 py-1 bg-black/60 backdrop-blur-md border border-white/30 text-white text-[10px] font-black uppercase tracking-widest rounded-full">
+                      <span className="px-3 py-1 bg-black/40 backdrop-blur-md border border-white/30 text-[#ffffff] text-[10px] font-black uppercase tracking-widest rounded-full drop-shadow-md shadow-black">
                         {blog.category}
                       </span>
                     </div>

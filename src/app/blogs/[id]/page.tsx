@@ -51,12 +51,11 @@ export default function BlogDetailsPage() {
             src={blog.imageUrl} 
             alt={blog.title} 
             fill 
-            className="object-cover opacity-30" 
+            className="object-cover" 
             priority
           />
-          {/* Gradient Overlays to ensure text is fully visible */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-black/95" />
-          <div className="absolute inset-0 backdrop-blur-[2px]" />
+          {/* Softer Gradient Overlay to let the image shine through */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/60" />
         </div>
       )}
       
@@ -66,15 +65,15 @@ export default function BlogDetailsPage() {
       {/* Content wrapper */}
       <div className="relative z-10 pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto min-h-screen flex flex-col">
         
-        <Link href="/blogs" className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-sm font-bold uppercase tracking-widest mb-12 self-start bg-white/5 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
+        <Link href="/blogs" className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-sm font-bold uppercase tracking-widest mb-12 self-start bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
           <ArrowLeft className="w-4 h-4" /> Back to Magazine
         </Link>
 
         <div className="mb-8">
-          <span className="inline-block px-4 py-1.5 bg-gradient-to-r from-blue-600 to-teal-500 text-white text-xs font-black uppercase tracking-widest rounded-full shadow-[0_0_15px_rgba(45,212,191,0.3)] mb-6">
+          <span className="inline-block px-4 py-1.5 bg-gradient-to-r from-blue-600 to-teal-500 text-[#ffffff] text-xs font-black uppercase tracking-widest rounded-full shadow-[0_0_15px_rgba(45,212,191,0.3)] mb-6">
             {blog.category}
           </span>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tighter leading-[1.1] mb-6 text-white drop-shadow-2xl" style={{ fontFamily: "var(--font-heading)" }}>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tighter leading-[1.1] mb-6 text-[#ffffff] drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] shadow-black" style={{ fontFamily: "var(--font-heading)" }}>
             {blog.title}
           </h1>
           <div className="flex items-center gap-4 text-gray-400 text-sm font-bold uppercase tracking-widest">

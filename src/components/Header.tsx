@@ -85,12 +85,12 @@ export default function Header() {
             
             {/* Left: Menu Button */}
             <div className="flex-1 flex justify-start">
-              <button
+              <button suppressHydrationWarning
                 onClick={() => setMenuOpen(true)}
-                className="flex items-center gap-2 group text-black hover:text-gray-600 transition-colors px-2 py-2 rounded-md hover:bg-gray-100"
+                className="flex items-center gap-2 group transition-opacity hover:opacity-80 px-2 py-2 rounded-md hover:bg-gray-50"
               >
-                <Menu className="w-5 h-5 stroke-[1.5]" />
-                <span className="hidden sm:block text-[11px] font-semibold uppercase tracking-[0.1em]">Menu</span>
+                <Menu className="w-5 h-5 stroke-[1.5]" color="#0f52ba" />
+                <span className="hidden sm:block text-[11px] font-bold uppercase tracking-[0.1em]" style={{ background: "linear-gradient(135deg, rgb(15,82,186) 0%, #008080 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Menu</span>
               </button>
             </div>
 
@@ -113,11 +113,11 @@ export default function Header() {
               
               {user ? (
                 <div className="relative">
-                  <button
+                  <button suppressHydrationWarning
                     onClick={() => setUserMenuOpen(!userMenuOpen)}
-                    className="p-1 text-black hover:text-gray-600 transition-colors"
+                    className="p-1 transition-opacity hover:opacity-80"
                   >
-                    <User className="w-5 h-5 stroke-[1.5]" />
+                    <User className="w-5 h-5 stroke-[1.5]" color="#0f52ba" />
                   </button>
                   {userMenuOpen && (
                     <div className="absolute right-0 top-full mt-4 w-48 bg-white border border-gray-100 shadow-xl rounded-none overflow-hidden z-50">
@@ -141,7 +141,7 @@ export default function Header() {
                           <Settings className="w-3.5 h-3.5" /> Admin
                         </Link>
                       )}
-                      <button
+                      <button suppressHydrationWarning
                         onClick={handleLogout}
                         className="flex items-center gap-3 w-full px-5 py-3 text-[11px] font-medium uppercase tracking-wider text-red-600 hover:bg-red-50 transition-colors"
                       >
@@ -153,26 +153,29 @@ export default function Header() {
               ) : (
                 <Link
                   href="/login"
-                  className="p-1 text-black hover:text-gray-600 transition-colors"
+                  className="p-1 transition-opacity hover:opacity-80"
                 >
-                  <User className="w-5 h-5 stroke-[1.5]" />
+                  <User className="w-5 h-5 stroke-[1.5]" color="#0f52ba" />
                 </Link>
               )}
 
               <Link
                 href="/contact"
-                className="p-1 text-black hover:text-gray-600 transition-colors hidden sm:block"
+                className="p-1 transition-opacity hover:opacity-80 hidden sm:block"
               >
-                <MapPin className="w-5 h-5 stroke-[1.5]" />
+                <MapPin className="w-5 h-5 stroke-[1.5]" color="#0f52ba" />
               </Link>
 
               <Link
                 href="/cart"
-                className="relative p-1 text-black hover:text-gray-600 transition-colors"
+                className="relative p-1 transition-opacity hover:opacity-80"
               >
-                <ShoppingCart className="w-5 h-5 stroke-[1.5]" />
+                <ShoppingCart className="w-5 h-5 stroke-[1.5]" color="#0f52ba" />
                 {isMounted && count > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-amber-600 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                  <span 
+                    className="absolute -top-1 -right-1 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-sm"
+                    style={{ background: "linear-gradient(135deg, rgb(15,82,186) 0%, #008080 100%)" }}
+                  >
                     {count > 9 ? "9+" : count}
                   </span>
                 )}
@@ -190,9 +193,9 @@ export default function Header() {
         {/* Drawer panel */}
         <div className={cn("absolute top-0 left-0 bottom-0 w-64 max-w-[85vw] bg-white shadow-2xl transition-transform duration-300 flex flex-col", menuOpen ? "translate-x-0" : "-translate-x-full")}>
           <div className="p-6 border-b border-gray-100 flex items-center justify-start">
-            <button onClick={() => setMenuOpen(false)} className="flex items-center gap-2 text-black hover:text-gray-600 transition-colors group">
-              <X className="w-5 h-5 stroke-[1.5]" />
-              <span className="text-[11px] font-semibold uppercase tracking-[0.1em]">Close</span>
+            <button suppressHydrationWarning onClick={() => setMenuOpen(false)} className="flex items-center gap-2 group transition-opacity hover:opacity-80">
+              <X className="w-5 h-5 stroke-[1.5]" color="#0f52ba" />
+              <span className="text-[11px] font-bold uppercase tracking-[0.1em]" style={{ background: "linear-gradient(135deg, rgb(15,82,186) 0%, #008080 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Close</span>
             </button>
           </div>
           
@@ -212,16 +215,18 @@ export default function Header() {
               <Link
                 href="/contact"
                 onClick={() => setMenuOpen(false)}
-                className="flex items-center gap-3 text-sm font-medium tracking-wide text-black hover:text-amber-600 transition-colors"
+                className="flex items-center gap-3 text-sm font-medium tracking-wide group transition-opacity hover:opacity-80"
               >
-                <MapPin className="w-4 h-4 stroke-[1.5]" /> Find Store
+                <MapPin className="w-4 h-4 stroke-[1.5]" color="#0f52ba" /> 
+                <span style={{ background: "linear-gradient(135deg, rgb(15,82,186) 0%, #008080 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Find Store</span>
               </Link>
               <Link
                 href={user ? "/account" : "/login"}
                 onClick={() => setMenuOpen(false)}
-                className="flex items-center gap-3 text-sm font-medium tracking-wide text-black hover:text-amber-600 transition-colors"
+                className="flex items-center gap-3 text-sm font-medium tracking-wide group transition-opacity hover:opacity-80"
               >
-                <User className="w-4 h-4 stroke-[1.5]" /> Account
+                <User className="w-4 h-4 stroke-[1.5]" color="#0f52ba" /> 
+                <span style={{ background: "linear-gradient(135deg, rgb(15,82,186) 0%, #008080 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Account</span>
               </Link>
             </div>
           </div>

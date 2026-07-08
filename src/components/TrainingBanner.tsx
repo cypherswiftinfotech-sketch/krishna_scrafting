@@ -46,16 +46,16 @@ export default function TrainingBanner() {
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 hover:scale-105"
             />
           )}
-          {/* Dark Overlay for text readability */}
-          <div className="absolute inset-0 bg-black/50 transition-colors duration-500 hover:bg-black/40"></div>
+          {/* Soft Overlay for text readability without hiding the image */}
+          <div className="absolute inset-0 bg-black/30 transition-colors duration-500 hover:bg-black/20"></div>
         </div>
 
         {/* Content */}
         <div className="relative z-10 text-center px-4 md:px-12 w-full max-w-4xl">
-          <h2 className="text-4xl md:text-6xl font-black text-white mb-6 drop-shadow-md">
+          <h2 className="text-4xl md:text-6xl font-black text-[#ffffff] mb-6 drop-shadow-lg shadow-black">
             {settings.headline}
           </h2>
-          <p className="text-lg md:text-xl text-gray-200 mb-10 max-w-2xl mx-auto font-medium">
+          <p className="text-lg md:text-xl text-[#ffffff] mb-10 max-w-2xl mx-auto font-medium drop-shadow-md shadow-black">
             {settings.subheadline}
           </p>
           <Link

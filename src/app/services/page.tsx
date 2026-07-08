@@ -1,219 +1,635 @@
 "use client";
-import { useEffect, useState, Suspense } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { MessageCircle, Star, ArrowRight } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { ArrowRight, CheckCircle2, ChevronDown, ChevronUp, MapPin, Calculator, Calendar, Upload, MessageCircle, Phone, X, Target, FileText, PenTool, Hammer, Wrench, ChevronsRight, ChevronsLeft, ChevronsDown } from "lucide-react";
+import toast from "react-hot-toast";
 
-interface ProductCategory {
-  id: number;
-  mainCategory: string;
-  subCategory: string;
-}
+const PROCESS_STEPS = [
+  { title: "Consultation", desc: "Understand your vision and requirements.", icon: MessageCircle },
+  { title: "Requirement Discussion", desc: "Detailed analysis of materials and scope.", icon: Target },
+  { title: "Site Visit & Design", desc: "Expert assessment of the space.", icon: MapPin },
+  { title: "Quotation", desc: "Transparent pricing and timelines.", icon: FileText },
+  { title: "Design Approval", desc: "Finalizing the resin layout and colors.", icon: PenTool },
+  { title: "Production", desc: "Crafting the materials with precision.", icon: Hammer },
+  { title: "Installation", desc: "Professional, seamless application.", icon: Wrench },
+  { title: "Final Handover", desc: "Quality check and client approval.", icon: CheckCircle2 }
+];
 
-interface Product {
-  id: number;
-  name: string;
-  price: string;
-  imageUrl: string | null;
-  mainCategory: string;
-  subCategory: string;
-}
+const FAQS = [
+  { q: "How many days does flooring take?", a: "Typically 3 to 7 days depending on the area and complexity." },
+  { q: "Can it be installed over existing tiles?", a: "Yes, we prepare the existing surface properly before installation." },
+  { q: "Is it waterproof?", a: "Yes, epoxy creates a seamless, 100% waterproof barrier." },
+  { q: "Is it scratch resistant?", a: "It is highly durable and scratch-resistant, perfect for high traffic areas." },
+  { q: "Warranty?", a: "We provide a standard 5-year warranty against peeling or bubbling." }
+];
 
-const WHATSAPP_NUMBER = "+917204468429";
-const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER.replace(/\D/g, '')}`;
+const PrimaryButton = ({ children, onClick, className = "", icon = null }: any) => (
+  <button 
+    onClick={onClick} 
+    className={`bg-gradient-to-r from-[#135db6] to-[#008493] text-white font-bold rounded-full hover:shadow-[0_8px_20px_rgba(19,93,182,0.3)] hover:-translate-y-1 transition-all flex items-center justify-center gap-2 ${className}`}
+  >
+    {children} {icon}
+  </button>
+);
 
-const getCategoryIcon = (categoryName: string) => {
-  const name = categoryName.toLowerCase();
-  if (name.includes("bulk") || name.includes("corporate") || name.includes("order")) return "📦";
-  if (name.includes("counter") || name.includes("kitchen") || name.includes("top")) return "🍳";
-  if (name.includes("floor") || name.includes("tile")) return "🧊";
-  if (name.includes("mandir") || name.includes("temple")) return "🕉️";
-  if (name.includes("table") || name.includes("furniture") || name.includes("desk")) return "🪑";
-  if (name.includes("wall") || name.includes("art") || name.includes("decor")) return "🖼️";
-  if (name.includes("gift") || name.includes("souvenir")) return "🎁";
-  if (name.includes("jewelry") || name.includes("accessory") || name.includes("ring")) return "💍";
-  return "✨";
-};
+const OutlineButton = ({ children, onClick, className = "", icon = null }: any) => (
+  <button 
+    onClick={onClick} 
+    className={`bg-white border-2 border-[#135db6] text-[#135db6] font-bold rounded-full hover:bg-gray-50 transition-all flex items-center justify-center gap-2 ${className}`}
+  >
+    {children} {icon}
+  </button>
+);
 
-function ServicesContent() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
+export default function CustomSolutionsPage() {
+  const [dataLoaded, setDataLoaded] = useState(false);
   
-  const initialTab = searchParams.get("tab") || "HOME";
-  const [activeTab, setActiveTab] = useState(initialTab);
+  // Dynamic Data
+  const [heroVideo, setHeroVideo] = useState<string | null>(null);
+  const [solutions, setSolutions] = useState<any[]>([]);
+  const [projects, setProjects] = useState<any[]>([]);
+  const [reviews, setReviews] = useState<any[]>([]);
   
-  const [categories, setCategories] = useState<ProductCategory[]>([]);
-  const [recommendedProducts, setRecommendedProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  // Modal State
+  const [quoteModalOpen, setQuoteModalOpen] = useState(false);
+  const [visitModalOpen, setVisitModalOpen] = useState(false);
+  
+  // Calculator State
+  const [calcLength, setCalcLength] = useState("");
+  const [calcWidth, setCalcWidth] = useState("");
+  
+  // Submit Loading
+  const [quoteLoading, setQuoteLoading] = useState(false);
+  const [visitLoading, setVisitLoading] = useState(false);
+  
+  const area = Number(calcLength) * Number(calcWidth);
+  const resin = (area * 0.15).toFixed(1); // Mock formula
+  const budget = (area * 350).toLocaleString("en-IN"); // Mock formula ₹350/sqft
+  
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   useEffect(() => {
-    setLoading(true);
-    // Fetch service categories
-    fetch("/api/service-categories")
-      .then((r) => r.json())
-      .then((d) => setCategories(d.categories || []))
-      .catch(console.error);
-
-    // Fetch recommended products (featured or just all)
-    fetch("/api/products?featured=true")
-      .then((r) => r.json())
-      .then((d) => {
-        // If no featured, just take the first 4
-        if (d.products && d.products.length > 0) {
-          setRecommendedProducts(d.products.slice(0, 4));
-        } else {
-          fetch("/api/products")
-            .then(r => r.json())
-            .then(d2 => setRecommendedProducts(d2.products ? d2.products.slice(0, 4) : []));
-        }
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
+    const fetchData = async () => {
+      try {
+        const [heroRes, solRes, projRes, revRes] = await Promise.all([
+          fetch("/api/custom-solutions/hero"),
+          fetch("/api/custom-solutions/solutions"),
+          fetch("/api/custom-solutions/projects"),
+          fetch("/api/custom-solutions/reviews")
+        ]);
+        
+        const heroData = await heroRes.json();
+        const solData = await solRes.json();
+        const projData = await projRes.json();
+        const revData = await revRes.json();
+        
+        setHeroVideo(heroData.settings?.heroVideoUrl || null);
+        setSolutions(solData.solutions || []);
+        setProjects(projData.projects || []);
+        setReviews(revData.reviews || []);
+      } catch (error) {
+        console.error("Error fetching custom solutions data", error);
+      } finally {
+        setDataLoaded(true);
+      }
+    };
+    
+    fetchData();
   }, []);
 
-  const handleTabChange = (key: string) => {
-    setActiveTab(key);
-    router.push(`/services?tab=${key}`, { scroll: false });
+  const handleQuoteSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setQuoteLoading(true);
+    try {
+      const formData = new FormData(e.currentTarget);
+      formData.append("type", "quote");
+      const res = await fetch("/api/custom-solutions/inquiries", { method: "POST", body: formData });
+      if (!res.ok) throw new Error("Submission failed");
+      toast.success("Quote request submitted successfully!");
+      setQuoteModalOpen(false);
+    } catch (err: any) {
+      toast.error(err.message || "Error submitting form");
+    } finally {
+      setQuoteLoading(false);
+    }
   };
 
-  const activeSubCategories = categories.filter(c => c.mainCategory === activeTab);
+  const handleVisitSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setVisitLoading(true);
+    try {
+      const formData = new FormData(e.currentTarget);
+      formData.append("type", "visit");
+      const res = await fetch("/api/custom-solutions/inquiries", { method: "POST", body: formData });
+      if (!res.ok) throw new Error("Submission failed");
+      toast.success("Site visit requested successfully!");
+      setVisitModalOpen(false);
+    } catch (err: any) {
+      toast.error(err.message || "Error submitting form");
+    } finally {
+      setVisitLoading(false);
+    }
+  };
+
+  if (!dataLoaded) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white text-[#135db6]">
+        <div className="flex flex-col items-center">
+          <div className="w-16 h-16 border-4 border-gray-200 border-t-[#135db6] rounded-full animate-spin mb-4"></div>
+          <h2 className="text-xl font-bold tracking-widest uppercase">Preparing Experience...</h2>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="pt-20 min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="py-16 text-center max-w-3xl mx-auto px-4">
-        <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-6" style={{ fontFamily: "var(--font-heading)" }}>
-          Our <span style={{ color: "var(--peacock-blue)" }}>Services</span>
-        </h1>
-        <p className="text-gray-500 text-lg leading-relaxed">
-          Discover our specialized bespoke categories for residential and commercial spaces. Elevate your environment with premium craftsmanship.
-        </p>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-        
-        {/* Main Tabs (HOME / COMMERCIALS) */}
-        <div className="flex justify-center gap-4 mb-12">
-          {["HOME", "COMMERCIALS"].map((tab) => (
-            <button
-              key={tab}
-              onClick={() => handleTabChange(tab)}
-              className={cn(
-                "px-8 py-4 rounded-xl font-black text-lg transition-all border-2",
-                activeTab === tab
-                  ? "bg-peacock-blue text-white shadow-lg border-peacock-blue"
-                  : "bg-white text-gray-400 border-gray-200 hover:border-gray-400 hover:text-gray-700"
-              )}
-              style={activeTab === tab ? { backgroundColor: "var(--peacock-blue)", borderColor: "var(--peacock-blue)" } : {}}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
-
-        {/* Subcategories Grid */}
-        <div className="mb-24">
-          <h2 className="text-2xl font-black text-gray-900 mb-8 text-center uppercase tracking-widest">{activeTab} SERVICES</h2>
-          
-          {loading ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-              {[1, 2, 3, 4, 5, 6].map(i => <div key={i} className="h-32 bg-gray-200 rounded-2xl animate-pulse" />)}
-            </div>
-          ) : activeSubCategories.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-2xl border border-gray-100 shadow-sm">
-              <p className="text-gray-500 font-medium">No services found for {activeTab}.</p>
-            </div>
+    <div className="min-h-screen bg-white text-gray-800 selection:bg-[#135db6]/20">
+      
+      {/* 1. HERO SECTION */}
+      {/* 1. HERO SECTION */}
+      <section className="relative h-screen flex items-center justify-center overflow-hidden bg-[#111827] pt-20">
+        <div className="absolute inset-0 z-0">
+          {heroVideo ? (
+             <video src={heroVideo} autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover z-0" />
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-              {activeSubCategories.map(cat => (
-                <Link 
-                  key={cat.id} 
-                  href={`/services/${cat.id}`}
-                  className="bg-white border rounded-2xl p-8 text-center flex flex-col items-center justify-center transition-all hover:shadow-xl group" 
-                  style={{ borderColor: "var(--cream-white-border)" }}
-                >
-                  <div className="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <span className="text-2xl" style={{ color: "var(--peacock-blue)" }}>{getCategoryIcon(cat.subCategory)}</span>
-                  </div>
-                  <h3 className="text-lg font-bold text-gray-900">{cat.subCategory}</h3>
-                </Link>
-              ))}
+             <div className="absolute inset-0 bg-[url('/placeholder.jpg')] bg-cover bg-center" />
+          )}
+          <div className="absolute inset-0 bg-[#000000]/60 z-10" />
+        </div>
+        
+        <div className="relative z-20 text-center max-w-5xl px-4 flex flex-col items-center">
+          <div className="inline-block px-4 py-1.5 rounded-full border border-white/20 bg-white/10 text-[#ffffff] text-sm font-semibold tracking-widest uppercase mb-6 backdrop-blur-sm">
+            Custom Solutions
+          </div>
+          <h1 className="text-5xl md:text-7xl font-black text-[#ffffff] mb-6 leading-tight drop-shadow-lg">
+            Transform Your Space with <br className="hidden md:block" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4db4ff] to-[#00d0e8] drop-shadow-md">Premium Epoxy Craftsmanship</span>
+          </h1>
+          <p className="text-xl md:text-2xl text-[#e5e7eb] mb-10 max-w-3xl font-medium drop-shadow-md">
+            Custom Epoxy Flooring, River Tables, Wall Panels & Corporate Installations.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-5">
+            <PrimaryButton onClick={() => setQuoteModalOpen(true)} className="px-8 py-4 text-lg border border-transparent shadow-[0_0_20px_rgba(19,93,182,0.4)]">
+              Request Quote
+            </PrimaryButton>
+            <button 
+              onClick={() => setVisitModalOpen(true)} 
+              className="px-8 py-4 text-lg bg-white/10 border-2 border-white text-[#ffffff] font-bold rounded-full hover:bg-white hover:text-[#135db6] transition-all flex items-center justify-center gap-2 backdrop-blur-sm"
+            >
+              Book Site Visit
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* 2. OUR SOLUTIONS */}
+      <section className="py-24 px-4 max-w-7xl mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-4">
+            Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#135db6] to-[#008493]">Solutions</span>
+          </h2>
+          <div className="w-24 h-1 bg-gradient-to-r from-[#135db6] to-[#008493] mx-auto rounded-full mb-8"></div>
+          {solutions.length === 0 && <p className="text-gray-500">No solutions added yet. Manage them in the Admin Panel.</p>}
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {solutions.length > 0 ? solutions.map((sol) => (
+            <Link href={`/contact`} key={sol.id} className="group relative rounded-3xl overflow-hidden bg-white border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+              <div className="aspect-[4/3] bg-gray-100 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent z-10" />
+                {sol.imageUrl ? (
+                  <img src={sol.imageUrl} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt={sol.title} />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-4xl group-hover:scale-110 transition-transform duration-700">📸</div>
+                )}
+                <div className="absolute bottom-0 left-0 right-0 p-6 z-20">
+                  <h3 className="text-2xl font-bold text-[#ffffff] drop-shadow-md mb-1">{sol.title}</h3>
+                  <p className="text-[#ffffff] drop-shadow-md text-sm">{sol.description}</p>
+                </div>
+              </div>
+              <div className="p-5 flex justify-between items-center text-[#135db6] font-semibold group-hover:bg-gray-50 transition-colors">
+                <span>Request details</span>
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </Link>
+          )) : null}
+        </div>
+      </section>
+
+      {/* 3. OUR PROCESS (Snake grid layout) */}
+      <section className="py-24 bg-gray-50 relative border-y border-gray-200 overflow-hidden">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="text-center mb-24">
+            <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-4">
+              Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#135db6] to-[#008493]">Process</span>
+            </h2>
+            <p className="text-gray-600">From concept to perfection, step by step.</p>
+          </div>
+          
+          {/* Desktop Layout */}
+          <div className="hidden md:flex flex-col items-center">
+            {Array.from({ length: Math.ceil(PROCESS_STEPS.length / 2) }).map((_, rowIndex) => {
+              const isEvenRow = rowIndex % 2 === 0;
+              const item1 = PROCESS_STEPS[rowIndex * 2];
+              const item2 = PROCESS_STEPS[rowIndex * 2 + 1];
+
+              return (
+                <div key={rowIndex} className="flex w-full max-w-4xl relative mb-20">
+                  {/* Vertical connecting dashed line to previous row */}
+                  {rowIndex > 0 && (
+                    <div 
+                      className={`absolute -top-20 h-20 w-[2px] border-l-[3px] border-dashed border-[#135db6]/40 ${!isEvenRow ? "right-[25%]" : "left-[25%]"}`} 
+                    >
+                       <ChevronsDown className="absolute -bottom-4 -left-3 w-6 h-6 text-[#135db6]/60" />
+                    </div>
+                  )}
+                  
+                  {isEvenRow ? (
+                     // Left to Right (1 -> 2)
+                     <>
+                       <div className="w-1/2 flex justify-center relative">
+                          {item1 && (
+                            <div className="flex flex-col items-center text-center max-w-[220px]">
+                              <div className="w-24 h-24 rounded-full border-[3px] border-[#135db6] text-[#135db6] flex items-center justify-center mb-6 bg-white relative z-10 shadow-[0_0_20px_rgba(19,93,182,0.15)]">
+                                <item1.icon className="w-10 h-10" />
+                              </div>
+                              <h3 className="font-bold text-lg text-gray-900 mb-2">{rowIndex * 2 + 1}. {item1.title}</h3>
+                              <p className="text-sm text-gray-500 leading-tight">{item1.desc}</p>
+                            </div>
+                          )}
+                          {/* Horizontal dashed line */}
+                          {item2 && (
+                            <div className="absolute top-12 left-[50%] w-full border-t-[3px] border-dashed border-[#135db6]/40 -z-0">
+                               <ChevronsRight className="absolute -top-3 left-1/2 -translate-x-1/2 w-6 h-6 text-[#135db6]/60 bg-gray-50 px-1" />
+                            </div>
+                          )}
+                       </div>
+                       <div className="w-1/2 flex justify-center relative">
+                          {item2 && (
+                            <div className="flex flex-col items-center text-center max-w-[220px]">
+                              <div className="w-24 h-24 rounded-full border-[3px] border-[#135db6] text-[#135db6] flex items-center justify-center mb-6 bg-white relative z-10 shadow-[0_0_20px_rgba(19,93,182,0.15)]">
+                                <item2.icon className="w-10 h-10" />
+                              </div>
+                              <h3 className="font-bold text-lg text-gray-900 mb-2">{rowIndex * 2 + 2}. {item2.title}</h3>
+                              <p className="text-sm text-gray-500 leading-tight">{item2.desc}</p>
+                            </div>
+                          )}
+                       </div>
+                     </>
+                  ) : (
+                     // Right to Left (4 <- 3)
+                     <>
+                       <div className="w-1/2 flex justify-center relative">
+                          {item2 && (
+                            <div className="flex flex-col items-center text-center max-w-[220px]">
+                              <div className="w-24 h-24 rounded-full border-[3px] border-[#135db6] text-[#135db6] flex items-center justify-center mb-6 bg-white relative z-10 shadow-[0_0_20px_rgba(19,93,182,0.15)]">
+                                <item2.icon className="w-10 h-10" />
+                              </div>
+                              <h3 className="font-bold text-lg text-gray-900 mb-2">{rowIndex * 2 + 2}. {item2.title}</h3>
+                              <p className="text-sm text-gray-500 leading-tight">{item2.desc}</p>
+                            </div>
+                          )}
+                       </div>
+                       <div className="w-1/2 flex justify-center relative">
+                          {item1 && (
+                            <div className="flex flex-col items-center text-center max-w-[220px]">
+                              <div className="w-24 h-24 rounded-full border-[3px] border-[#135db6] text-[#135db6] flex items-center justify-center mb-6 bg-white relative z-10 shadow-[0_0_20px_rgba(19,93,182,0.15)]">
+                                <item1.icon className="w-10 h-10" />
+                              </div>
+                              <h3 className="font-bold text-lg text-gray-900 mb-2">{rowIndex * 2 + 1}. {item1.title}</h3>
+                              <p className="text-sm text-gray-500 leading-tight">{item1.desc}</p>
+                            </div>
+                          )}
+                          {/* Horizontal dashed line */}
+                          {item2 && (
+                            <div className="absolute top-12 right-[50%] w-full border-t-[3px] border-dashed border-[#135db6]/40 -z-0">
+                               <ChevronsLeft className="absolute -top-3 left-1/2 -translate-x-1/2 w-6 h-6 text-[#135db6]/60 bg-gray-50 px-1" />
+                            </div>
+                          )}
+                       </div>
+                     </>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Mobile Layout */}
+          <div className="flex md:hidden flex-col items-center gap-12 relative">
+            <div className="absolute top-10 bottom-10 left-1/2 w-[3px] bg-transparent border-l-[3px] border-dashed border-[#135db6]/40 -translate-x-1/2"></div>
+            {PROCESS_STEPS.map((step, idx) => (
+              <div key={idx} className="flex flex-col items-center text-center max-w-[250px] bg-gray-50 relative z-10 p-2">
+                <div className="w-20 h-20 rounded-full border-[3px] border-[#135db6] text-[#135db6] flex items-center justify-center mb-4 bg-white shadow-md">
+                  <step.icon className="w-8 h-8" />
+                </div>
+                <h3 className="font-bold text-lg text-gray-900 mb-1">{idx + 1}. {step.title}</h3>
+                <p className="text-sm text-gray-500 leading-tight">{step.desc}</p>
+                {idx < PROCESS_STEPS.length - 1 && (
+                  <ChevronsDown className="absolute -bottom-10 text-[#135db6]/60 w-6 h-6 z-20 bg-gray-50 py-1" />
+                )}
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </section>
+
+      {/* 4. RECENT PROJECTS (Auto scroll) */}
+      <section className="py-24 px-4 overflow-hidden bg-white">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-4">
+            Recent <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#135db6] to-[#008493]">Projects</span>
+          </h2>
+          <div className="w-24 h-1 bg-gradient-to-r from-[#135db6] to-[#008493] mx-auto rounded-full"></div>
+        </div>
+        
+        <div className="flex gap-6 overflow-x-auto pb-8 snap-x scrollbar-hide px-4 md:px-20">
+          {projects.length > 0 ? projects.map((proj) => (
+            <div key={proj.id} className="snap-center shrink-0 w-[350px] md:w-[450px] bg-white rounded-3xl border border-gray-200 shadow-xl shadow-gray-200/50 overflow-hidden hover:shadow-2xl transition-all cursor-pointer group">
+              <div className="relative h-60 flex">
+                <div className="w-1/2 bg-gray-100 flex items-center justify-center text-gray-400 border-r border-white relative overflow-hidden">
+                  <span className="absolute top-2 left-2 bg-white/90 text-xs px-2 py-1 rounded shadow-sm text-gray-800 font-semibold z-10">Before</span>
+                  {proj.beforeImageUrl ? <img src={proj.beforeImageUrl} className="absolute inset-0 w-full h-full object-cover" /> : "📷"}
+                </div>
+                <div className="w-1/2 bg-gray-200 flex items-center justify-center text-gray-500 relative overflow-hidden">
+                  <span className="absolute top-2 right-2 bg-gradient-to-r from-[#135db6] to-[#008493] text-xs px-2 py-1 rounded shadow-sm text-white font-bold z-10">After</span>
+                  {proj.afterImageUrl ? <img src={proj.afterImageUrl} className="absolute inset-0 w-full h-full object-cover" /> : "📸"}
+                </div>
+              </div>
+              <div className="p-6">
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="text-xl font-bold text-gray-900 group-hover:text-[#135db6] transition-colors">{proj.title}</h3>
+                  <span className="text-sm font-semibold bg-[#135db6]/10 px-2 py-1 rounded text-[#135db6] whitespace-nowrap ml-2">{proj.costRange}</span>
+                </div>
+                <p className="text-gray-600 text-sm mb-4 h-10 overflow-hidden">{proj.description}</p>
+                <div className="flex justify-between items-center text-sm text-gray-500 font-medium">
+                  <span className="flex items-center gap-1"><MapPin className="w-4 h-4"/> {proj.city}</span>
+                  <span className="flex items-center gap-1"><Calendar className="w-4 h-4"/> {proj.timeTaken}</span>
+                </div>
+                <button onClick={() => setQuoteModalOpen(true)} className="w-full mt-6 py-3 bg-gray-50 hover:bg-[#135db6]/5 rounded-xl text-[#135db6] font-bold transition-colors flex justify-center items-center gap-2 border border-gray-100">
+                  Discuss a Similar Project <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
+          )) : (
+             <p className="text-center text-gray-500 w-full">No projects added yet.</p>
           )}
         </div>
+      </section>
 
-        {/* Recommendation System */}
-        {recommendedProducts.length > 0 && (
-          <div className="mb-24">
-            <div className="flex justify-between items-end mb-8">
-              <div>
-                <h2 className="text-3xl font-black text-gray-900 mb-2">Trending {activeTab === "HOME" ? "Decor" : "Essentials"}</h2>
-                <p className="text-gray-500">Best products handpicked for your spaces.</p>
-              </div>
-              <Link href="/store" className="hidden sm:flex items-center gap-2 font-bold hover:underline" style={{ color: "var(--peacock-blue)" }}>
-                View All Products <ArrowRight className="w-4 h-4" />
-              </Link>
+      {/* 5. REQUEST QUOTE / BOOK VISIT BUTTONS */}
+      <section className="py-20 bg-gray-50 border-y border-gray-200">
+        <div className="max-w-4xl mx-auto px-4 flex flex-col sm:flex-row gap-6 justify-center">
+          <button onClick={() => setQuoteModalOpen(true)} className="flex-1 py-8 px-8 bg-white border border-gray-200 shadow-xl shadow-gray-200/50 rounded-3xl flex flex-col items-center gap-4 hover:-translate-y-2 hover:shadow-2xl hover:border-[#135db6]/30 transition-all group">
+            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#135db6]/10 to-[#008493]/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <Calculator className="w-10 h-10 text-[#135db6]" />
             </div>
+            <h3 className="text-2xl font-bold text-gray-900">Get Free Quote</h3>
+            <p className="text-gray-500 text-center">Share your requirements and get a detailed estimate.</p>
+          </button>
+          
+          <button onClick={() => setVisitModalOpen(true)} className="flex-1 py-8 px-8 bg-white border border-gray-200 shadow-xl shadow-gray-200/50 rounded-3xl flex flex-col items-center gap-4 hover:-translate-y-2 hover:shadow-2xl hover:border-[#008493]/30 transition-all group">
+            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#008493]/10 to-[#135db6]/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <MapPin className="w-10 h-10 text-[#008493]" />
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900">Book Site Inspection</h3>
+            <p className="text-gray-500 text-center">Schedule our expert team to visit your location.</p>
+          </button>
+        </div>
+      </section>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {recommendedProducts.map((product) => (
-                <Link key={product.id} href={`/store/${product.id}`} className="group bg-white rounded-2xl border overflow-hidden hover:shadow-xl transition-all" style={{ borderColor: "var(--cream-white-border)" }}>
-                  <div className="relative h-48 bg-gray-50 overflow-hidden">
-                    {product.imageUrl ? (
-                      <Image
-                        src={product.imageUrl}
-                        alt={product.name}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                    ) : (
-                      <div className="flex items-center justify-center h-full text-4xl text-gray-300">📦</div>
-                    )}
-                  </div>
-                  <div className="p-4">
-                    <p className="text-[10px] uppercase font-bold text-gray-400 mb-1">{product.subCategory}</p>
-                    <h3 className="font-bold text-gray-900 line-clamp-1 mb-2">{product.name}</h3>
-                    <p className="font-black text-gray-900">₹{Number(product.price).toLocaleString("en-IN")}</p>
-                  </div>
-                </Link>
-              ))}
+      {/* 6. EPOXY FLOORING CALCULATOR */}
+      <section className="py-24 px-4 max-w-6xl mx-auto bg-white">
+        <div className="bg-white rounded-[3rem] border border-gray-200 shadow-[0_20px_50px_rgba(0,0,0,0.05)] p-8 md:p-16 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-[#135db6]/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#008493]/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+          
+          <div className="relative z-10 text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-4">
+              Epoxy Flooring <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#135db6] to-[#008493]">Calculator</span>
+            </h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-[#135db6] to-[#008493] mx-auto rounded-full mb-4"></div>
+            <p className="text-gray-500">Get an instant estimate for your next flooring project.</p>
+          </div>
+          
+          <div className="flex flex-col md:flex-row gap-12 relative z-10">
+            <div className="flex-1 flex flex-col gap-6">
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2">Length (Feet)</label>
+                <input 
+                  type="number" 
+                  value={calcLength} 
+                  onChange={(e) => setCalcLength(e.target.value)}
+                  className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-4 text-gray-900 focus:outline-none focus:border-[#135db6] focus:ring-2 focus:ring-[#135db6]/20 text-lg transition-all"
+                  placeholder="e.g. 20"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2">Width (Feet)</label>
+                <input 
+                  type="number" 
+                  value={calcWidth} 
+                  onChange={(e) => setCalcWidth(e.target.value)}
+                  className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-4 text-gray-900 focus:outline-none focus:border-[#135db6] focus:ring-2 focus:ring-[#135db6]/20 text-lg transition-all"
+                  placeholder="e.g. 15"
+                />
+              </div>
+            </div>
+            
+            <div className="flex-1 bg-gradient-to-br from-[#135db6] to-[#008493] rounded-3xl p-8 shadow-2xl flex flex-col justify-center gap-6 text-[#ffffff] relative overflow-hidden">
+              <div className="absolute -right-10 -bottom-10 opacity-10 text-[#ffffff]">
+                <Calculator className="w-64 h-64" />
+              </div>
+              <div className="relative z-10 flex justify-between items-end border-b border-[#ffffff]/20 pb-4">
+                <span className="font-medium text-[#ffffff]/80">Approx Area</span>
+                <span className="text-2xl font-bold text-[#ffffff]">{area > 0 ? area : 0} <span className="text-sm text-[#ffffff]/60">sq.ft</span></span>
+              </div>
+              <div className="relative z-10 flex justify-between items-end border-b border-[#ffffff]/20 pb-4">
+                <span className="font-medium text-[#ffffff]/80">Estimated Resin</span>
+                <span className="text-2xl font-bold text-[#ffffff]">{area > 0 ? resin : 0} <span className="text-sm text-[#ffffff]/60">KGs</span></span>
+              </div>
+              <div className="relative z-10 flex justify-between items-end pt-2">
+                <span className="font-bold text-lg text-[#ffffff]">Estimated Budget</span>
+                <span className="text-4xl font-black text-[#ffffff]">₹{area > 0 ? budget : 0}*</span>
+              </div>
+              <p className="relative z-10 text-xs text-[#ffffff]/80 mt-2">*This is a rough estimate. Actual costs may vary based on design complexity.</p>
             </div>
           </div>
-        )}
+        </div>
+      </section>
 
-        {/* CTA Section */}
-        <div className="bg-white border rounded-3xl p-10 md:p-16 text-center shadow-sm relative overflow-hidden" style={{ borderColor: "var(--cream-white-border)" }}>
-          <div className="absolute top-0 right-0 w-64 h-64 bg-green-50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-50 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none" />
+      {/* 7. WHY CHOOSE US */}
+      <section className="py-24 bg-gray-50 relative border-y border-gray-200">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-4">
+              Why <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#135db6] to-[#008493]">Choose Us</span>
+            </h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-[#135db6] to-[#008493] mx-auto rounded-full"></div>
+          </div>
           
-          <div className="relative z-10">
-            <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4">Ready to start your project?</h2>
-            <p className="text-gray-500 text-lg mb-8 max-w-2xl mx-auto">
-              Whether you need customized bulk orders or a single personalized masterpiece, our experts are here to help. Reach out directly on WhatsApp for instant support.
-            </p>
-            <a 
-              href={`${WHATSAPP_LINK}?text=Hi, I would like to inquire about your ${activeTab} services.`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 px-8 py-4 bg-green-500 hover:bg-green-600 text-white font-black rounded-xl shadow-lg shadow-green-500/30 transition-all hover:-translate-y-1"
-            >
-              <MessageCircle className="w-6 h-6" />
-              Chat on WhatsApp
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
+            {[
+              { icon: "💎", title: "Premium Resin" },
+              { icon: "👷‍♂️", title: "Experienced Team" },
+              { icon: "🎨", title: "Customized Design" },
+              { icon: "⏳", title: "Long Life Finish" },
+              { icon: "🛠️", title: "Professional Installation" },
+              { icon: "🇮🇳", title: "Pan India Service" }
+            ].map((feature, idx) => (
+              <div key={idx} className="bg-white border border-gray-200 rounded-3xl p-8 flex flex-col items-center text-center hover:-translate-y-2 transition-transform shadow-lg shadow-gray-200/50">
+                <div className="text-5xl mb-6 bg-gray-50 w-24 h-24 rounded-full flex items-center justify-center shadow-inner">{feature.icon}</div>
+                <h3 className="text-xl font-bold text-gray-900">{feature.title}</h3>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 8. FAQs */}
+      <section className="py-24 px-4 max-w-4xl mx-auto bg-white">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-4">
+            Frequently Asked <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#135db6] to-[#008493]">Questions</span>
+          </h2>
+        </div>
+        
+        <div className="flex flex-col gap-4">
+          {FAQS.map((faq, idx) => (
+            <div key={idx} className={`border rounded-2xl overflow-hidden transition-all duration-300 ${openFaq === idx ? "border-[#135db6] shadow-md bg-white" : "border-gray-200 bg-gray-50 hover:border-[#135db6]/50"}`}>
+              <button 
+                onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
+                className="w-full px-6 py-5 flex justify-between items-center text-left focus:outline-none"
+              >
+                <span className={`font-bold text-lg ${openFaq === idx ? "text-[#135db6]" : "text-gray-800"}`}>{faq.q}</span>
+                <span className={`p-2 rounded-full transition-colors ${openFaq === idx ? "bg-[#135db6]/10 text-[#135db6]" : "bg-white text-gray-400"}`}>
+                  {openFaq === idx ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                </span>
+              </button>
+              <div className={`px-6 overflow-hidden transition-all duration-300 ${openFaq === idx ? "max-h-40 pb-5 opacity-100" : "max-h-0 opacity-0"}`}>
+                <p className="text-gray-600">{faq.a}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 9. CUSTOMER REVIEWS (Scrollable) */}
+      <section className="py-24 bg-gray-50 border-y border-gray-200 overflow-hidden">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-4">
+            Customer <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#135db6] to-[#008493]">Reviews</span>
+          </h2>
+          <div className="w-24 h-1 bg-gradient-to-r from-[#135db6] to-[#008493] mx-auto rounded-full"></div>
+        </div>
+        
+        <div className="flex gap-6 overflow-x-auto pb-12 snap-x scrollbar-hide px-4 md:px-20">
+          {reviews.length > 0 ? reviews.map((review) => (
+            <div key={review.id} className="snap-center shrink-0 w-[300px] md:w-[400px] bg-white rounded-3xl p-8 border border-gray-200 shadow-xl shadow-gray-200/50 flex flex-col justify-between">
+              <div>
+                <div className="flex text-yellow-400 mb-4">
+                  {[...Array(review.rating)].map((_, i) => <span key={i}>★</span>)}
+                </div>
+                <p className="text-gray-700 text-lg mb-6 italic font-medium">"{review.text}"</p>
+              </div>
+              <div className="flex items-center gap-4 pt-4 border-t border-gray-100">
+                <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-xl shadow-inner overflow-hidden">
+                  {review.avatarUrl ? <img src={review.avatarUrl} className="w-full h-full object-cover" /> : "👤"}
+                </div>
+                <div>
+                  <h4 className="font-bold text-gray-900">{review.name}</h4>
+                  <p className="text-sm text-[#135db6] font-medium">Verified Client</p>
+                </div>
+              </div>
+            </div>
+          )) : (
+            <p className="w-full text-center text-gray-500">No reviews added yet.</p>
+          )}
+        </div>
+      </section>
+
+      {/* 10. CTA */}
+      <section className="py-32 relative overflow-hidden bg-white">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#135db6]/5 via-white to-[#008493]/5" />
+        
+        <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
+          <h2 className="text-5xl md:text-6xl font-black text-gray-900 mb-6">
+            Ready to Transform Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#135db6] to-[#008493]">Space?</span>
+          </h2>
+          <p className="text-xl text-gray-600 mb-12">Connect with our experts today and bring your vision to reality.</p>
+          
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+            <PrimaryButton onClick={() => setQuoteModalOpen(true)} className="w-full sm:w-auto px-10 py-5 text-lg">
+              Request Quote
+            </PrimaryButton>
+            <OutlineButton onClick={() => window.location.href='tel:+917204468429'} className="w-full sm:w-auto px-10 py-5 text-lg" icon={<Phone className="w-5 h-5" />}>
+              Call Now
+            </OutlineButton>
+            <a href="https://wa.me/917204468429" target="_blank" rel="noreferrer" className="w-full sm:w-auto px-10 py-5 bg-[#25D366] hover:bg-[#1ebe57] text-white font-bold rounded-full transition-all hover:shadow-lg hover:-translate-y-1 flex items-center justify-center gap-3 text-lg">
+              <MessageCircle className="w-6 h-6" /> WhatsApp
             </a>
           </div>
         </div>
+      </section>
 
-      </div>
+      {/* MODALS */}
+      {/* Quote Modal */}
+      {quoteModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-10 pb-20 sm:p-10 bg-gray-900/40 backdrop-blur-sm overflow-y-auto">
+          <div className="bg-white border border-gray-200 shadow-2xl rounded-3xl w-full max-w-2xl relative my-auto p-8 md:p-10">
+            <button onClick={() => setQuoteModalOpen(false)} className="absolute top-6 right-6 text-gray-400 hover:text-gray-900 bg-gray-100 p-2 rounded-full transition-colors">
+              <X className="w-5 h-5" />
+            </button>
+            <h2 className="text-3xl font-black text-gray-900 mb-2">Get Free Quote</h2>
+            <p className="text-gray-500 mb-8">Fill the details below and our team will get back to you with an estimate.</p>
+            
+            <form onSubmit={handleQuoteSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div><label className="block text-sm font-bold text-gray-700 mb-1">Full Name</label><input name="name" type="text" required className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:border-[#135db6] focus:ring-2 focus:ring-[#135db6]/20 focus:outline-none transition-all" /></div>
+                <div><label className="block text-sm font-bold text-gray-700 mb-1">Phone</label><input name="phone" type="tel" required className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:border-[#135db6] focus:ring-2 focus:ring-[#135db6]/20 focus:outline-none transition-all" /></div>
+                <div><label className="block text-sm font-bold text-gray-700 mb-1">Email</label><input name="email" type="email" required className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:border-[#135db6] focus:ring-2 focus:ring-[#135db6]/20 focus:outline-none transition-all" /></div>
+                <div><label className="block text-sm font-bold text-gray-700 mb-1">City</label><input name="city" type="text" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:border-[#135db6] focus:ring-2 focus:ring-[#135db6]/20 focus:outline-none transition-all" /></div>
+                <div><label className="block text-sm font-bold text-gray-700 mb-1">State</label><input name="state" type="text" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:border-[#135db6] focus:ring-2 focus:ring-[#135db6]/20 focus:outline-none transition-all" /></div>
+                <div><label className="block text-sm font-bold text-gray-700 mb-1">Project Type</label><select name="projectType" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:border-[#135db6] focus:ring-2 focus:ring-[#135db6]/20 focus:outline-none transition-all"><option>Epoxy Flooring</option><option>River Table</option><option>Wall Panel</option></select></div>
+                <div><label className="block text-sm font-bold text-gray-700 mb-1">Area (sq.ft)</label><input name="area" type="number" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:border-[#135db6] focus:ring-2 focus:ring-[#135db6]/20 focus:outline-none transition-all" /></div>
+                <div><label className="block text-sm font-bold text-gray-700 mb-1">Budget</label><input name="budget" type="text" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:border-[#135db6] focus:ring-2 focus:ring-[#135db6]/20 focus:outline-none transition-all" /></div>
+                <div><label className="block text-sm font-bold text-gray-700 mb-1">Preferred Date</label><input name="preferredDate" type="date" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:border-[#135db6] focus:ring-2 focus:ring-[#135db6]/20 focus:outline-none transition-all" /></div>
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-1">Upload Images</label>
+                  <label className="w-full bg-gray-50 border-2 border-gray-200 border-dashed rounded-xl px-4 py-3 text-gray-500 flex items-center justify-center gap-2 cursor-pointer hover:border-[#135db6] hover:bg-[#135db6]/5 transition-colors">
+                    <Upload className="w-4 h-4" /> <span className="text-sm">Click to Upload</span>
+                    <input type="file" name="image" accept="image/*" className="hidden" />
+                  </label>
+                </div>
+              </div>
+              <div><label className="block text-sm font-bold text-gray-700 mb-1">Describe Requirement</label><textarea name="description" rows={3} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:border-[#135db6] focus:ring-2 focus:ring-[#135db6]/20 focus:outline-none transition-all"></textarea></div>
+              <PrimaryButton type="submit" className="w-full py-4 text-lg" disabled={quoteLoading}>{quoteLoading ? "Submitting..." : "Submit Request"}</PrimaryButton>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Visit Modal */}
+      {visitModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-10 pb-20 sm:p-10 bg-gray-900/40 backdrop-blur-sm overflow-y-auto">
+          <div className="bg-white border border-gray-200 shadow-2xl rounded-3xl w-full max-w-md relative my-auto p-8 md:p-10">
+            <button onClick={() => setVisitModalOpen(false)} className="absolute top-6 right-6 text-gray-400 hover:text-gray-900 bg-gray-100 p-2 rounded-full transition-colors">
+              <X className="w-5 h-5" />
+            </button>
+            <h2 className="text-3xl font-black text-gray-900 mb-2">Book Site Visit</h2>
+            <p className="text-gray-500 mb-8">Schedule an inspection.</p>
+            
+            <form onSubmit={handleVisitSubmit} className="space-y-6">
+              <div><label className="block text-sm font-bold text-gray-700 mb-1">Select Date</label><input name="preferredDate" type="date" required className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:border-[#135db6] focus:ring-2 focus:ring-[#135db6]/20 focus:outline-none transition-all" /></div>
+              <div><label className="block text-sm font-bold text-gray-700 mb-1">Select Time</label><input name="preferredTime" type="time" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:border-[#135db6] focus:ring-2 focus:ring-[#135db6]/20 focus:outline-none transition-all" /></div>
+              <div><label className="block text-sm font-bold text-gray-700 mb-1">Address</label><textarea name="address" required rows={2} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:border-[#135db6] focus:ring-2 focus:ring-[#135db6]/20 focus:outline-none transition-all"></textarea></div>
+              <div><label className="block text-sm font-bold text-gray-700 mb-1">Google Map Location (Link)</label><input name="mapLocation" type="url" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:border-[#135db6] focus:ring-2 focus:ring-[#135db6]/20 focus:outline-none transition-all" /></div>
+              <PrimaryButton type="submit" className="w-full py-4 text-lg" disabled={visitLoading}>{visitLoading ? "Booking..." : "Confirm Booking"}</PrimaryButton>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
-  );
-}
-
-export default function ServicesPage() {
-  return (
-    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center"><div className="w-10 h-10 border-4 border-gray-200 border-t-amber-500 rounded-full animate-spin" /></div>}>
-      <ServicesContent />
-    </Suspense>
   );
 }
