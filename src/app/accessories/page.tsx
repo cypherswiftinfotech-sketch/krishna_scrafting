@@ -222,21 +222,30 @@ export default function AccessoriesPage() {
 
       {/* 1. HERO SECTION */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden bg-white pt-20">
-        <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 z-0 overflow-hidden group">
           {settings?.heroVideoUrl ? (
-            <video 
-              src={settings.heroVideoUrl} 
-              autoPlay 
-              muted 
-              loop 
-              playsInline 
-              className="absolute inset-0 w-full h-full object-cover"
-              onLoadedData={() => setVideoLoaded(true)}
-            />
+            settings?.heroVideoUrl?.match(/\.(mp4|webm|ogg)$/i) || settings?.heroVideoUrl?.includes("video/upload") ? (
+              <video 
+                src={settings.heroVideoUrl} 
+                autoPlay 
+                muted 
+                loop 
+                playsInline 
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-[2000ms] group-hover:scale-105"
+                onLoadedData={() => setVideoLoaded(true)}
+              />
+            ) : (
+              <img 
+                src={settings.heroVideoUrl}
+                alt="Accessories Hero"
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-[2000ms] group-hover:scale-105"
+                onLoad={() => setVideoLoaded(true)}
+              />
+            )
           ) : (
             <div className="absolute inset-0 bg-gray-100" />
           )}
-          <div className="absolute inset-0 bg-black/60 z-10" />
+          <div className="absolute inset-0 bg-black/40 z-10 transition-colors duration-700 group-hover:bg-black/30" />
         </div>
         
         <div className="relative z-20 text-center max-w-5xl px-4 flex flex-col items-center">
