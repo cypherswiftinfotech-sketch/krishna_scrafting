@@ -51,7 +51,7 @@ export default function AdminPage() {
   const [showPass, setShowPass] = useState(false);
   const [loginLoading, setLoginLoading] = useState(false);
 
-  const [activeTab, setActiveTab] = useState<"hero" | "training_banner" | "instagram" | "testimonials" | "products" | "categories" | "service_categories" | "gallery" | "about" | "trainings" | "users_orders" | "blogs" | "home_categories" | "menu_settings" | "contact_requests" | "custom_solutions">("products");
+  const [activeTab, setActiveTab] = useState<"hero" | "training_banner" | "instagram" | "testimonials" | "products" | "categories" | "service_categories" | "gallery" | "about" | "trainings" | "users_orders" | "blogs" | "home_categories" | "menu_settings" | "contact_requests" | "custom_solutions" | "accessories">("products");
 
   // Hero State
   const [heroSettings, setHeroSettings] = useState<HeroSettings | null>(null);
