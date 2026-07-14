@@ -44,5 +44,23 @@ export async function POST(req: NextRequest) {
     sortOrder: sortOrderStr ? parseInt(sortOrderStr) : 0,
   }).returning();
 
+  try {
+    const { notifyAllSubscribers, generateEmailTemplate } = await import("@/lib/sendEmail");
+    const htmlMessage = generateEmailTemplate({
+      title: `New Project Added: ${title}`,
+      message: `<p style="font-size: 18px; color: #111;">We just added a new project to our portfolio!</p>
+                <p><strong>${title}</strong></p>
+                <p>${description?.substring(0, 150)}...</p>`,
+      linkUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/custom-solutions`,
+      linkText: "Check it out"
+    });
+    await notifyAllSubscribers(
+      `New Project Added: ${title}`,
+      htmlMessage
+    );
+  } catch (e) {
+    console.error("Failed to notify subscribers:", e);
+  }
+
   return NextResponse.json({ project: newItem });
 }

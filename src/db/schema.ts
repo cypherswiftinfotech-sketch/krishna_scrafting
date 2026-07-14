@@ -76,6 +76,11 @@ export const portfolio = pgTable("portfolio", {
   category: varchar("category", { length: 100 }),
   featured: boolean("featured").default(false).notNull(),
   sortOrder: integer("sort_order").default(0).notNull(),
+  cost: varchar("cost", { length: 100 }),
+  place: varchar("place", { length: 255 }),
+  review: text("review"),
+  socialLink: varchar("social_link", { length: 1000 }),
+  additionalImages: text("additional_images"), // JSON string of array of URLs
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -153,6 +158,7 @@ export const trainingBannerSettings = pgTable("training_banner_settings", {
   subheadline: text("subheadline"),
   ctaText: varchar("cta_text", { length: 100 }),
   ctaLink: varchar("cta_link", { length: 255 }).default("/trainings"),
+  whatsappNumber: varchar("whatsapp_number", { length: 50 }).default("918319668016"),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
@@ -183,6 +189,8 @@ export const productCategories = pgTable("product_categories", {
   id: serial("id").primaryKey(),
   mainCategory: varchar("main_category", { length: 255 }).notNull(),
   subCategory: varchar("sub_category", { length: 255 }).notNull(),
+  imageUrl: varchar("image_url", { length: 1000 }),
+  description: text("description"),
   mainSortOrder: integer("main_sort_order").default(0).notNull(),
   subSortOrder: integer("sub_sort_order").default(0).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -213,9 +221,27 @@ export const trainings = pgTable("trainings", {
   imageUrl: varchar("image_url", { length: 1000 }),
   videoUrl: varchar("video_url", { length: 1000 }),
   learnings: text("learnings"),
+  fullDetails: text("full_details"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
+// ─── Student Success Stories ──────────────────────────────────────────────────
+export const studentSuccessStories = pgTable("student_success_stories", {
+  id: serial("id").primaryKey(),
+  type: varchar("type", { length: 50 }).notNull(), // 'review', 'video', 'gallery', 'before_after'
+  mediaUrl: text("media_url"),
+  mediaPublicId: text("media_public_id"),
+  secondaryMediaUrl: text("secondary_media_url"),
+  secondaryMediaPublicId: text("secondary_media_public_id"),
+  title: varchar("title", { length: 255 }),
+  description: text("description"),
+  sortOrder: integer("sort_order").default(0).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export type StudentSuccessStory = typeof studentSuccessStories.$inferSelect;
+export type NewStudentSuccessStory = typeof studentSuccessStories.$inferInsert;
 
 // ─── About Page ───────────────────────────────────────────────────────────────
 export const aboutSettings = pgTable("about_settings", {
@@ -402,6 +428,13 @@ export const accessoriesSettings = pgTable("accessories_settings", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export const portfolioSettings = pgTable("portfolio_settings", {
+  id: serial("id").primaryKey(),
+  heroVideoUrl: text("hero_video_url"),
+  heroVideoPublicId: text("hero_video_public_id"),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const accessoriesKits = pgTable("accessories_kits", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
@@ -429,6 +462,14 @@ export const newsletterSubscribers = pgTable("newsletter_subscribers", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// ─── CRM Settings ─────────────────────────────────────────────────────────────
+export const crmSettings = pgTable("crm_settings", {
+  id: serial("id").primaryKey(),
+  abandonedCartFirstReminderDays: integer("abandoned_cart_first_reminder_days").default(4).notNull(),
+  abandonedCartRecurringReminderDays: integer("abandoned_cart_recurring_reminder_days").default(7).notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export type AccessoriesSetting = typeof accessoriesSettings.$inferSelect;
 export type AccessoriesKit = typeof accessoriesKits.$inferSelect;
 export type NewAccessoriesKit = typeof accessoriesKits.$inferInsert;
@@ -436,3 +477,52 @@ export type LearningGuide = typeof learningGuides.$inferSelect;
 export type NewLearningGuide = typeof learningGuides.$inferInsert;
 export type NewsletterSubscriber = typeof newsletterSubscribers.$inferSelect;
 export type NewNewsletterSubscriber = typeof newsletterSubscribers.$inferInsert;
+
+// ─── Store Hero Images ────────────────────────────────────────────────────────
+export const storeHeroImages = pgTable("store_hero_images", {
+  id: serial("id").primaryKey(),
+  mediaUrl: text("media_url").notNull(),
+  mediaPublicId: text("media_public_id"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  orderIndex: integer("order_index").default(0).notNull(),
+});
+
+export type StoreHeroImage = typeof storeHeroImages.$inferSelect;
+export type NewStoreHeroImage = typeof storeHeroImages.$inferInsert;
+
+// ─── Blogs Hero Images ────────────────────────────────────────────────────────
+export const blogsHeroImages = pgTable("blogs_hero_images", {
+  id: serial("id").primaryKey(),
+  mediaUrl: text("media_url").notNull(),
+  mediaPublicId: text("media_public_id"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  orderIndex: integer("order_index").default(0).notNull(),
+});
+
+export type BlogsHeroImage = typeof blogsHeroImages.$inferSelect;
+export type NewBlogsHeroImage = typeof blogsHeroImages.$inferInsert;
+
+// ─── Contact Hero Images ──────────────────────────────────────────────────────
+export const contactHeroImages = pgTable("contact_hero_images", {
+  id: serial("id").primaryKey(),
+  mediaUrl: text("media_url").notNull(),
+  mediaPublicId: text("media_public_id"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  orderIndex: integer("order_index").default(0).notNull(),
+});
+
+export type ContactHeroImage = typeof contactHeroImages.$inferSelect;
+export type NewContactHeroImage = typeof contactHeroImages.$inferInsert;
+
+// ─── Services Hero Images ─────────────────────────────────────────────────────
+export const servicesHeroImages = pgTable("services_hero_images", {
+  id: serial("id").primaryKey(),
+  mediaUrl: text("media_url").notNull(),
+  mediaPublicId: text("media_public_id"),
+  title: text("title"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  orderIndex: integer("order_index").default(0).notNull(),
+});
+
+export type ServicesHeroImage = typeof servicesHeroImages.$inferSelect;
+export type NewServicesHeroImage = typeof servicesHeroImages.$inferInsert;

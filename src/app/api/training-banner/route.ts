@@ -11,6 +11,7 @@ export async function GET() {
       subheadline: "Join our masterclasses and turn your passion into a thriving business. Learn pouring, curing, and finishing from industry experts.",
       ctaText: "Enroll Now",
       ctaLink: "/trainings",
+      whatsappNumber: "918319668016",
       mediaUrl: "https://images.unsplash.com/photo-1596489370007-96a8dc5884ba?auto=format&fit=crop&q=80&w=1600",
     };
     return NextResponse.json({ settings });
@@ -26,6 +27,7 @@ export async function PUT(req: NextRequest) {
     const subheadline = formData.get("subheadline") as string;
     const ctaText = formData.get("ctaText") as string;
     const ctaLink = formData.get("ctaLink") as string;
+    const whatsappNumber = formData.get("whatsappNumber") as string;
     const file = formData.get("media") as File | null;
 
     const rows = await db.select().from(trainingBannerSettings).limit(1);
@@ -47,13 +49,13 @@ export async function PUT(req: NextRequest) {
     if (existing) {
       const [r] = await db
         .update(trainingBannerSettings)
-        .set({ headline, subheadline, ctaText, ctaLink, mediaUrl, mediaPublicId, updatedAt: new Date() })
+        .set({ headline, subheadline, ctaText, ctaLink, whatsappNumber, mediaUrl, mediaPublicId, updatedAt: new Date() })
         .returning();
       updated = r;
     } else {
       const [r] = await db
         .insert(trainingBannerSettings)
-        .values({ headline, subheadline, ctaText, ctaLink, mediaUrl, mediaPublicId })
+        .values({ headline, subheadline, ctaText, ctaLink, whatsappNumber, mediaUrl, mediaPublicId })
         .returning();
       updated = r;
     }

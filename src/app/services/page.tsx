@@ -47,9 +47,12 @@ export default function CustomSolutionsPage() {
   
   // Dynamic Data
   const [heroVideo, setHeroVideo] = useState<string | null>(null);
+  const [heroImages, setHeroImages] = useState<any[]>([]);
   const [solutions, setSolutions] = useState<any[]>([]);
+  const [showAllSolutions, setShowAllSolutions] = useState(false);
   const [projects, setProjects] = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
+
   
   // Modal State
   const [quoteModalOpen, setQuoteModalOpen] = useState(false);
@@ -72,19 +75,22 @@ export default function CustomSolutionsPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [heroRes, solRes, projRes, revRes] = await Promise.all([
+        const [heroRes, imagesRes, solRes, projRes, revRes] = await Promise.all([
           fetch("/api/custom-solutions/hero"),
+          fetch("/api/services-hero"),
           fetch("/api/custom-solutions/solutions"),
           fetch("/api/custom-solutions/projects"),
           fetch("/api/custom-solutions/reviews")
         ]);
         
         const heroData = await heroRes.json();
+        const imagesData = await imagesRes.json();
         const solData = await solRes.json();
         const projData = await projRes.json();
         const revData = await revRes.json();
         
         setHeroVideo(heroData.settings?.heroVideoUrl || null);
+        setHeroImages(imagesData.images || []);
         setSolutions(solData.solutions || []);
         setProjects(projData.projects || []);
         setReviews(revData.reviews || []);
@@ -148,37 +154,92 @@ export default function CustomSolutionsPage() {
       
       {/* 1. HERO SECTION */}
       {/* 1. HERO SECTION */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden bg-[#111827] pt-20">
-        <div className="absolute inset-0 z-0">
-          {heroVideo ? (
-             <video src={heroVideo} autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover z-0" />
-          ) : (
-             <div className="absolute inset-0 bg-[url('/placeholder.jpg')] bg-cover bg-center" />
-          )}
-          <div className="absolute inset-0 bg-[#000000]/60 z-10" />
-        </div>
-        
-        <div className="relative z-20 text-center max-w-5xl px-4 flex flex-col items-center">
-          <div className="inline-block px-4 py-1.5 rounded-full border border-white/20 bg-white/10 text-[#ffffff] text-sm font-semibold tracking-widest uppercase mb-6 backdrop-blur-sm">
-            Custom Solutions
+      <section className="relative min-h-screen flex items-center bg-white pt-28 pb-20 rounded-b-[3rem] overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+          
+          {/* Left: Text Content */}
+          <div className="flex flex-col items-start z-10 relative">
+            <div className="inline-block px-5 py-1.5 rounded-full border border-[#135db6] text-[#135db6] text-xs font-bold tracking-widest uppercase mb-8">
+              Custom Solutions
+            </div>
+            
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-medium text-gray-900 mb-6 leading-[1.1] font-serif">
+              Transform your<br />space with <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#135db6] to-[#008493] font-bold">premium<br />epoxy<br />craftsmanship</span>
+            </h1>
+            
+            <p className="text-lg md:text-xl text-gray-600 mb-10 max-w-md font-medium leading-relaxed">
+              Custom epoxy flooring, river tables, wall panels and corporate installations.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+              <PrimaryButton 
+                onClick={() => setQuoteModalOpen(true)} 
+                className="px-8 py-4 text-lg w-full sm:w-auto shadow-lg"
+              >
+                Request quote
+              </PrimaryButton>
+              <OutlineButton 
+                onClick={() => setVisitModalOpen(true)} 
+                className="px-8 py-4 text-lg w-full sm:w-auto border-2 border-gray-200 text-gray-700 hover:border-[#135db6] hover:text-[#135db6] hover:bg-transparent"
+              >
+                Book site visit
+              </OutlineButton>
+            </div>
           </div>
-          <h1 className="text-5xl md:text-7xl font-black text-[#ffffff] mb-6 leading-tight drop-shadow-lg">
-            Transform Your Space with <br className="hidden md:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4db4ff] to-[#00d0e8] drop-shadow-md">Premium Epoxy Craftsmanship</span>
-          </h1>
-          <p className="text-xl md:text-2xl text-[#e5e7eb] mb-10 max-w-3xl font-medium drop-shadow-md">
-            Custom Epoxy Flooring, River Tables, Wall Panels & Corporate Installations.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-5">
-            <PrimaryButton onClick={() => setQuoteModalOpen(true)} className="px-8 py-4 text-lg border border-transparent shadow-[0_0_20px_rgba(19,93,182,0.4)]">
-              Request Quote
-            </PrimaryButton>
-            <button 
-              onClick={() => setVisitModalOpen(true)} 
-              className="px-8 py-4 text-lg bg-white/10 border-2 border-white text-[#ffffff] font-bold rounded-full hover:bg-white hover:text-[#135db6] transition-all flex items-center justify-center gap-2 backdrop-blur-sm"
-            >
-              Book Site Visit
-            </button>
+
+          {/* Right: Masonry Images */}
+          <div className="relative w-full h-[500px] md:h-[600px]">
+            {heroImages.length > 0 ? (
+              <div className="grid grid-cols-2 gap-4 h-full">
+                {/* Left tall image */}
+                <div className="relative h-full rounded-[2rem] overflow-hidden shadow-lg group">
+                  <Image src={heroImages[0]?.mediaUrl || "/placeholder.jpg"} alt={heroImages[0]?.title || "Service 1"} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  {heroImages[0]?.title && (
+                    <div 
+                      className="absolute bottom-6 left-6 px-4 py-2 bg-black/40 backdrop-blur-md rounded-xl border border-white/20 text-white font-medium text-sm"
+                      style={{ color: "#ffffff" }}
+                    >
+                      {heroImages[0].title}
+                    </div>
+                  )}
+                </div>
+                
+                {/* Right stacked images */}
+                <div className="flex flex-col gap-4 h-full">
+                  {/* Top right */}
+                  <div className="relative h-1/2 rounded-[2rem] overflow-hidden shadow-lg group">
+                    <Image src={heroImages[1]?.mediaUrl || "/placeholder.jpg"} alt={heroImages[1]?.title || "Service 2"} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    {heroImages[1]?.title && (
+                      <div 
+                        className="absolute bottom-5 left-5 px-4 py-2 bg-black/40 backdrop-blur-md rounded-xl border border-white/20 text-white font-medium text-sm"
+                        style={{ color: "#ffffff" }}
+                      >
+                        {heroImages[1].title}
+                      </div>
+                    )}
+                  </div>
+                  {/* Bottom right */}
+                  <div className="relative h-1/2 rounded-[2rem] overflow-hidden shadow-lg group">
+                    <Image src={heroImages[2]?.mediaUrl || "/placeholder.jpg"} alt={heroImages[2]?.title || "Service 3"} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    {heroImages[2]?.title && (
+                      <div 
+                        className="absolute bottom-5 left-5 px-4 py-2 bg-black/40 backdrop-blur-md rounded-xl border border-white/20 text-white font-medium text-sm"
+                        style={{ color: "#ffffff" }}
+                      >
+                        {heroImages[2].title}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="w-full h-full bg-gray-200 rounded-[2rem] flex items-center justify-center text-gray-500">
+                Please upload 3 images via Admin Panel
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -194,7 +255,7 @@ export default function CustomSolutionsPage() {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {solutions.length > 0 ? solutions.map((sol) => (
+          {solutions.length > 0 ? (showAllSolutions ? solutions : solutions.slice(0, Math.max(3, solutions.length - (solutions.length % 3)))).map((sol) => (
             <Link href={`/contact`} key={sol.id} className="group relative rounded-3xl overflow-hidden bg-white border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
               <div className="aspect-[4/3] bg-gray-100 relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent z-10" />
@@ -215,6 +276,17 @@ export default function CustomSolutionsPage() {
             </Link>
           )) : null}
         </div>
+        
+        {solutions.length > Math.max(3, solutions.length - (solutions.length % 3)) && (
+          <div className="mt-12 flex justify-center">
+            <OutlineButton 
+              onClick={() => setShowAllSolutions(!showAllSolutions)} 
+              className="px-8 py-3 text-sm"
+            >
+              {showAllSolutions ? "View Less" : "View More"}
+            </OutlineButton>
+          </div>
+        )}
       </section>
 
       {/* 3. OUR PROCESS (Snake grid layout) */}

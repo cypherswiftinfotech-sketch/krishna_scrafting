@@ -58,6 +58,24 @@ export async function POST(req: NextRequest) {
       })
       .returning();
 
+    try {
+      const { notifyAllSubscribers, generateEmailTemplate } = await import("@/lib/sendEmail");
+      const htmlMessage = generateEmailTemplate({
+        title: `New Blog Post: ${title}`,
+        message: `<p style="font-size: 18px; color: #111;">We just published a new blog post!</p>
+                  <p><strong>${title}</strong></p>
+                  <p>${content.substring(0, 150)}...</p>`,
+        linkUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/blogs`,
+        linkText: "Read Story"
+      });
+      await notifyAllSubscribers(
+        `New Blog Post: ${title}`,
+        htmlMessage
+      );
+    } catch (e) {
+      console.error("Failed to notify subscribers:", e);
+    }
+
     return NextResponse.json({ blog }, { status: 201 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

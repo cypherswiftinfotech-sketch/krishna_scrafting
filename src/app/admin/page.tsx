@@ -12,6 +12,12 @@ import MenuAdmin from "@/components/MenuAdmin";
 import ContactRequestsAdmin from "@/components/ContactRequestsAdmin";
 import CustomSolutionsAdmin from "@/components/CustomSolutionsAdmin";
 import AccessoriesAdmin from "@/components/AccessoriesAdmin";
+import CRMAdmin from "@/components/CRMAdmin";
+import StoreHeroAdmin from "@/components/StoreHeroAdmin";
+import HeroSliderAdmin from "@/components/HeroSliderAdmin";
+import ServicesHeroAdmin from "@/components/ServicesHeroAdmin";
+import SuccessStoriesAdmin from "@/components/SuccessStoriesAdmin";
+
 
 interface HeroSettings {
   videoUrl: string | null;
@@ -42,6 +48,11 @@ interface PortfolioItem {
   imageUrl: string;
   featured: boolean;
   sortOrder: number;
+  cost?: string | null;
+  place?: string | null;
+  socialLink?: string | null;
+  review?: string | null;
+  additionalImages?: string[];
 }
 
 export default function AdminPage() {
@@ -51,7 +62,7 @@ export default function AdminPage() {
   const [showPass, setShowPass] = useState(false);
   const [loginLoading, setLoginLoading] = useState(false);
 
-  const [activeTab, setActiveTab] = useState<"hero" | "training_banner" | "instagram" | "testimonials" | "products" | "categories" | "service_categories" | "gallery" | "about" | "trainings" | "users_orders" | "blogs" | "home_categories" | "menu_settings" | "contact_requests" | "custom_solutions" | "accessories">("products");
+  const [activeTab, setActiveTab] = useState<"hero" | "training_banner" | "instagram" | "testimonials" | "products" | "categories" | "service_categories" | "gallery" | "about" | "trainings" | "users_orders" | "blogs" | "home_categories" | "menu_settings" | "contact_requests" | "custom_solutions" | "accessories" | "crm" | "store_hero" | "blogs_hero" | "contact_hero" | "services_hero" | "success_stories">("products");
 
   // Hero State
   const [heroSettings, setHeroSettings] = useState<HeroSettings | null>(null);
@@ -78,6 +89,12 @@ export default function AdminPage() {
   const [isAddingGallery, setIsAddingGallery] = useState(false);
   const [editGallery, setEditGallery] = useState<PortfolioItem | null>(null);
   const [galleryFile, setGalleryFile] = useState<File | null>(null);
+  const [galleryAdditionalFiles, setGalleryAdditionalFiles] = useState<File[]>([]);
+
+  // Portfolio Hero Settings
+  const [portfolioSettings, setPortfolioSettings] = useState<any>(null);
+  const [portfolioSettingsLoading, setPortfolioSettingsLoading] = useState(false);
+  const [portfolioHeroFile, setPortfolioHeroFile] = useState<File | null>(null);
 
   // On mount, verify session via cookie
   useEffect(() => {
@@ -91,6 +108,7 @@ export default function AdminPage() {
           fetchProducts();
           fetchCategories();
           fetchGallery();
+          fetchPortfolioSettings();
           fetchInstagram();
           fetchTestimonials();
         }
@@ -348,6 +366,7 @@ export default function AdminPage() {
     setGalleryLoading(true);
     const formData = new FormData(e.currentTarget);
     if (galleryFile) formData.set("image", galleryFile);
+    galleryAdditionalFiles.forEach(f => formData.append("additionalImages", f));
     const method = editGallery ? "PUT" : "POST";
     const url = editGallery ? `/api/portfolio/${editGallery.id}` : "/api/portfolio";
     try {
@@ -357,6 +376,7 @@ export default function AdminPage() {
       setIsAddingGallery(false);
       setEditGallery(null);
       setGalleryFile(null);
+      setGalleryAdditionalFiles([]);
       fetchGallery();
     } catch (e: any) {
       toast.error(e.message || "Error");
@@ -374,6 +394,35 @@ export default function AdminPage() {
       fetchGallery();
     } catch (e: any) {
       toast.error(e.message || "Error");
+    }
+  };
+
+  const fetchPortfolioSettings = async () => {
+    try {
+      const res = await fetch("/api/portfolio/settings");
+      const data = await res.json();
+      setPortfolioSettings(data.settings);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handlePortfolioSettingsSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setPortfolioSettingsLoading(true);
+    const formData = new FormData();
+    if (portfolioHeroFile) formData.set("video", portfolioHeroFile);
+
+    try {
+      const res = await fetch("/api/portfolio/settings", { method: "POST", body: formData });
+      if (!res.ok) throw new Error("Failed to save portfolio settings");
+      toast.success("Portfolio hero updated!");
+      fetchPortfolioSettings();
+      setPortfolioHeroFile(null);
+    } catch (e: any) {
+      toast.error(e.message || "Error");
+    } finally {
+      setPortfolioSettingsLoading(false);
     }
   };
 
@@ -462,13 +511,13 @@ export default function AdminPage() {
         {/* Sidebar Menu */}
         <div className="w-full md:w-64 flex-shrink-0 bg-white rounded-2xl shadow p-4 h-fit sticky top-24" style={{ border: "1px solid var(--cream-white-border)" }}>
           <div className="flex flex-col gap-1">
-            {(["users_orders", "contact_requests", "products", "home_categories", "categories", "service_categories", "gallery", "trainings", "training_banner", "instagram", "testimonials", "blogs", "hero", "about", "menu_settings", "custom_solutions", "accessories"] as const).map((tab) => (
+            {(["users_orders", "contact_requests", "crm", "products", "home_categories", "categories", "service_categories", "gallery", "trainings", "training_banner", "success_stories", "store_hero", "blogs_hero", "contact_hero", "services_hero", "instagram", "testimonials", "blogs", "hero", "about", "menu_settings", "custom_solutions", "accessories"] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={`px-4 py-3 text-left font-semibold rounded-xl transition-all ${activeTab === tab ? "bg-[#135db6] text-white shadow-md translate-x-1" : "text-gray-600 hover:bg-gray-50 hover:translate-x-1"}`}
               >
-                {tab === "users_orders" ? "Users & Orders" : tab === "contact_requests" ? "Form Submissions" : tab === "products" ? "Manage Products" : tab === "home_categories" ? "Home Categories" : tab === "categories" ? "Product Categories" : tab === "service_categories" ? "Service Categories" : tab === "trainings" ? "Trainings" : tab === "training_banner" ? "Training Banner" : tab === "instagram" ? "Instagram Feed" : tab === "testimonials" ? "Testimonials" : tab === "blogs" ? "Blogs" : tab === "gallery" ? "Gallery Upload" : tab === "hero" ? "Hero Settings" : tab === "menu_settings" ? "Menu Visibility" : tab === "custom_solutions" ? "Custom Solutions" : tab === "accessories" ? "Accessories Page" : "About Page"}
+                {tab === "users_orders" ? "Users & Orders" : tab === "contact_requests" ? "Form Submissions" : tab === "crm" ? "CRM" : tab === "products" ? "Manage Products" : tab === "home_categories" ? "Home Categories" : tab === "categories" ? "Product Categories" : tab === "service_categories" ? "Service Categories" : tab === "trainings" ? "Trainings" : tab === "training_banner" ? "Training Banner" : tab === "success_stories" ? "Student Success Stories" : tab === "store_hero" ? "Store Hero Slider" : tab === "blogs_hero" ? "Blogs Hero Slider" : tab === "contact_hero" ? "Contact Hero Slider" : tab === "services_hero" ? "Services Hero Masonry" : tab === "instagram" ? "Instagram Feed" : tab === "testimonials" ? "Testimonials" : tab === "blogs" ? "Blogs" : tab === "gallery" ? "Gallery Upload" : tab === "hero" ? "Hero Settings" : tab === "menu_settings" ? "Menu Visibility" : tab === "custom_solutions" ? "Custom Solutions" : tab === "accessories" ? "Accessories Page" : "About Page"}
               </button>
             ))}
           </div>
@@ -477,8 +526,36 @@ export default function AdminPage() {
         {/* Main Content Area */}
         <div className="flex-1 min-w-0">
 
+      {activeTab === "store_hero" && (
+        <StoreHeroAdmin />
+      )}
+
+      {activeTab === "blogs_hero" && (
+        <HeroSliderAdmin
+          apiPath="/api/blogs-hero"
+          title="Blogs Hero Slider"
+          description="Images that auto-scroll on the Blogs page hero section."
+        />
+      )}
+
+      {activeTab === "contact_hero" && (
+        <HeroSliderAdmin
+          apiPath="/api/contact-hero"
+          title="Contact Hero Slider"
+          description="Images that auto-scroll on the Contact page hero section."
+        />
+      )}
+
+      {activeTab === "services_hero" && (
+        <ServicesHeroAdmin />
+      )}
+
       {activeTab === "contact_requests" && (
         <ContactRequestsAdmin />
+      )}
+
+      {activeTab === "crm" && (
+        <CRMAdmin />
       )}
 
       {activeTab === "custom_solutions" && (
@@ -539,7 +616,7 @@ export default function AdminPage() {
               <label className="block text-sm font-semibold mb-1">Subheadline</label>
               <textarea name="subheadline" defaultValue={trainingBannerSettings?.subheadline} required rows={3} className="w-full p-2 rounded border" />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-semibold mb-1">Button Text</label>
                 <input name="ctaText" defaultValue={trainingBannerSettings?.ctaText} required className="w-full p-2 rounded border" />
@@ -547,6 +624,10 @@ export default function AdminPage() {
               <div>
                 <label className="block text-sm font-semibold mb-1">Button Link</label>
                 <input name="ctaLink" defaultValue={trainingBannerSettings?.ctaLink} required className="w-full p-2 rounded border" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1">WhatsApp Number</label>
+                <input name="whatsappNumber" defaultValue={trainingBannerSettings?.whatsappNumber || "918319668016"} required className="w-full p-2 rounded border" />
               </div>
             </div>
             <div>
@@ -559,6 +640,10 @@ export default function AdminPage() {
             </button>
           </form>
         </div>
+      )}
+
+      {activeTab === "success_stories" && (
+        <SuccessStoriesAdmin />
       )}
 
       {activeTab === "instagram" && (
@@ -813,6 +898,22 @@ export default function AdminPage() {
 
       {activeTab === "gallery" && (
         <div>
+          {!isAddingGallery && !editGallery && (
+            <div className="mb-12 p-6 rounded-2xl shadow" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
+              <h2 className="text-2xl font-bold mb-6">Portfolio Hero Settings</h2>
+              <form onSubmit={handlePortfolioSettingsSubmit} className="space-y-4 max-w-2xl">
+                <div>
+                  <label className="block text-sm font-semibold mb-1">Background Media (Image or Video)</label>
+                  <input type="file" accept="image/*,video/mp4,video/webm" onChange={(e) => setPortfolioHeroFile(e.target.files?.[0] || null)} className="w-full p-2 rounded border" style={{ borderColor: "var(--cream-white-border)" }} />
+                  {portfolioSettings?.heroVideoUrl && <p className="mt-2 text-sm text-green-600 font-medium">Currently using custom media.</p>}
+                </div>
+                <button type="submit" disabled={portfolioSettingsLoading} className="btn-peacock mt-4 w-full sm:w-auto">
+                  {portfolioSettingsLoading ? "Saving..." : "Save Hero Settings"}
+                </button>
+              </form>
+            </div>
+          )}
+
           {!isAddingGallery && !editGallery ? (
             <>
               <div className="flex justify-between items-center mb-6">
@@ -862,9 +963,27 @@ export default function AdminPage() {
                     <input name="sortOrder" type="number" defaultValue={editGallery?.sortOrder || 0} className="w-full p-2 rounded border focus:ring-2 outline-none transition-all" style={{ borderColor: "var(--cream-white-border)" }} />
                   </div>
                 </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold mb-1">Cost (Optional)</label>
+                    <input name="cost" defaultValue={editGallery?.cost || ""} placeholder="e.g. ₹50,000" className="w-full p-2 rounded border focus:ring-2 outline-none transition-all" style={{ borderColor: "var(--cream-white-border)" }} />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold mb-1">Place (Optional)</label>
+                    <input name="place" defaultValue={editGallery?.place || ""} placeholder="e.g. Indore, MP" className="w-full p-2 rounded border focus:ring-2 outline-none transition-all" style={{ borderColor: "var(--cream-white-border)" }} />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1">Social Media Link (Optional)</label>
+                  <input name="socialLink" defaultValue={editGallery?.socialLink || ""} placeholder="https://instagram.com/p/..." className="w-full p-2 rounded border focus:ring-2 outline-none transition-all" style={{ borderColor: "var(--cream-white-border)" }} />
+                </div>
                 <div>
                   <label className="block text-sm font-semibold mb-1">Description</label>
                   <textarea name="description" defaultValue={editGallery?.description || ""} className="w-full p-2 rounded border focus:ring-2 outline-none transition-all" style={{ borderColor: "var(--cream-white-border)" }} rows={3} />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1">Customer Review (Optional)</label>
+                  <textarea name="review" defaultValue={editGallery?.review || ""} className="w-full p-2 rounded border focus:ring-2 outline-none transition-all" style={{ borderColor: "var(--cream-white-border)" }} rows={2} />
                 </div>
                 <div className="flex items-center gap-2 mt-4">
                   <input name="featured" type="checkbox" id="galleryFeatured" value="true" defaultChecked={editGallery?.featured || false} className="w-4 h-4" />
@@ -874,6 +993,11 @@ export default function AdminPage() {
                   <label className="block text-sm font-semibold mb-1">Image</label>
                   <input type="file" accept="image/*" onChange={(e) => setGalleryFile(e.target.files?.[0] || null)} className="w-full p-2 rounded border" style={{ borderColor: "var(--cream-white-border)" }} />
                   {editGallery?.imageUrl && <p className="mt-2 text-sm text-green-600">Current image will be kept if you don&apos;t upload a new one.</p>}
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1">Additional Images (Optional)</label>
+                  <input type="file" multiple accept="image/*" onChange={(e) => setGalleryAdditionalFiles(Array.from(e.target.files || []))} className="w-full p-2 rounded border" style={{ borderColor: "var(--cream-white-border)" }} />
+                  {editGallery?.additionalImages && <p className="mt-2 text-sm text-green-600">This project already has additional images. Uploading new ones will replace them.</p>}
                 </div>
                 <button type="submit" disabled={galleryLoading} className="btn-peacock mt-4 w-full sm:w-auto">
                   {galleryLoading ? "Saving..." : "Save Gallery Item"}

@@ -10,6 +10,8 @@ interface Category {
   id: number;
   mainCategory: string;
   subCategory: string;
+  imageUrl?: string;
+  description?: string;
   mainSortOrder: number;
   subSortOrder: number;
 }
@@ -33,6 +35,7 @@ export default function CategoriesAdmin({ type }: CategoriesAdminProps) {
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [expandedMains, setExpandedMains] = useState<Set<string>>(new Set());
 
   /* ── Add/Edit state for Main Category ── */
@@ -50,6 +53,7 @@ export default function CategoriesAdmin({ type }: CategoriesAdminProps) {
   const [editingSub, setEditingSub] = useState<Category | null>(null);
   const [editSubName, setEditSubName] = useState("");
   const [editSubSort, setEditSubSort] = useState(0);
+  const [editSubImageUrl, setEditSubImageUrl] = useState("");
 
   const fetchCategories = useCallback(async () => {
     try {
@@ -195,7 +199,7 @@ export default function CategoriesAdmin({ type }: CategoriesAdminProps) {
       const res = await fetch(`${endpoint}/${cat.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ subCategory: editSubName.trim(), subSortOrder: editSubSort }),
+        body: JSON.stringify({ subCategory: editSubName.trim(), subSortOrder: editSubSort, imageUrl: editSubImageUrl }),
       });
       if (!res.ok) throw new Error("Failed to update sub-category");
       toast.success("Sub-category updated!");
@@ -418,19 +422,59 @@ export default function CategoriesAdmin({ type }: CategoriesAdminProps) {
                                     style={inputStyle}
                                   />
                                 </div>
-                                <button
-                                  onClick={() => handleEditSub(sub)}
-                                  disabled={loading}
-                                  className="btn-peacock !py-1 !px-2.5 flex items-center gap-1 text-xs"
-                                >
-                                  <Check className="w-3 h-3" /> Save
-                                </button>
-                                <button
-                                  onClick={() => setEditingSub(null)}
-                                  className="p-1 text-gray-400 hover:text-gray-600"
-                                >
-                                  <X className="w-3.5 h-3.5" />
-                                </button>
+                                <div className="flex flex-col gap-2 w-full mt-2 border-t pt-2 border-gray-200">
+                                  <label className="text-xs text-gray-500">Image Photo (Optional):</label>
+                                  <div className="flex gap-2 items-center">
+                                    <input
+                                      type="file"
+                                      accept="image/*"
+                                      onChange={async (e) => {
+                                        const file = e.target.files?.[0];
+                                        if (!file) return;
+                                        setUploadingImage(true);
+                                        const formData = new FormData();
+                                        formData.append("file", file);
+                                        try {
+                                          const res = await fetch("/api/contact-upload", {
+                                            method: "POST",
+                                            body: formData,
+                                          });
+                                          const data = await res.json();
+                                          if (res.ok) {
+                                            setEditSubImageUrl(data.url);
+                                            toast.success("Image uploaded!");
+                                          } else {
+                                            toast.error("Upload failed");
+                                          }
+                                        } catch {
+                                          toast.error("Upload error");
+                                        } finally {
+                                          setUploadingImage(false);
+                                        }
+                                      }}
+                                      className="text-xs"
+                                    />
+                                    {uploadingImage && <span className="text-xs text-blue-500">Uploading...</span>}
+                                  </div>
+                                  {editSubImageUrl && (
+                                    <img src={editSubImageUrl} alt="Preview" className="w-16 h-16 object-cover rounded mt-1 border" />
+                                  )}
+                                </div>
+                                <div className="flex w-full justify-end gap-2 mt-2">
+                                  <button
+                                    onClick={() => handleEditSub(sub)}
+                                    disabled={loading || uploadingImage}
+                                    className="btn-peacock !py-1 !px-2.5 flex items-center gap-1 text-xs"
+                                  >
+                                    <Check className="w-3 h-3" /> Save
+                                  </button>
+                                  <button
+                                    onClick={() => setEditingSub(null)}
+                                    className="p-1 text-gray-400 hover:text-gray-600"
+                                  >
+                                    <X className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
                               </div>
                             ) : (
                               <>
@@ -441,6 +485,7 @@ export default function CategoriesAdmin({ type }: CategoriesAdminProps) {
                                     setEditingSub(sub);
                                     setEditSubName(sub.subCategory);
                                     setEditSubSort(sub.subSortOrder);
+                                    setEditSubImageUrl(sub.imageUrl || "");
                                   }}
                                   className="p-1.5 text-gray-400 hover:text-blue-600 rounded transition-colors"
                                   title="Edit sub-category"

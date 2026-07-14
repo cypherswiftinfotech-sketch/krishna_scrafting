@@ -33,6 +33,10 @@ export async function PUT(
   const category = formData.get("category") as string;
   const featured = formData.get("featured") === "true";
   const sortOrder = formData.get("sortOrder") as string;
+  const cost = formData.get("cost") as string;
+  const place = formData.get("place") as string;
+  const review = formData.get("review") as string;
+  const socialLink = formData.get("socialLink") as string;
   const file = formData.get("image") as File | null;
 
   let imageUrl = existing.imageUrl;
@@ -47,6 +51,21 @@ export async function PUT(
     }
   }
 
+  let additionalImagesJson = existing.additionalImages;
+  const additionalImageFiles = formData.getAll("additionalImages") as File[];
+  if (additionalImageFiles && additionalImageFiles.length > 0 && additionalImageFiles.some((f) => f.size > 0)) {
+    const additionalImageUrls: string[] = [];
+    for (const f of additionalImageFiles) {
+      if (f && f.size > 0) {
+        const u = await uploadToCloudinary(f, "portfolio");
+        if (u?.url) additionalImageUrls.push(u.url);
+      }
+    }
+    if (additionalImageUrls.length > 0) {
+      additionalImagesJson = JSON.stringify(additionalImageUrls);
+    }
+  }
+
   const [updated] = await db
     .update(portfolio)
     .set({
@@ -56,6 +75,11 @@ export async function PUT(
       featured,
       imageUrl,
       imagePublicId,
+      cost: cost !== null ? cost : existing.cost,
+      place: place !== null ? place : existing.place,
+      review: review !== null ? review : existing.review,
+      socialLink: socialLink !== null ? socialLink : existing.socialLink,
+      additionalImages: additionalImagesJson,
       sortOrder: sortOrder ? parseInt(sortOrder) : existing.sortOrder,
     })
     .where(eq(portfolio.id, parseInt(id)))

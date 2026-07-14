@@ -46,6 +46,24 @@ export async function POST(req: NextRequest) {
       })
       .returning();
 
+    try {
+      const { notifyAllSubscribers, generateEmailTemplate } = await import("@/lib/sendEmail");
+      const htmlMessage = generateEmailTemplate({
+        title: `New Learning Guide: ${title}`,
+        message: `<p style="font-size: 18px; color: #111;">We just published a new learning guide!</p>
+                  <p><strong>${title}</strong></p>
+                  <p>${content.substring(0, 150)}...</p>`,
+        linkUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/accessories`,
+        linkText: "Learn more"
+      });
+      await notifyAllSubscribers(
+        `New Learning Guide: ${title}`,
+        htmlMessage
+      );
+    } catch (e) {
+      console.error("Failed to notify subscribers:", e);
+    }
+
     return NextResponse.json({ guide }, { status: 201 });
   } catch (error) {
     console.error("Error creating learning guide:", error);

@@ -32,11 +32,11 @@ const CATEGORIES = [
 ];
 
 const MOCK_PRODUCTS = [
-  { id: 1, name: "Ocean Blue Pigment", rating: 4.8, price: 499, stock: 25, img: "/placeholder.jpg", badge: "Best Seller" },
-  { id: 2, name: "Metallic Gold Powder", rating: 4.9, price: 799, stock: 12, img: "/placeholder.jpg", badge: "Best Seller" },
-  { id: 3, name: "Crystal Clear Resin Kit", rating: 5.0, price: 2499, stock: 5, img: "/placeholder.jpg", badge: "Best Seller" },
-  { id: 4, name: "Premium Torch", rating: 4.7, price: 1299, stock: 40, img: "/placeholder.jpg", badge: "Best Seller" },
-  { id: 5, name: "Safety Kit (Mask & Gloves)", rating: 4.6, price: 599, stock: 100, img: "/placeholder.jpg", badge: "Best Seller" },
+  { id: 1, name: "Ocean Blue Pigment", rating: 4.8, price: 499, stock: 25, img: "/placeholder.jpg" },
+  { id: 2, name: "Metallic Gold Powder", rating: 4.9, price: 799, stock: 12, img: "/placeholder.jpg" },
+  { id: 3, name: "Crystal Clear Resin Kit", rating: 5.0, price: 2499, stock: 5, img: "/placeholder.jpg" },
+  { id: 4, name: "Premium Torch", rating: 4.7, price: 1299, stock: 40, img: "/placeholder.jpg" },
+  { id: 5, name: "Safety Kit (Mask & Gloves)", rating: 4.6, price: 599, stock: 100, img: "/placeholder.jpg" },
 ];
 
 const MOCK_NEW_ARRIVALS = [
@@ -120,20 +120,29 @@ export default function AccessoriesPage() {
   const [isFetching, setIsFetching] = useState(true);
   const [subscriberCount, setSubscriberCount] = useState<number | null>(null);
   const [testimonials, setTestimonials] = useState<any[]>([]);
+  const [showAllKits, setShowAllKits] = useState(false);
+  const [showAllGuides, setShowAllGuides] = useState(false);
+  const [categoriesData, setCategoriesData] = useState<any[]>([]);
 
   React.useEffect(() => {
     const fetchData = async () => {
       try {
-        const [kitsRes, settingsRes, countRes, guidesRes, bestSellersRes, newArrivalsRes, testimonialsRes] = await Promise.all([
+        const [kitsRes, settingsRes, countRes, guidesRes, bestSellersRes, newArrivalsRes, testimonialsRes, catsRes] = await Promise.all([
           fetch("/api/accessories/kits"),
           fetch("/api/accessories/settings"),
           fetch("/api/accessories/newsletter"),
           fetch("/api/accessories/guides"),
           fetch("/api/products?mainCategory=Accessories&featured=true&limit=8"),
           fetch("/api/products?mainCategory=Accessories&limit=6"),
-          fetch("/api/testimonials")
+          fetch("/api/testimonials"),
+          fetch("/api/product-categories")
         ]);
         
+        if (catsRes.ok) {
+          const data = await catsRes.json();
+          setCategoriesData(data.categories || []);
+        }
+
         if (kitsRes.ok) {
           const data = await kitsRes.json();
           setKits(data.kits);
@@ -162,7 +171,7 @@ export default function AccessoriesPage() {
 
         if (bestSellersRes.ok) {
           const data = await bestSellersRes.json();
-          setBestSellers(data.products.map((p: any) => ({ ...p, badge: 'Best Seller', rating: 4.8 })));
+          setBestSellers(data.products.map((p: any) => ({ ...p, rating: 4.8 })));
         }
 
         if (newArrivalsRes.ok) {
@@ -280,22 +289,35 @@ export default function AccessoriesPage() {
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {CATEGORIES.map((cat, idx) => (
-            <Link key={idx} href={`/store?mainCategory=Accessories&subCategory=${encodeURIComponent(cat.name)}`} className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all group cursor-pointer flex flex-col">
-              <div className={`h-36 flex items-center justify-center bg-gradient-to-br ${cat.color} relative overflow-hidden`}>
-                {/* Subtle pattern overlay */}
-                <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '16px 16px' }}></div>
-                {/* Icon Container */}
-                <div className={`p-4 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg z-10 ${cat.textCol} transform group-hover:scale-110 transition-transform duration-300`}>
-                  {cat.icon}
+          {CATEGORIES.map((cat, idx) => {
+            const dbCat = categoriesData.find(c => c.subCategory === cat.name);
+            const imageUrl = dbCat?.imageUrl;
+            
+            return (
+              <Link key={idx} href={`/store?mainCategory=Accessories&subCategory=${encodeURIComponent(cat.name)}`} className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all group cursor-pointer flex flex-col">
+                <div className="h-36 flex items-center justify-center relative overflow-hidden bg-gray-100">
+                  {imageUrl ? (
+                    <img src={imageUrl} alt={cat.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                  ) : (
+                    <img src="/placeholder.jpg" alt={cat.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-30 grayscale" />
+                  )}
+                  
+                  {/* Icon Container (only show if no image uploaded) */}
+                  {!imageUrl && (
+                    <div className="absolute inset-0 flex items-center justify-center z-10">
+                      <div className={`p-4 bg-white/90 backdrop-blur-sm rounded-2xl shadow-sm transform group-hover:scale-110 transition-transform duration-300 text-gray-500`}>
+                        {cat.icon}
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </div>
-              <div className="p-6 text-center flex flex-col flex-grow justify-center">
-                <h3 className="font-bold text-gray-900 mb-2 text-lg">{cat.name}</h3>
-                <p className="text-sm text-gray-500">{cat.desc}</p>
-              </div>
-            </Link>
-          ))}
+                <div className="p-6 text-center flex flex-col flex-grow justify-center">
+                  <h3 className="font-bold text-gray-900 mb-2 text-lg">{cat.name}</h3>
+                  <p className="text-sm text-gray-500">{dbCat?.description || cat.desc}</p>
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </section>
 
@@ -335,7 +357,7 @@ export default function AccessoriesPage() {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {kits.map((kit) => (
+          {(showAllKits ? kits : kits.slice(0, kits.length >= 3 ? kits.length - (kits.length % 3) : kits.length)).map((kit) => (
             <div key={kit.id} className="bg-white rounded-3xl border border-gray-200 overflow-hidden shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:border-[#135db6]/50 transition-all flex flex-col group cursor-pointer" onClick={() => setSelectedKit(kit)}>
               <div className="h-64 relative bg-gray-100 overflow-hidden">
                 <img src={kit.imageUrl || "/placeholder.jpg"} alt={kit.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
@@ -361,6 +383,14 @@ export default function AccessoriesPage() {
             </div>
           )}
         </div>
+        
+        {kits.length >= 3 && kits.length % 3 !== 0 && (
+          <div className="mt-12 text-center">
+            <button onClick={() => setShowAllKits(!showAllKits)} className="px-8 py-3 rounded-full border-2 border-[#135db6] text-[#135db6] font-bold hover:bg-[#135db6] hover:text-white transition-all">
+              {showAllKits ? "View Less" : "View More Kits"}
+            </button>
+          </div>
+        )}
       </section>
 
       {/* 5. NEW ARRIVALS */}
@@ -396,7 +426,7 @@ export default function AccessoriesPage() {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {guides.map((guide, idx) => (
+          {(showAllGuides ? guides : guides.slice(0, guides.length >= 3 ? guides.length - (guides.length % 3) : guides.length)).map((guide, idx) => (
             <div key={guide.id} className="relative h-[400px] rounded-3xl overflow-hidden group shadow-lg">
               <img src={guide.imageUrl || "/placeholder.jpg"} alt={guide.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
               <div className="absolute inset-0 bg-black/60 transition-opacity duration-300 group-hover:bg-black/70" />
@@ -423,6 +453,14 @@ export default function AccessoriesPage() {
             </div>
           )}
         </div>
+        
+        {guides.length >= 3 && guides.length % 3 !== 0 && (
+          <div className="mt-12 text-center">
+            <button onClick={() => setShowAllGuides(!showAllGuides)} className="px-8 py-3 rounded-full border-2 border-[#135db6] text-[#135db6] font-bold hover:bg-[#135db6] hover:text-white transition-all">
+              {showAllGuides ? "View Less" : "View More Guides"}
+            </button>
+          </div>
+        )}
       </section>
 
       {/* 7. CUSTOMER REVIEWS */}

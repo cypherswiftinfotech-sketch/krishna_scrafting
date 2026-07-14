@@ -36,6 +36,7 @@ export async function POST(req: NextRequest) {
   const language = formData.get("language") as string;
   const seats = formData.get("seats") as string;
   const learnings = formData.get("learnings") as string;
+  const fullDetails = formData.get("fullDetails") as string;
   const file = formData.get("image") as File | null;
   const videoFile = formData.get("video") as File | null;
   
@@ -64,6 +65,7 @@ export async function POST(req: NextRequest) {
       imageUrl,
       videoUrl,
       learnings: learnings || null,
+      fullDetails: fullDetails || null,
     })
     .returning();
 

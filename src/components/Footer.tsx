@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function Footer() {
   return (
     <footer
-      className="border-t"
+      className="border-t relative z-10"
       style={{
         backgroundColor: "#ffffff",
         borderColor: "#e5e5e5",

@@ -27,6 +27,10 @@ export async function POST(req: NextRequest) {
   const category = formData.get("category") as string;
   const featured = formData.get("featured") === "true";
   const sortOrder = formData.get("sortOrder") as string;
+  const cost = formData.get("cost") as string;
+  const place = formData.get("place") as string;
+  const review = formData.get("review") as string;
+  const socialLink = formData.get("socialLink") as string;
   const file = formData.get("image") as File | null;
 
   if (!title || !file || file.size === 0) {
@@ -40,6 +44,17 @@ export async function POST(req: NextRequest) {
   const imageUrl = uploaded?.url || "";
   const imagePublicId = uploaded?.publicId || null;
 
+  const additionalImageFiles = formData.getAll("additionalImages") as File[];
+  const additionalImageUrls: string[] = [];
+  
+  for (const f of additionalImageFiles) {
+    if (f && f.size > 0) {
+      const u = await uploadToCloudinary(f, "portfolio");
+      if (u?.url) additionalImageUrls.push(u.url);
+    }
+  }
+  const additionalImagesJson = additionalImageUrls.length > 0 ? JSON.stringify(additionalImageUrls) : null;
+
   const [item] = await db
     .insert(portfolio)
     .values({
@@ -49,6 +64,11 @@ export async function POST(req: NextRequest) {
       featured,
       imageUrl,
       imagePublicId,
+      cost: cost || null,
+      place: place || null,
+      review: review || null,
+      socialLink: socialLink || null,
+      additionalImages: additionalImagesJson,
       sortOrder: parseInt(sortOrder) || 0,
     })
     .returning();

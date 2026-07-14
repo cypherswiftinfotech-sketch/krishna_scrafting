@@ -25,6 +25,7 @@ export default function FeaturedProducts() {
   const [tab, setTab] = useState<Tab>("latest");
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showAllFeatured, setShowAllFeatured] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -139,9 +140,10 @@ export default function FeaturedProducts() {
         ) : displayed.length === 0 ? (
           <p className="text-center text-gray-400 py-16">No products found.</p>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-            {displayed.map((product) => (
-              <Link
+          <>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+              {(showAllFeatured ? displayed : displayed.slice(0, displayed.length >= 4 ? displayed.length - (displayed.length % 4) : displayed.length)).map((product) => (
+                <Link
                 key={product.id}
                 href={`/store/${product.id}`}
                 className="group rounded-2xl overflow-hidden bg-white transition-all duration-300 hover:-translate-y-1"
@@ -196,7 +198,16 @@ export default function FeaturedProducts() {
                 </div>
               </Link>
             ))}
-          </div>
+            </div>
+            
+            {displayed.length >= 4 && displayed.length % 4 !== 0 && (
+              <div className="mt-8 text-center">
+                <button onClick={() => setShowAllFeatured(!showAllFeatured)} className="px-6 py-2 rounded-xl border border-gray-300 text-gray-700 font-bold hover:bg-gray-100 transition-all text-sm">
+                  {showAllFeatured ? "View Less" : "View More Products"}
+                </button>
+              </div>
+            )}
+          </>
         )}
 
         {/* Explore Now */}

@@ -30,7 +30,7 @@ export const useCartStore = create<CartStore>()(
     (set, get) => ({
       items: [],
 
-      addItem: (product) => {
+      addItem: async (product) => {
         const existing = get().items.find((i) => i.product.id === product.id);
         if (existing) {
           set({
@@ -43,10 +43,24 @@ export const useCartStore = create<CartStore>()(
         } else {
           set({ items: [...get().items, { product, quantity: 1 }] });
         }
+        
+        // Sync with backend
+        try {
+          await fetch("/api/cart", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ productId: product.id, quantity: 1 }),
+          });
+        } catch (e) {
+          console.error("Failed to sync cart", e);
+        }
       },
 
-      removeItem: (productId) => {
+      removeItem: async (productId) => {
         set({ items: get().items.filter((i) => i.product.id !== productId) });
+        try {
+          await fetch(`/api/cart?productId=${productId}`, { method: "DELETE" });
+        } catch (e) {}
       },
 
       updateQuantity: (productId, quantity) => {

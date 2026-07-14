@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
+import { DEFAULT_DETAILS } from "@/lib/trainingDefaults";
 
 interface Training {
   id: number;
@@ -14,6 +15,7 @@ interface Training {
   imageUrl: string | null;
   videoUrl: string | null;
   learnings: string | null;
+  fullDetails: string | null;
 }
 
 const CATEGORIES = [
@@ -140,6 +142,19 @@ export default function TrainingsAdmin() {
                 rows={5}
                 placeholder={`Master the fundamentals of resin art\nHands-on real-world projects\nBusiness strategies for scaling\nReceive an official certificate`}
                 className="w-full p-2 border rounded font-mono text-sm" 
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-1">
+                Advanced Page Details (JSON)
+                <span className="text-gray-400 font-normal text-xs ml-2">(Optional: Override the 18 dynamic sections with custom JSON. Leave blank to use defaults.)</span>
+              </label>
+              <textarea 
+                name="fullDetails" 
+                defaultValue={editTraining?.fullDetails || JSON.stringify(DEFAULT_DETAILS, null, 2)} 
+                rows={8}
+                className="w-full p-2 border rounded font-mono text-xs bg-gray-50" 
               />
             </div>
 

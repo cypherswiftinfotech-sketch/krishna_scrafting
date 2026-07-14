@@ -3,10 +3,158 @@ import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingCart, Search, X, ChevronRight, Tags, Plus } from "lucide-react";
+import { ShoppingCart, Search, X, ChevronRight, Tags, Plus, Store } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
 import { cn } from "@/lib/utils";
 import toast from "react-hot-toast";
+
+interface StoreHeroImage {
+  id: number;
+  mediaUrl: string;
+}
+
+function StoreHeroSlider() {
+  const [images, setImages] = useState<StoreHeroImage[]>([]);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/store-hero")
+      .then((r) => r.json())
+      .then((d) => {
+        setImages(d.images || []);
+        setLoaded(true);
+      })
+      .catch(() => setLoaded(true));
+  }, []);
+
+  const doubled = [...images, ...images]; // duplicate for seamless loop
+
+  if (!loaded) {
+    return (
+      <div className="w-full h-[52vh] min-h-[380px] bg-gray-100 animate-pulse flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  // No images → elegant gradient fallback
+  if (images.length === 0) {
+    return (
+      <div
+        className="relative w-full h-[52vh] min-h-[380px] overflow-hidden flex items-center justify-center"
+        style={{ background: "linear-gradient(135deg, #0d3b6e 0%, #135db6 50%, #1a73e8 100%)" }}
+      >
+        <div className="absolute inset-0 opacity-10"
+          style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")" }}
+        />
+        <div className="relative text-center text-white px-4">
+          <div className="inline-flex items-center gap-3 mb-4 bg-white/10 backdrop-blur-sm px-6 py-2 rounded-full border border-white/20">
+            <Store className="w-5 h-5" />
+            <span className="font-semibold text-sm tracking-wide">Premium Handcrafted Products</span>
+          </div>
+          <h1 className="text-5xl md:text-6xl font-black mb-4 drop-shadow-lg text-white">
+            Our <span className="text-amber-300">Store</span>
+          </h1>
+          <p className="text-xl text-white/80 max-w-xl mx-auto font-medium">
+            Discover premium handcrafted products made with passion and precision.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Single image → full-width static hero
+  if (images.length === 1) {
+    return (
+      <div className="relative w-full h-[52vh] min-h-[380px] overflow-hidden">
+        <Image src={images[0].mediaUrl} alt="Store hero" fill className="object-cover" priority />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent flex items-center px-10 md:px-20">
+          <div className="text-white">
+            <h1 className="text-5xl md:text-6xl font-black mb-3 drop-shadow-lg text-white">
+              Our <span className="text-amber-300">Store</span>
+            </h1>
+            <p className="text-lg text-white/80 max-w-md font-medium">
+              Discover premium handcrafted products.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Multiple images → continuous auto-scroll marquee
+  const totalWidth = images.length * 100; // vw units
+
+  return (
+    <div className="relative w-full h-[52vh] min-h-[380px] overflow-hidden bg-gray-900">
+      {/* Scrolling strip */}
+      <div
+        className="absolute inset-0 flex"
+        style={{
+          width: `${doubled.length * 100}vw`,
+          animation: `storeMarquee ${images.length * 6}s linear infinite`,
+        }}
+      >
+        {doubled.map((img, i) => (
+          <div key={i} className="relative flex-shrink-0" style={{ width: "100vw", height: "100%" }}>
+            <Image
+              src={img.mediaUrl}
+              alt={`Store hero ${i + 1}`}
+              fill
+              className="object-cover"
+              priority={i < 2}
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* Gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/25 to-black/10" />
+
+      {/* Text Overlay */}
+      <div className="absolute inset-0 flex items-center px-8 md:px-16 lg:px-24">
+        <div className="text-white">
+          <div className="inline-flex items-center gap-2 mb-4 bg-white/15 backdrop-blur-sm px-4 py-1.5 rounded-full border border-white/20 text-sm font-semibold tracking-wide">
+            <Store className="w-4 h-4" />
+            Premium Handcrafted Products
+          </div>
+          <h1 className="text-5xl md:text-6xl font-black mb-4 drop-shadow-lg leading-tight text-white">
+            Our <span className="text-amber-300">Store</span>
+          </h1>
+          <p className="text-lg text-white/80 max-w-lg font-medium leading-relaxed">
+            Discover premium handcrafted products made with passion and precision.
+          </p>
+        </div>
+      </div>
+
+      {/* Slide indicators */}
+      <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-2">
+        {images.map((_, i) => (
+          <div
+            key={i}
+            className="w-2 h-2 rounded-full bg-white/50 transition-all"
+            style={{
+              animation: `dotActive ${images.length * 6}s ${i * 6}s linear infinite`,
+            }}
+          />
+        ))}
+      </div>
+
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          @keyframes storeMarquee {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-${totalWidth}vw); }
+          }
+          @keyframes dotActive {
+            0%, ${100 / images.length - 1}%   { background-color: rgba(255,255,255,0.9); width: 20px; border-radius: 4px; }
+            ${100 / images.length}%, 100%      { background-color: rgba(255,255,255,0.35); width: 8px; border-radius: 9999px; }
+          }
+        `
+      }} />
+    </div>
+  );
+}
 
 interface Product {
   id: number;
@@ -41,6 +189,7 @@ function StoreContent() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [showAllStore, setShowAllStore] = useState(false);
 
   useEffect(() => {
     fetch("/api/product-categories")
@@ -102,13 +251,6 @@ function StoreContent() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      {/* Page Header */}
-      <div className="mb-8 text-center md:text-left">
-        <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-2">
-          Our <span style={{ color: "var(--peacock-blue)" }}>Store</span>
-        </h1>
-        <p className="text-gray-500">Discover premium handcrafted products.</p>
-      </div>
 
       <div className="flex flex-col lg:flex-row gap-8 mb-8">
         {/* Main Categories Sidebar (or top nav on mobile) */}
@@ -227,9 +369,10 @@ function StoreContent() {
               )}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-              {filtered.map((product) => (
-                <div
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                {(showAllStore ? filtered : filtered.slice(0, filtered.length >= 3 ? filtered.length - (filtered.length % 3) : filtered.length)).map((product) => (
+                  <div
                   key={product.id}
                   className="group bg-white border rounded-2xl overflow-hidden transition-all hover:shadow-xl relative flex flex-col"
                   style={{ borderColor: "var(--cream-white-border)" }}
@@ -294,6 +437,15 @@ function StoreContent() {
                 </div>
               ))}
             </div>
+              
+              {filtered.length >= 3 && filtered.length % 3 !== 0 && (
+                <div className="mt-12 text-center">
+                  <button onClick={() => setShowAllStore(!showAllStore)} className="px-8 py-3 rounded-full border-2 border-[#135db6] text-[#135db6] font-bold hover:bg-[#135db6] hover:text-white transition-all">
+                    {showAllStore ? "View Less" : "View More Products"}
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
@@ -303,8 +455,10 @@ function StoreContent() {
 
 export default function StorePage() {
   return (
-    <div className="pt-20 bg-gray-50 min-h-screen">
-      <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="w-10 h-10 border-4 border-gray-200 border-t-amber-500 rounded-full animate-spin" /></div>}>
+    <div className="pt-16 bg-gray-50 min-h-screen">
+      {/* Hero Slider — outside Suspense so it loads immediately */}
+      <StoreHeroSlider />
+      <Suspense fallback={<div className="flex items-center justify-center py-20"><div className="w-10 h-10 border-4 border-gray-200 border-t-amber-500 rounded-full animate-spin" /></div>}>
         <StoreContent />
       </Suspense>
     </div>

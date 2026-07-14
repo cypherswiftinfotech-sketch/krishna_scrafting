@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Mail, Phone, MapPin, Video, CheckCircle, Upload, Calendar } from "lucide-react";
 import toast from "react-hot-toast";
 import Image from "next/image";
+import PageHeroSlider from "@/components/PageHeroSlider";
 
 export default function ContactPage() {
   const [form, setForm] = useState({
@@ -79,18 +80,21 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="pt-20 min-h-screen bg-gray-50 pb-20 font-sans text-gray-900">
-      {/* Header */}
-      <div className="relative py-16 text-center">
-        <h1 className="text-4xl md:text-5xl font-black mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-teal-500" style={{ fontFamily: "var(--font-heading)" }}>
-          Let's Connect
-        </h1>
-        <p className="text-gray-500 text-lg max-w-2xl mx-auto px-4">
-          Request a video consultation, inquire about custom orders, or share your project requirements with us.
-        </p>
+    <div className="min-h-screen bg-gray-50 pb-20 font-sans text-gray-900">
+      {/* Hero Slider */}
+      <div className="pt-16">
+        <PageHeroSlider
+          apiPath="/api/contact-hero"
+          title="Let's"
+          titleHighlight="Connect"
+          subtitle="Request a video consultation, inquire about custom orders, or share your project requirements with us."
+          highlightClassName="text-transparent bg-clip-text bg-gradient-to-r from-[#135db6] to-[#008493]"
+          fallbackGradient="linear-gradient(135deg, #0d3b6e 0%, #135db6 60%, #0891b2 100%)"
+          badge="📞 Get in Touch"
+        />
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           
           {/* Left Column: Contact Info */}
@@ -231,7 +235,7 @@ export default function ContactPage() {
                     type="submit"
                     disabled={loading}
                     className="w-full flex items-center justify-center gap-2 py-4 bg-gray-900 hover:bg-black text-white font-bold text-lg rounded-xl transition-all shadow-lg hover:shadow-xl disabled:opacity-70"
-                    style={{ backgroundColor: "var(--peacock-blue)" }}
+                    style={{ backgroundColor: "var(--peacock-blue)", color: "#ffffff" }}
                   >
                     {loading ? (
                       <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />

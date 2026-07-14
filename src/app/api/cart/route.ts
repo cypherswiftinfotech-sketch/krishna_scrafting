@@ -80,16 +80,16 @@ export async function POST(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
   const user = await getServerUser();
   const { searchParams } = new URL(req.url);
-  const itemId = searchParams.get("itemId");
+  const productId = searchParams.get("productId");
   const sessionId = req.cookies.get("session_id")?.value;
 
-  if (!itemId) {
-    return NextResponse.json({ error: "Item ID required" }, { status: 400 });
+  if (!productId) {
+    return NextResponse.json({ error: "Product ID required" }, { status: 400 });
   }
 
   const condition = user
-    ? and(eq(cartItems.id, parseInt(itemId)), eq(cartItems.userId, user.userId))
-    : and(eq(cartItems.id, parseInt(itemId)), eq(cartItems.sessionId, sessionId!));
+    ? and(eq(cartItems.productId, parseInt(productId)), eq(cartItems.userId, user.userId))
+    : and(eq(cartItems.productId, parseInt(productId)), eq(cartItems.sessionId, sessionId!));
 
   await db.delete(cartItems).where(condition);
   return NextResponse.json({ success: true });

@@ -31,12 +31,16 @@ export async function PUT(
   const updateData: Partial<{
     mainCategory: string;
     subCategory: string;
+    imageUrl: string;
+    description: string;
     mainSortOrder: number;
     subSortOrder: number;
   }> = {};
 
   if (body.mainCategory !== undefined) updateData.mainCategory = body.mainCategory;
   if (body.subCategory !== undefined) updateData.subCategory = body.subCategory;
+  if (body.imageUrl !== undefined) updateData.imageUrl = body.imageUrl;
+  if (body.description !== undefined) updateData.description = body.description;
   if (body.mainSortOrder !== undefined) updateData.mainSortOrder = Number(body.mainSortOrder);
   if (body.subSortOrder !== undefined) updateData.subSortOrder = Number(body.subSortOrder);
 
