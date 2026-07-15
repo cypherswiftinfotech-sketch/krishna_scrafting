@@ -46,7 +46,7 @@ export default function BlogsPage() {
     <div className="min-h-screen bg-black text-white pb-20 font-sans selection:bg-teal-500/30">
 
       {/* Hero Slider */}
-      <div className="pt-16">
+      <div>
         <PageHeroSlider
           apiPath="/api/blogs-hero"
           title="The Resin"
