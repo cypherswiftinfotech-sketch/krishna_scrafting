@@ -211,14 +211,14 @@ export default function TrainingsRedesignPage() {
         <div className="absolute inset-0 bg-black/65 backdrop-blur-[2px]"></div>
         
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mt-10">
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-6 drop-shadow-xl" style={{ fontFamily: "var(--font-heading)" }}>
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-[#ffffff] mb-6 drop-shadow-xl" style={{ fontFamily: "var(--font-heading)", textShadow: "0px 2px 10px rgba(0,0,0,0.8)" }}>
             Become a Certified <br className="hidden md:block"/>
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-teal-400 drop-shadow-md">Epoxy Resin Professional</span>
           </h1>
-          <h2 className="text-xl md:text-2xl font-bold text-white mb-6 tracking-wide uppercase drop-shadow">
+          <h2 className="text-xl md:text-2xl font-bold text-[#ffffff] mb-6 tracking-wide uppercase drop-shadow" style={{ textShadow: "0px 2px 8px rgba(0,0,0,0.8)" }}>
             Professional Epoxy Resin Training & Certification Programs
           </h2>
-          <p className="text-lg md:text-xl text-gray-200 max-w-4xl mx-auto mb-10 leading-relaxed drop-shadow">
+          <p className="text-lg md:text-xl text-[#e5e7eb] max-w-4xl mx-auto mb-10 leading-relaxed drop-shadow" style={{ textShadow: "0px 1px 5px rgba(0,0,0,0.8)" }}>
             Master premium epoxy resin techniques through hands-on practical training. Learn to create luxury resin products, epoxy furniture, river tables, metallic flooring, home décor, and corporate projects while building a successful creative business.
           </p>
           
