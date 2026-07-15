@@ -35,6 +35,18 @@ export async function POST(req: NextRequest) {
       const uploaded = await uploadToCloudinary(file, "custom_solutions_inquiries");
       if (uploaded) imageUrl = uploaded.url;
     }
+    
+    const selectedImageUrl = formData.get("selectedImageUrl") as string | null;
+    const selectedImageId = formData.get("selectedImageId") as string | null;
+    
+    if (!imageUrl && selectedImageUrl) {
+      imageUrl = selectedImageUrl;
+    }
+    
+    let finalDescription = description || "";
+    if (selectedImageUrl && selectedImageId) {
+      finalDescription += `\n\n(Selected Reference Image ID: ${selectedImageId})`;
+    }
 
     const [newItem] = await db.insert(customSolutionsInquiries).values({
       type: type || "quote",
@@ -50,7 +62,7 @@ export async function POST(req: NextRequest) {
       preferredTime,
       address,
       mapLocation,
-      description,
+      description: finalDescription,
       imageUrl,
     }).returning();
 

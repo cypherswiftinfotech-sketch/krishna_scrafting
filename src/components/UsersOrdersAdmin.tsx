@@ -18,6 +18,8 @@ interface OrderItem {
   quantity: number;
   priceAtPurchase: string;
   imageUrl: string | null;
+  mainCategory?: string | null;
+  subCategory?: string | null;
 }
 
 interface Order {
@@ -134,6 +136,11 @@ export default function UsersOrdersAdmin() {
                           </div>
                           <div className="flex flex-col">
                             <span className="text-sm font-medium text-gray-900 leading-tight line-clamp-1" title={item.productName}>{item.productName}</span>
+                            {(item.mainCategory || item.subCategory) && (
+                              <span className="text-[10px] text-gray-500 mt-0.5">
+                                {item.mainCategory} {item.mainCategory && item.subCategory ? '>' : ''} {item.subCategory}
+                              </span>
+                            )}
                             <span className="text-xs text-gray-500 font-semibold mt-0.5">Qty: {item.quantity}</span>
                           </div>
                         </div>

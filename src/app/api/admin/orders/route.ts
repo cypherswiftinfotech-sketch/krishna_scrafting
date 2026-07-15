@@ -34,6 +34,8 @@ export async function GET() {
       quantity: orderItems.quantity,
       priceAtPurchase: orderItems.priceAtPurchase,
       imageUrl: products.imageUrl,
+      mainCategory: products.mainCategory,
+      subCategory: products.subCategory,
     })
     .from(orderItems)
     .leftJoin(products, eq(orderItems.productId, products.id));

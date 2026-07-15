@@ -143,24 +143,10 @@ export default function ServicesHeroAdmin() {
 
       {/* Grid */}
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[1, 2, 3].map((i) => (
             <div key={i} className="aspect-[3/4] rounded-xl bg-gray-100 animate-pulse" />
           ))}
-        </div>
-      ) : images.length === 0 ? (
-        <div 
-          onClick={() => fileInputRef.current?.click()}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-          className={`py-16 text-center border-2 border-dashed rounded-2xl cursor-pointer transition-all ${
-            isDragging ? "border-blue-500 bg-blue-50" : "border-gray-200 hover:border-blue-400 hover:bg-gray-50"
-          }`}
-        >
-          <ImageIcon className={`w-12 h-12 mx-auto mb-3 transition-colors ${isDragging ? "text-blue-500" : "text-gray-300"}`} />
-          <p className="text-gray-500 font-medium">Click or drag & drop images here</p>
-          <p className="text-sm text-gray-400 mt-1">Upload exactly 3 images for the masonry layout.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -224,6 +210,26 @@ export default function ServicesHeroAdmin() {
                   </div>
                 )}
               </div>
+            </div>
+          ))}
+
+          {/* Empty Slots for Drag & Drop */}
+          {images.length < 3 && Array.from({ length: 3 - images.length }).map((_, idx) => (
+            <div 
+              key={`empty-${idx}`}
+              onClick={() => fileInputRef.current?.click()}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              className={`flex flex-col items-center justify-center aspect-[3/4] border-2 border-dashed rounded-xl cursor-pointer transition-all ${
+                isDragging ? "border-blue-500 bg-blue-50 scale-105" : "border-gray-300 hover:border-blue-400 hover:bg-gray-50"
+              }`}
+            >
+              <ImageIcon className={`w-10 h-10 mb-3 transition-colors ${isDragging ? "text-blue-500" : "text-gray-300"}`} />
+              <p className={`text-sm font-bold px-4 text-center ${isDragging ? "text-blue-600" : "text-gray-500"}`}>
+                {isDragging ? "Drop here!" : "Click or Drag & Drop"}
+              </p>
+              <p className="text-xs text-gray-400 mt-1">Upload image {images.length + idx + 1}</p>
             </div>
           ))}
         </div>

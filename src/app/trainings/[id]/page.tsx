@@ -211,7 +211,7 @@ export default function TrainingDetailsPage() {
       <section className="py-20 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-sm font-bold text-[#008080] uppercase tracking-widest mb-2">{details.overview.heading}</h2>
-          <h3 className="text-3xl md:text-4xl font-black text-[#0f52ba] mb-8" style={{ fontFamily: "var(--font-heading)" }}>
+          <h3 className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-8" style={{ fontFamily: "var(--font-heading)" }}>
             {details.overview.subheading}
           </h3>
           
@@ -240,7 +240,7 @@ export default function TrainingDetailsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-sm font-bold text-[#008080] uppercase tracking-widest mb-2">{details.whyChoose.heading}</h2>
-            <h3 className="text-3xl md:text-4xl font-black text-[#0f52ba] mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+            <h3 className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-4" style={{ fontFamily: "var(--font-heading)" }}>
               {details.whyChoose.subheading}
             </h3>
             <p className="text-gray-600 text-lg max-w-3xl mx-auto whitespace-pre-line">{details.whyChoose.intro}</p>
@@ -287,7 +287,7 @@ export default function TrainingDetailsPage() {
             
             {/* Left Column (Text) */}
             <div className="lg:col-span-2">
-              <h2 className="text-4xl md:text-5xl font-black text-[#0f52ba] mb-6" style={{ fontFamily: "var(--font-heading)" }}>{details.whoCanJoin.heading}</h2>
+              <h2 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-6" style={{ fontFamily: "var(--font-heading)" }}>{details.whoCanJoin.heading}</h2>
               <p className="text-gray-600 text-lg mb-8 whitespace-pre-line leading-relaxed">{details.whoCanJoin.intro}</p>
               <div className="p-6 bg-cyan-50 rounded-2xl border-l-4 border-[#008080]">
                 <p className="font-bold text-[#008080]">{details.whoCanJoin.outro}</p>
@@ -332,7 +332,7 @@ export default function TrainingDetailsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-sm font-bold text-[#008080] uppercase tracking-widest mb-2">{details.learningOutcomes.heading}</h2>
-            <h3 className="text-3xl md:text-4xl font-black text-[#0f52ba] mb-4" style={{ fontFamily: "var(--font-heading)" }}>{details.learningOutcomes.subheading}</h3>
+            <h3 className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-4" style={{ fontFamily: "var(--font-heading)" }}>{details.learningOutcomes.subheading}</h3>
             <p className="text-gray-600 text-lg max-w-3xl mx-auto whitespace-pre-line">{details.learningOutcomes.intro}</p>
           </div>
 
@@ -396,7 +396,7 @@ export default function TrainingDetailsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-sm font-bold text-[#008080] uppercase tracking-widest mb-2">{details.curriculum.heading}</h2>
-            <h3 className="text-3xl md:text-4xl font-black text-[#0f52ba] mb-4" style={{ fontFamily: "var(--font-heading)" }}>{details.curriculum.subheading}</h3>
+            <h3 className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-4" style={{ fontFamily: "var(--font-heading)" }}>{details.curriculum.subheading}</h3>
             <p className="text-gray-600 text-lg max-w-3xl mx-auto">{details.curriculum.intro}</p>
           </div>
 
@@ -426,7 +426,7 @@ export default function TrainingDetailsPage() {
                     <div className="flex flex-wrap items-center justify-between mb-6 pb-6 border-b border-gray-100 gap-4">
                       <div>
                         <span className="text-[#0f52ba] font-black uppercase tracking-widest text-sm mb-2 block">Module {mod.id}</span>
-                        <h4 className="text-3xl font-black text-[#0f52ba]" style={{ fontFamily: "var(--font-heading)" }}>{mod.title}</h4>
+                        <h4 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080]" style={{ fontFamily: "var(--font-heading)" }}>{mod.title}</h4>
                       </div>
                       <div className="bg-gradient-to-r from-[#0f52ba] to-[#008080] text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 shadow-sm">
                         <Clock className="w-4 h-4 text-cyan-200" /> Duration: {mod.duration}
@@ -489,7 +489,7 @@ export default function TrainingDetailsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-sm font-bold text-[#008080] uppercase tracking-widest mb-2">Process</h2>
-            <h3 className="text-3xl md:text-4xl font-black text-[#0f52ba] mb-6" style={{ fontFamily: "var(--font-heading)" }}>
+            <h3 className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-6" style={{ fontFamily: "var(--font-heading)" }}>
               {details.methodology.heading}
             </h3>
             <p className="text-gray-600 text-lg">
@@ -546,12 +546,12 @@ export default function TrainingDetailsPage() {
       <section className="py-20 bg-white border-t border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-black text-[#0f52ba] mb-4" style={{ fontFamily: "var(--font-heading)" }}>{details.projects.heading}</h2>
+            <h2 className="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-4" style={{ fontFamily: "var(--font-heading)" }}>{details.projects.heading}</h2>
             <h3 className="text-xl font-bold text-[#0f52ba] mb-4">{details.projects.sub1}</h3>
             <p className="text-gray-600 text-lg max-w-4xl mx-auto whitespace-pre-line">{details.projects.desc1}</p>
           </div>
 
-          <h3 className="text-2xl font-black text-[#0f52ba] mb-8 text-center">{details.projects.sub2}</h3>
+          <h3 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-8 text-center">{details.projects.sub2}</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
             {details.projects.list.slice(0, showProjectsMore ? details.projects.list.length : (Math.floor(details.projects.list.length / 3) * 3 || details.projects.list.length)).map((proj, i) => (
@@ -559,7 +559,7 @@ export default function TrainingDetailsPage() {
                 <div className="w-12 h-12 bg-gradient-to-br from-[#0f52ba] to-[#008080] rounded-xl flex items-center justify-center text-white mb-6 transform group-hover:scale-110 transition-transform">
                   <PenTool className="w-6 h-6" />
                 </div>
-                <h4 className="text-xl font-black text-[#0f52ba] mb-3">{proj.title}</h4>
+                <h4 className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-3">{proj.title}</h4>
                 <p className="text-gray-600 mb-6 text-sm leading-relaxed">{proj.desc}</p>
                 <div>
                   <h5 className="font-bold text-xs uppercase tracking-widest text-gray-400 mb-3">Skills Covered</h5>
@@ -592,7 +592,7 @@ export default function TrainingDetailsPage() {
           {/* Mastered Skills */}
           <div className="bg-white rounded-3xl p-8 md:p-12 border border-gray-200 shadow-sm">
             <div className="text-center mb-8">
-              <h3 className="text-2xl font-black text-[#0f52ba] mb-2">{details.projects.masteredSkillsSub}</h3>
+              <h3 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-2">{details.projects.masteredSkillsSub}</h3>
               <p className="text-gray-600">{details.projects.masteredSkillsDesc}</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
@@ -719,7 +719,7 @@ export default function TrainingDetailsPage() {
             
             <div>
               <div className="mb-10">
-                <h2 className="text-3xl font-black text-[#0f52ba] mb-2" style={{ fontFamily: "var(--font-heading)" }}>{details.careers.heading}</h2>
+                <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-2" style={{ fontFamily: "var(--font-heading)" }}>{details.careers.heading}</h2>
                 <p className="text-[#0f52ba] font-bold mb-4">{details.careers.subheading}</p>
                 <p className="text-gray-600">{details.careers.desc}</p>
               </div>
@@ -744,7 +744,7 @@ export default function TrainingDetailsPage() {
             </div>
 
             <div className="bg-white border border-gray-200 rounded-3xl p-8 md:p-10 shadow-sm">
-              <h2 className="text-3xl font-black text-[#0f52ba] mb-2" style={{ fontFamily: "var(--font-heading)" }}>{details.business.heading}</h2>
+              <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-2" style={{ fontFamily: "var(--font-heading)" }}>{details.business.heading}</h2>
               <p className="text-[#008080] font-bold mb-4">{details.business.subheading}</p>
               <p className="text-gray-600 mb-8 whitespace-pre-line">{details.business.desc}</p>
 
@@ -778,7 +778,7 @@ export default function TrainingDetailsPage() {
       <section className="py-24 bg-white border-t border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-black text-[#0f52ba]" style={{ fontFamily: "var(--font-heading)" }}>{details.benefits.heading}</h2>
+            <h2 className="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080]" style={{ fontFamily: "var(--font-heading)" }}>{details.benefits.heading}</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
             {details.benefits.list.slice(0, showBenefitsMore ? details.benefits.list.length : 16).map((benefit, i) => {
@@ -825,7 +825,7 @@ export default function TrainingDetailsPage() {
       {/* SECTION 17: WHY ACADEMY */}
       <section className="py-20 bg-white border-b border-gray-100">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-black text-[#0f52ba] mb-6" style={{ fontFamily: "var(--font-heading)" }}>{details.academy.heading}</h2>
+          <h2 className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-6" style={{ fontFamily: "var(--font-heading)" }}>{details.academy.heading}</h2>
           <p className="text-gray-600 text-lg mb-10 whitespace-pre-line">{details.academy.desc}</p>
           <div className="flex flex-wrap justify-center gap-4 mb-10">
             {details.academy.points.map((pt, i) => (
@@ -840,7 +840,7 @@ export default function TrainingDetailsPage() {
       <section className="py-20 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-black text-[#0f52ba]" style={{ fontFamily: "var(--font-heading)" }}>{details.faq.heading}</h2>
+            <h2 className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080]" style={{ fontFamily: "var(--font-heading)" }}>{details.faq.heading}</h2>
           </div>
           <div className="space-y-4">
             {details.faq.items.map((faq, i) => (
@@ -867,7 +867,7 @@ export default function TrainingDetailsPage() {
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-black text-[#0f52ba] mb-4" style={{ fontFamily: "var(--font-heading)" }}>{details.continueLearning.heading}</h2>
+            <h2 className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-4" style={{ fontFamily: "var(--font-heading)" }}>{details.continueLearning.heading}</h2>
             <p className="text-gray-600 max-w-2xl mx-auto">{details.continueLearning.desc}</p>
           </div>
           <div className="flex flex-col items-center justify-center max-w-3xl mx-auto gap-4">
@@ -930,7 +930,7 @@ export default function TrainingDetailsPage() {
               <ChevronDown className="w-5 h-5 rotate-90" />
             </button>
             <div className="text-center mb-6">
-              <h3 className="text-2xl font-black text-[#0f52ba] mb-2">Book Free Counselling</h3>
+              <h3 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-2">Book Free Counselling</h3>
               <p className="text-gray-500 text-sm">Fill your details and our training expert will call you.</p>
             </div>
             
@@ -964,7 +964,7 @@ export default function TrainingDetailsPage() {
               <ChevronDown className="w-5 h-5 rotate-90" />
             </button>
             <div className="text-center mb-6">
-              <h3 className="text-2xl font-black text-[#0f52ba] mb-2">Enroll Now</h3>
+              <h3 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-2">Enroll Now</h3>
               <p className="text-gray-500 text-sm">Submit your details for: <span className="font-bold text-[#0f52ba]">{course.title}</span></p>
             </div>
             

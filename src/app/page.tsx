@@ -624,7 +624,7 @@ export default function HomePage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                href="/services?tab=custom_orders"
+                href="/customservices?tab=custom_orders"
                 className="px-8 py-4 font-bold rounded-xl transition-all hover:scale-105"
                 style={{
                   backgroundColor: "#ffffff",

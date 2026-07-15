@@ -14,6 +14,7 @@ export async function POST(req: NextRequest) {
   const description = formData.get("description") as string;
   const sortOrderStr = formData.get("sortOrder") as string;
   const file = formData.get("image") as File | null;
+  const additionalFiles = formData.getAll("additionalImages") as File[];
   
   let imageUrl = null;
   if (file && file.size > 0) {
@@ -21,10 +22,19 @@ export async function POST(req: NextRequest) {
     if (uploaded) imageUrl = uploaded.url;
   }
 
+  let additionalImagesUrls: string[] = [];
+  for (const f of additionalFiles) {
+    if (f.size > 0) {
+      const u = await uploadToCloudinary(f, "custom_solutions");
+      if (u) additionalImagesUrls.push(u.url);
+    }
+  }
+
   const [newItem] = await db.insert(solutions).values({
     title,
     description,
     imageUrl,
+    additionalImages: JSON.stringify(additionalImagesUrls),
     sortOrder: sortOrderStr ? parseInt(sortOrderStr) : 0,
   }).returning();
 

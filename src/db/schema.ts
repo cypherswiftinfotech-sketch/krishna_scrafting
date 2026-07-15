@@ -363,6 +363,7 @@ export const solutions = pgTable("solutions", {
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
   imageUrl: text("image_url"),
+  additionalImages: text("additional_images"),
   sortOrder: integer("sort_order").default(0).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });

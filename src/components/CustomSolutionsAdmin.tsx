@@ -116,6 +116,15 @@ export default function CustomSolutionsAdmin() {
     setSolutionLoading(true);
     const formData = new FormData(e.currentTarget);
     if (solutionFile) formData.set("image", solutionFile);
+    
+    // Add additional files to form data
+    const fileInput = document.getElementById('additional-images-input') as HTMLInputElement;
+    if (fileInput && fileInput.files) {
+      Array.from(fileInput.files).forEach((file) => {
+        formData.append("additionalImages", file);
+      });
+    }
+
     try {
       const res = await fetch("/api/custom-solutions/solutions", { method: "POST", body: formData });
       if (!res.ok) throw new Error("Failed to add solution card");
@@ -256,15 +265,50 @@ export default function CustomSolutionsAdmin() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {solutions.map((s) => (
-                  <div key={s.id} className="border border-gray-200 rounded-xl p-4 shadow-sm bg-white">
+                  <div key={s.id} className="border border-gray-200 rounded-xl p-4 shadow-sm bg-white relative">
                     {s.imageUrl ? (
                       <img src={s.imageUrl} alt={s.title} className="w-full h-32 object-cover rounded-lg mb-4" />
                     ) : (
                       <div className="w-full h-32 bg-gray-100 rounded-lg mb-4 flex items-center justify-center text-gray-400">No Image</div>
                     )}
                     <h3 className="font-bold text-lg">{s.title}</h3>
-                    <p className="text-sm text-gray-500 mb-4 h-10 overflow-hidden">{s.description}</p>
-                    <button onClick={() => handleDeleteSolution(s.id)} className="w-full py-2 bg-red-50 text-red-600 font-medium rounded-lg hover:bg-red-100 transition-colors">Delete</button>
+                    <p className="text-sm text-gray-500 mb-2 h-10 overflow-hidden">{s.description}</p>
+                    {s.additionalImages && JSON.parse(s.additionalImages).length > 0 && (
+                      <p className="text-xs text-blue-600 font-semibold mb-2 bg-blue-50 px-2 py-1 rounded inline-block">
+                        +{JSON.parse(s.additionalImages).length} more images
+                      </p>
+                    )}
+                    
+                    <div className="mb-4">
+                      <label className="block text-xs font-semibold text-gray-500 mb-1 cursor-pointer hover:text-blue-600 flex items-center gap-1">
+                        <Upload className="w-3 h-3" /> Add Images
+                        <input 
+                          type="file" 
+                          multiple 
+                          accept="image/*" 
+                          className="hidden" 
+                          onChange={async (e) => {
+                            if (!e.target.files?.length) return;
+                            const toastId = toast.loading("Uploading additional images...");
+                            const formData = new FormData();
+                            Array.from(e.target.files).forEach(f => formData.append("additionalImages", f));
+                            try {
+                              const res = await fetch(`/api/custom-solutions/solutions/${s.id}`, {
+                                method: "PUT",
+                                body: formData
+                              });
+                              if (!res.ok) throw new Error("Upload failed");
+                              toast.success("Images added successfully", { id: toastId });
+                              fetchSolutions();
+                            } catch (err) {
+                              toast.error("Failed to add images", { id: toastId });
+                            }
+                          }}
+                        />
+                      </label>
+                    </div>
+
+                    <button onClick={() => handleDeleteSolution(s.id)} className="w-full py-2 mt-2 bg-red-50 text-red-600 font-medium rounded-lg hover:bg-red-100 transition-colors">Delete</button>
                   </div>
                 ))}
               </div>
@@ -289,8 +333,13 @@ export default function CustomSolutionsAdmin() {
                   <input name="sortOrder" type="number" defaultValue={0} className="w-full p-2 rounded border border-gray-200" />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold mb-1">Image</label>
+                  <label className="block text-sm font-semibold mb-1">Main Cover Image</label>
                   <input type="file" accept="image/*" onChange={(e) => setSolutionFile(e.target.files?.[0] || null)} required className="w-full p-2 rounded border border-gray-200 bg-white" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1">Additional Images (Optional, for solution detail page)</label>
+                  <input id="additional-images-input" type="file" multiple accept="image/*" className="w-full p-2 rounded border border-gray-200 bg-white" />
+                  <p className="text-xs text-gray-500 mt-1">Select multiple images at once (Ctrl+Click or Cmd+Click)</p>
                 </div>
                 <button type="submit" disabled={solutionLoading} className="w-full py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors">
                   {solutionLoading ? "Adding..." : "Add Solution Card"}

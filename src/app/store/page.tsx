@@ -41,8 +41,7 @@ function StoreHeroSlider() {
   if (images.length === 0) {
     return (
       <div
-        className="relative w-full h-[52vh] min-h-[380px] overflow-hidden flex items-center justify-center"
-        style={{ background: "linear-gradient(135deg, #0d3b6e 0%, #135db6 50%, #1a73e8 100%)" }}
+        className="relative w-full h-[52vh] min-h-[380px] overflow-hidden flex items-center justify-center bg-gray-50"
       >
         <div className="absolute inset-0 opacity-10"
           style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")" }}
@@ -52,10 +51,10 @@ function StoreHeroSlider() {
             <Store className="w-5 h-5" />
             <span className="font-semibold text-sm tracking-wide">Premium Handcrafted Products</span>
           </div>
-          <h1 className="text-5xl md:text-6xl font-black mb-4 drop-shadow-lg text-white">
-            Our <span className="text-amber-300">Store</span>
+          <h1 className="text-5xl md:text-6xl font-black mb-4 drop-shadow-sm text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080]">
+            Our Store
           </h1>
-          <p className="text-xl text-white/80 max-w-xl mx-auto font-medium">
+          <p className="text-xl text-gray-700 max-w-xl mx-auto font-medium">
             Discover premium handcrafted products made with passion and precision.
           </p>
         </div>
@@ -68,12 +67,12 @@ function StoreHeroSlider() {
     return (
       <div className="relative w-full h-[52vh] min-h-[380px] overflow-hidden">
         <Image src={images[0].mediaUrl} alt="Store hero" fill className="object-cover" priority />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent flex items-center px-10 md:px-20">
-          <div className="text-white">
-            <h1 className="text-5xl md:text-6xl font-black mb-3 drop-shadow-lg text-white">
-              Our <span className="text-amber-300">Store</span>
+        <div className="absolute inset-0 bg-white/40 flex items-center px-10 md:px-20 backdrop-blur-[2px]">
+          <div>
+            <h1 className="text-5xl md:text-6xl font-black mb-3 drop-shadow-sm text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080]">
+              Our Store
             </h1>
-            <p className="text-lg text-white/80 max-w-md font-medium">
+            <p className="text-lg text-gray-800 max-w-md font-medium font-bold">
               Discover premium handcrafted products.
             </p>
           </div>
@@ -109,19 +108,19 @@ function StoreHeroSlider() {
       </div>
 
       {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/25 to-black/10" />
+      <div className="absolute inset-0 bg-white/40 backdrop-blur-[2px]" />
 
       {/* Text Overlay */}
       <div className="absolute inset-0 flex items-center px-8 md:px-16 lg:px-24">
-        <div className="text-white">
-          <div className="inline-flex items-center gap-2 mb-4 bg-white/15 backdrop-blur-sm px-4 py-1.5 rounded-full border border-white/20 text-sm font-semibold tracking-wide">
-            <Store className="w-4 h-4" />
+        <div>
+          <div className="inline-flex items-center gap-2 mb-4 bg-white/80 backdrop-blur-sm px-4 py-1.5 rounded-full border border-gray-200 text-sm font-semibold tracking-wide text-gray-800 shadow-sm">
+            <Store className="w-4 h-4 text-[#008080]" />
             Premium Handcrafted Products
           </div>
-          <h1 className="text-5xl md:text-6xl font-black mb-4 drop-shadow-lg leading-tight text-white">
-            Our <span className="text-amber-300">Store</span>
+          <h1 className="text-5xl md:text-6xl font-black mb-4 drop-shadow-sm leading-tight text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080]">
+            Our Store
           </h1>
-          <p className="text-lg text-white/80 max-w-lg font-medium leading-relaxed">
+          <p className="text-lg text-gray-800 max-w-lg font-medium leading-relaxed font-bold">
             Discover premium handcrafted products made with passion and precision.
           </p>
         </div>
@@ -132,9 +131,9 @@ function StoreHeroSlider() {
         {images.map((_, i) => (
           <div
             key={i}
-            className="w-2 h-2 rounded-full bg-white/50 transition-all"
+            className="w-2 h-2 rounded-full bg-gray-400 transition-all"
             style={{
-              animation: `dotActive ${images.length * 6}s ${i * 6}s linear infinite`,
+              animation: `dotActiveStore ${images.length * 6}s ${i * 6}s linear infinite`,
             }}
           />
         ))}
@@ -146,9 +145,9 @@ function StoreHeroSlider() {
             0%   { transform: translateX(0); }
             100% { transform: translateX(-${totalWidth}vw); }
           }
-          @keyframes dotActive {
-            0%, ${100 / images.length - 1}%   { background-color: rgba(255,255,255,0.9); width: 20px; border-radius: 4px; }
-            ${100 / images.length}%, 100%      { background-color: rgba(255,255,255,0.35); width: 8px; border-radius: 9999px; }
+          @keyframes dotActiveStore {
+            0%, ${100 / images.length - 1}%   { background-color: rgba(15, 82, 186, 0.9); width: 20px; border-radius: 4px; }
+            ${100 / images.length}%, 100%      { background-color: rgba(156, 163, 175, 0.6); width: 8px; border-radius: 9999px; }
           }
         `
       }} />
@@ -246,7 +245,15 @@ function StoreContent() {
       : true
   );
 
-  const mainCategories = Array.from(new Set(categories.map(c => c.mainCategory)));
+  const desiredOrder = ["Home Products", "Commercial Products", "Accessories"];
+  const mainCategories = Array.from(new Set(categories.map(c => c.mainCategory))).sort((a, b) => {
+    const indexA = desiredOrder.indexOf(a);
+    const indexB = desiredOrder.indexOf(b);
+    if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+    if (indexA !== -1) return -1;
+    if (indexB !== -1) return 1;
+    return a.localeCompare(b);
+  });
   const subCategories = categories.filter(c => c.mainCategory === activeMainCat).map(c => c.subCategory);
 
   return (
@@ -455,7 +462,7 @@ function StoreContent() {
 
 export default function StorePage() {
   return (
-    <div className="pt-16 bg-gray-50 min-h-screen">
+    <div className="pt-0 bg-gray-50 min-h-screen">
       {/* Hero Slider — outside Suspense so it loads immediately */}
       <StoreHeroSlider />
       <Suspense fallback={<div className="flex items-center justify-center py-20"><div className="w-10 h-10 border-4 border-gray-200 border-t-amber-500 rounded-full animate-spin" /></div>}>

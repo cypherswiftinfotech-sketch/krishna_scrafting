@@ -12,7 +12,7 @@ const defaultNavLinks = [
   { key: "home", label: "Home", href: "/" },
   { key: "store", label: "Store", href: "/store" },
   { key: "portfolio", label: "Portfolio", href: "/portfolio" },
-  { key: "custom_services", label: "Custom Services", href: "/services" },
+  { key: "custom_services", label: "Custom Services", href: "/customservices" },
   { key: "training_academy", label: "Training Academy", href: "/trainings" },
   { key: "accessories", label: "Accessories", href: "/accessories" },
   { key: "blogs", label: "Blogs", href: "/blogs" },

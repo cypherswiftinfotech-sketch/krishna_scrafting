@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, ChevronDown, ChevronUp, MapPin, Calculator, Calendar, Upload, MessageCircle, Phone, X, Target, FileText, PenTool, Hammer, Wrench, ChevronsRight, ChevronsLeft, ChevronsDown } from "lucide-react";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const PROCESS_STEPS = [
   { title: "Consultation", desc: "Understand your vision and requirements.", icon: MessageCircle },
@@ -43,6 +44,7 @@ const OutlineButton = ({ children, onClick, className = "", icon = null }: any) 
 );
 
 export default function CustomSolutionsPage() {
+  const router = useRouter();
   const [dataLoaded, setDataLoaded] = useState(false);
   
   // Dynamic Data
@@ -57,6 +59,8 @@ export default function CustomSolutionsPage() {
   // Modal State
   const [quoteModalOpen, setQuoteModalOpen] = useState(false);
   const [visitModalOpen, setVisitModalOpen] = useState(false);
+  const [imageSelectModalOpen, setImageSelectModalOpen] = useState(false);
+  const [selectedSolutionImage, setSelectedSolutionImage] = useState<any>(null);
   
   // Calculator State
   const [calcLength, setCalcLength] = useState("");
@@ -110,9 +114,25 @@ export default function CustomSolutionsPage() {
     try {
       const formData = new FormData(e.currentTarget);
       formData.append("type", "quote");
+      if (selectedSolutionImage) {
+        formData.append("selectedImageUrl", selectedSolutionImage.url);
+        formData.append("selectedImageId", selectedSolutionImage.id.toString());
+      }
       const res = await fetch("/api/custom-solutions/inquiries", { method: "POST", body: formData });
       if (!res.ok) throw new Error("Submission failed");
+      
       toast.success("Quote request submitted successfully!");
+      
+      const text = `Hi, I would like to request a quote for ${formData.get("projectType")}.
+Name: ${formData.get("name")}
+Phone: ${formData.get("phone")}
+City: ${formData.get("city") || 'N/A'}
+Area: ${formData.get("area") || 'N/A'} sq.ft
+Budget: ${formData.get("budget") || 'N/A'}
+Requirement: ${formData.get("description") || 'N/A'}`;
+      const whatsappUrl = `https://wa.me/917204468429?text=${encodeURIComponent(text)}`;
+      window.open(whatsappUrl, '_blank');
+      
       setQuoteModalOpen(false);
     } catch (err: any) {
       toast.error(err.message || "Error submitting form");
@@ -129,7 +149,17 @@ export default function CustomSolutionsPage() {
       formData.append("type", "visit");
       const res = await fetch("/api/custom-solutions/inquiries", { method: "POST", body: formData });
       if (!res.ok) throw new Error("Submission failed");
+      
       toast.success("Site visit requested successfully!");
+      
+      const text = `Hi, I would like to book a site visit.
+Preferred Date: ${formData.get("preferredDate")}
+Preferred Time: ${formData.get("preferredTime") || 'N/A'}
+Address: ${formData.get("address")}
+Map Link: ${formData.get("mapLocation") || 'N/A'}`;
+      const whatsappUrl = `https://wa.me/917204468429?text=${encodeURIComponent(text)}`;
+      window.open(whatsappUrl, '_blank');
+      
       setVisitModalOpen(false);
     } catch (err: any) {
       toast.error(err.message || "Error submitting form");
@@ -153,13 +183,12 @@ export default function CustomSolutionsPage() {
     <div className="min-h-screen bg-white text-gray-800 selection:bg-[#135db6]/20">
       
       {/* 1. HERO SECTION */}
-      {/* 1. HERO SECTION */}
-      <section className="relative min-h-screen flex items-center bg-white pt-28 pb-20 rounded-b-[3rem] overflow-hidden">
+      <section className="relative flex items-center bg-white pt-8 lg:pt-10 pb-16 lg:pb-20 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           
           {/* Left: Text Content */}
           <div className="flex flex-col items-start z-10 relative">
-            <div className="inline-block px-5 py-1.5 rounded-full border border-[#135db6] text-[#135db6] text-xs font-bold tracking-widest uppercase mb-8">
+            <div className="inline-block px-5 py-1.5 rounded-full border border-[#135db6] text-[#135db6] text-xs font-bold tracking-widest uppercase mb-8 mt-4">
               Custom Solutions
             </div>
             
@@ -192,15 +221,21 @@ export default function CustomSolutionsPage() {
             {heroImages.length > 0 ? (
               <div className="grid grid-cols-2 gap-4 h-full">
                 {/* Left tall image */}
-                <div className="relative h-full rounded-[2rem] overflow-hidden shadow-lg group">
-                  <Image src={heroImages[0]?.mediaUrl || "/placeholder.jpg"} alt={heroImages[0]?.title || "Service 1"} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                  {heroImages[0]?.title && (
-                    <div 
-                      className="absolute bottom-6 left-6 px-4 py-2 bg-black/40 backdrop-blur-md rounded-xl border border-white/20 text-white font-medium text-sm"
-                      style={{ color: "#ffffff" }}
-                    >
-                      {heroImages[0].title}
+                <div className="relative h-full rounded-[2rem] overflow-hidden shadow-xl group bg-gray-100">
+                  {heroImages[0]?.mediaUrl ? (
+                    <>
+                      <Image src={heroImages[0].mediaUrl} alt={heroImages[0].title || "Service 1"} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+                      {heroImages[0].title && (
+                        <div className="absolute bottom-6 left-6 right-6">
+                          <span className="!text-white text-2xl md:text-3xl font-black drop-shadow-lg leading-tight block">{heroImages[0].title}</span>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center text-gray-400">
+                      <div className="w-16 h-16 mb-4 rounded-full bg-gray-200 flex items-center justify-center">📷</div>
+                      <span className="font-medium text-sm">More images coming soon</span>
                     </div>
                   )}
                 </div>
@@ -208,28 +243,38 @@ export default function CustomSolutionsPage() {
                 {/* Right stacked images */}
                 <div className="flex flex-col gap-4 h-full">
                   {/* Top right */}
-                  <div className="relative h-1/2 rounded-[2rem] overflow-hidden shadow-lg group">
-                    <Image src={heroImages[1]?.mediaUrl || "/placeholder.jpg"} alt={heroImages[1]?.title || "Service 2"} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                    {heroImages[1]?.title && (
-                      <div 
-                        className="absolute bottom-5 left-5 px-4 py-2 bg-black/40 backdrop-blur-md rounded-xl border border-white/20 text-white font-medium text-sm"
-                        style={{ color: "#ffffff" }}
-                      >
-                        {heroImages[1].title}
+                  <div className="relative h-1/2 rounded-[2rem] overflow-hidden shadow-xl group bg-gray-100">
+                    {heroImages[1]?.mediaUrl ? (
+                      <>
+                        <Image src={heroImages[1].mediaUrl} alt={heroImages[1].title || "Service 2"} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+                        {heroImages[1].title && (
+                          <div className="absolute bottom-5 left-5 right-5">
+                            <span className="!text-white text-xl md:text-2xl font-black drop-shadow-lg leading-tight block">{heroImages[1].title}</span>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gray-50/50">
+                        <span className="font-medium text-sm">Image Slot</span>
                       </div>
                     )}
                   </div>
                   {/* Bottom right */}
-                  <div className="relative h-1/2 rounded-[2rem] overflow-hidden shadow-lg group">
-                    <Image src={heroImages[2]?.mediaUrl || "/placeholder.jpg"} alt={heroImages[2]?.title || "Service 3"} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                    {heroImages[2]?.title && (
-                      <div 
-                        className="absolute bottom-5 left-5 px-4 py-2 bg-black/40 backdrop-blur-md rounded-xl border border-white/20 text-white font-medium text-sm"
-                        style={{ color: "#ffffff" }}
-                      >
-                        {heroImages[2].title}
+                  <div className="relative h-1/2 rounded-[2rem] overflow-hidden shadow-xl group bg-gray-100">
+                    {heroImages[2]?.mediaUrl ? (
+                      <>
+                        <Image src={heroImages[2].mediaUrl} alt={heroImages[2].title || "Service 3"} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+                        {heroImages[2].title && (
+                          <div className="absolute bottom-5 left-5 right-5">
+                            <span className="!text-white text-xl md:text-2xl font-black drop-shadow-lg leading-tight block">{heroImages[2].title}</span>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gray-50/50">
+                        <span className="font-medium text-sm">Image Slot</span>
                       </div>
                     )}
                   </div>
@@ -256,7 +301,7 @@ export default function CustomSolutionsPage() {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {solutions.length > 0 ? (showAllSolutions ? solutions : solutions.slice(0, Math.max(3, solutions.length - (solutions.length % 3)))).map((sol) => (
-            <Link href={`/contact`} key={sol.id} className="group relative rounded-3xl overflow-hidden bg-white border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+            <div key={sol.id} onClick={() => router.push(`/customservices/${sol.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')}`)} className="group relative rounded-3xl overflow-hidden bg-white border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer">
               <div className="aspect-[4/3] bg-gray-100 relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent z-10" />
                 {sol.imageUrl ? (
@@ -273,7 +318,7 @@ export default function CustomSolutionsPage() {
                 <span>Request details</span>
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </div>
-            </Link>
+            </div>
           )) : null}
         </div>
         
@@ -646,6 +691,39 @@ export default function CustomSolutionsPage() {
       </section>
 
       {/* MODALS */}
+
+      {/* Image Selection Modal */}
+      {imageSelectModalOpen && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm overflow-hidden">
+          <div className="bg-white border border-gray-200 shadow-2xl rounded-3xl w-full max-w-5xl relative p-8">
+            <button onClick={() => setImageSelectModalOpen(false)} className="absolute top-6 right-6 text-gray-400 hover:text-gray-900 bg-gray-100 p-2 rounded-full transition-colors z-10">
+              <X className="w-5 h-5" />
+            </button>
+            <h2 className="text-3xl font-black text-gray-900 mb-2">Select a Reference Image</h2>
+            <p className="text-gray-500 mb-6">Choose an image that best matches your requirement.</p>
+            
+            <div className="flex gap-4 overflow-x-auto snap-x pb-4">
+              {[...solutions.filter((s:any) => s.imageUrl).map((s:any) => ({id: s.id, url: s.imageUrl, title: s.title})), ...projects.filter((p:any) => p.afterImageUrl).map((p:any) => ({id: p.id, url: p.afterImageUrl, title: p.title}))].map((img, idx) => (
+                <div 
+                  key={idx} 
+                  onClick={() => {
+                    setSelectedSolutionImage(img);
+                    setImageSelectModalOpen(false);
+                    setQuoteModalOpen(true);
+                  }}
+                  className="snap-center shrink-0 w-[250px] md:w-[300px] aspect-video relative rounded-2xl overflow-hidden cursor-pointer border-4 border-transparent hover:border-[#135db6] transition-all group"
+                >
+                  <img src={img.url} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <span className="bg-[#135db6] text-white px-4 py-2 rounded-full font-bold">Select</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Quote Modal */}
       {quoteModalOpen && (
         <div className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-10 pb-20 sm:p-10 bg-gray-900/40 backdrop-blur-sm overflow-y-auto">
@@ -655,6 +733,17 @@ export default function CustomSolutionsPage() {
             </button>
             <h2 className="text-3xl font-black text-gray-900 mb-2">Get Free Quote</h2>
             <p className="text-gray-500 mb-8">Fill the details below and our team will get back to you with an estimate.</p>
+            
+            {selectedSolutionImage && (
+              <div className="mb-6 p-4 bg-[#135db6]/5 border border-[#135db6]/20 rounded-xl flex items-center gap-4">
+                <img src={selectedSolutionImage.url} className="w-16 h-16 rounded-lg object-cover" />
+                <div>
+                  <p className="text-sm font-bold text-gray-900">Selected Reference:</p>
+                  <p className="text-xs text-gray-500">{selectedSolutionImage.title}</p>
+                  <button type="button" onClick={() => setSelectedSolutionImage(null)} className="text-xs text-red-500 mt-1 hover:underline">Remove</button>
+                </div>
+              </div>
+            )}
             
             <form onSubmit={handleQuoteSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

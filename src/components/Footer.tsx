@@ -57,9 +57,10 @@ export default function Footer() {
             <h4 className="font-semibold mb-4" style={{ color: "#1f1f1f" }}>Services</h4>
             <ul className="space-y-2 text-sm">
               {[
-                { label: "Custom Orders", href: "/services?tab=custom_orders" },
-                { label: "Corporate Gifts", href: "/services?tab=corporate_gifts" },
-                { label: "Flooring", href: "/services?tab=flooring" },
+                { label: "Custom Orders", href: "/customservices?tab=custom_orders" },
+                { label: "Corporate Gifts", href: "/customservices?tab=corporate_gifts" },
+                { label: "Flooring", href: "/customservices?tab=flooring" },
+                { label: "Installations", href: "/customservices?tab=installations" },
               ].map((l) => (
                 <li key={l.label}>
                   <Link

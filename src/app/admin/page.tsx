@@ -511,13 +511,13 @@ export default function AdminPage() {
         {/* Sidebar Menu */}
         <div className="w-full md:w-64 flex-shrink-0 bg-white rounded-2xl shadow p-4 h-fit sticky top-24" style={{ border: "1px solid var(--cream-white-border)" }}>
           <div className="flex flex-col gap-1">
-            {(["users_orders", "contact_requests", "crm", "products", "home_categories", "categories", "service_categories", "gallery", "trainings", "training_banner", "success_stories", "store_hero", "blogs_hero", "contact_hero", "services_hero", "instagram", "testimonials", "blogs", "hero", "about", "menu_settings", "custom_solutions", "accessories"] as const).map((tab) => (
+            {(["users_orders", "contact_requests", "crm", "products", "home_categories", "categories", "service_categories", "gallery", "trainings", "store_hero", "blogs_hero", "contact_hero", "services_hero", "instagram", "testimonials", "blogs", "hero", "about", "menu_settings", "custom_solutions", "accessories"] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={`px-4 py-3 text-left font-semibold rounded-xl transition-all ${activeTab === tab ? "bg-[#135db6] text-white shadow-md translate-x-1" : "text-gray-600 hover:bg-gray-50 hover:translate-x-1"}`}
               >
-                {tab === "users_orders" ? "Users & Orders" : tab === "contact_requests" ? "Form Submissions" : tab === "crm" ? "CRM" : tab === "products" ? "Manage Products" : tab === "home_categories" ? "Home Categories" : tab === "categories" ? "Product Categories" : tab === "service_categories" ? "Service Categories" : tab === "trainings" ? "Trainings" : tab === "training_banner" ? "Training Banner" : tab === "success_stories" ? "Student Success Stories" : tab === "store_hero" ? "Store Hero Slider" : tab === "blogs_hero" ? "Blogs Hero Slider" : tab === "contact_hero" ? "Contact Hero Slider" : tab === "services_hero" ? "Services Hero Masonry" : tab === "instagram" ? "Instagram Feed" : tab === "testimonials" ? "Testimonials" : tab === "blogs" ? "Blogs" : tab === "gallery" ? "Gallery Upload" : tab === "hero" ? "Hero Settings" : tab === "menu_settings" ? "Menu Visibility" : tab === "custom_solutions" ? "Custom Solutions" : tab === "accessories" ? "Accessories Page" : "About Page"}
+                {tab === "users_orders" ? "Users & Orders" : tab === "contact_requests" ? "Form Submissions" : tab === "crm" ? "CRM" : tab === "products" ? "Manage Products" : tab === "home_categories" ? "Home Categories" : tab === "categories" ? "Product Categories" : tab === "service_categories" ? "Service Categories" : tab === "trainings" ? "Trainings" : tab === "store_hero" ? "Store Hero Slider" : tab === "blogs_hero" ? "Blogs Hero Slider" : tab === "contact_hero" ? "Contact Hero Slider" : tab === "services_hero" ? "Services Hero Masonry" : tab === "instagram" ? "Instagram Feed" : tab === "testimonials" ? "Testimonials" : tab === "blogs" ? "Blogs" : tab === "gallery" ? "Gallery Upload" : tab === "hero" ? "Hero Settings" : tab === "menu_settings" ? "Menu Visibility" : tab === "custom_solutions" ? "Custom Solutions" : tab === "accessories" ? "Accessories Page" : "About Page"}
               </button>
             ))}
           </div>
@@ -604,47 +604,7 @@ export default function AdminPage() {
         </div>
       )}
 
-      {activeTab === "training_banner" && (
-        <div className="p-6 rounded-2xl shadow max-w-2xl" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
-          <h2 className="text-2xl font-bold mb-6">Home Training Banner</h2>
-          <form onSubmit={handleTrainingBannerSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-semibold mb-1">Headline</label>
-              <input name="headline" defaultValue={trainingBannerSettings?.headline} required className="w-full p-2 rounded border" />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold mb-1">Subheadline</label>
-              <textarea name="subheadline" defaultValue={trainingBannerSettings?.subheadline} required rows={3} className="w-full p-2 rounded border" />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-semibold mb-1">Button Text</label>
-                <input name="ctaText" defaultValue={trainingBannerSettings?.ctaText} required className="w-full p-2 rounded border" />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold mb-1">Button Link</label>
-                <input name="ctaLink" defaultValue={trainingBannerSettings?.ctaLink} required className="w-full p-2 rounded border" />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold mb-1">WhatsApp Number</label>
-                <input name="whatsappNumber" defaultValue={trainingBannerSettings?.whatsappNumber || "918319668016"} required className="w-full p-2 rounded border" />
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-semibold mb-1">Background Media (Image or Video)</label>
-              <input type="file" name="media" accept="image/*,video/mp4,video/webm" className="w-full p-2 rounded border bg-white" />
-              {trainingBannerSettings?.mediaUrl && <p className="mt-2 text-sm text-green-600 font-medium">Current media is active.</p>}
-            </div>
-            <button type="submit" disabled={trainingBannerLoading} className="btn-peacock mt-4 w-full sm:w-auto">
-              {trainingBannerLoading ? "Saving..." : "Save Training Banner"}
-            </button>
-          </form>
-        </div>
-      )}
 
-      {activeTab === "success_stories" && (
-        <SuccessStoriesAdmin />
-      )}
 
       {activeTab === "instagram" && (
         <div>

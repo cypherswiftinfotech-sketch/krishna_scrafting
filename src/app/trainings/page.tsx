@@ -140,7 +140,8 @@ export default function TrainingsRedesignPage() {
     fetch("/api/training-banner")
       .then(res => res.json())
       .then(data => {
-        if (data.banner) setBanner(data.banner);
+        if (data.settings) setBanner(data.settings);
+        else if (data.banner) setBanner(data.banner);
       })
       .catch(console.error);
 
@@ -192,33 +193,32 @@ export default function TrainingsRedesignPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-[72px]" style={{ fontFamily: "var(--font-body)" }}>
+    <div className="min-h-screen bg-gray-50 pt-0" style={{ fontFamily: "var(--font-body)" }}>
       
       {/* SECTION 1: HERO SECTION */}
-      <section className="relative w-full h-[85vh] min-h-[600px] flex flex-col justify-center overflow-hidden bg-gray-900">
+      <section className="relative w-full h-screen min-h-[600px] flex flex-col justify-center overflow-hidden bg-black">
         {banner?.mediaUrl ? (
           banner.mediaUrl.match(/\.(mp4|webm)$/i) ? (
-            <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-40">
+            <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover">
               <source src={banner.mediaUrl} type="video/mp4" />
             </video>
           ) : (
-            <div className="absolute inset-0 w-full h-full">
-              <Image src={banner.mediaUrl} alt="Training Background" fill className="object-cover opacity-40" />
-            </div>
+            <Image src={banner.mediaUrl} alt="Training Background" fill className="object-cover" />
           )
-        ) : (
-          <div className="absolute inset-0 bg-black/60"></div>
-        )}
+        ) : null}
+        
+        {/* Dark overlay for readability */}
+        <div className="absolute inset-0 bg-black/65 backdrop-blur-[2px]"></div>
         
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mt-10">
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-6 drop-shadow-xl" style={{ fontFamily: "var(--font-heading)" }}>
             Become a Certified <br className="hidden md:block"/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080]">Epoxy Resin Professional</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-teal-400 drop-shadow-md">Epoxy Resin Professional</span>
           </h1>
-          <h2 className="text-xl md:text-2xl font-bold text-gray-200 mb-6 tracking-wide uppercase">
+          <h2 className="text-xl md:text-2xl font-bold text-white mb-6 tracking-wide uppercase drop-shadow">
             Professional Epoxy Resin Training & Certification Programs
           </h2>
-          <p className="text-lg md:text-xl text-gray-300 max-w-4xl mx-auto mb-10 leading-relaxed drop-shadow-md">
+          <p className="text-lg md:text-xl text-gray-200 max-w-4xl mx-auto mb-10 leading-relaxed drop-shadow">
             Master premium epoxy resin techniques through hands-on practical training. Learn to create luxury resin products, epoxy furniture, river tables, metallic flooring, home décor, and corporate projects while building a successful creative business.
           </p>
           
@@ -271,7 +271,7 @@ export default function TrainingsRedesignPage() {
       <section className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-black text-[#0f52ba] mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+            <h2 className="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-4" style={{ fontFamily: "var(--font-heading)" }}>
               Available Training Programs
             </h2>
             <p className="text-gray-600 text-lg max-w-2xl mx-auto">
@@ -296,7 +296,7 @@ export default function TrainingsRedesignPage() {
                 </div>
                 <div className="p-8 flex-grow flex flex-col justify-between">
                   <div>
-                    <h3 className="text-2xl font-black text-[#0f52ba] mb-4 leading-tight group-hover:text-[#008080] transition-colors">
+                    <h3 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-4 leading-tight group-hover:text-[#008080] transition-colors">
                       {course.title}
                     </h3>
                     <p className="text-gray-600 mb-6 line-clamp-3">
@@ -369,7 +369,7 @@ export default function TrainingsRedesignPage() {
                               {!isEven ? <span className="hidden md:inline-block w-6 h-0.5 bg-[#008080]"></span> : null}
                               <span className="inline-block md:hidden w-6 h-0.5 bg-[#008080]"></span>
                             </span>
-                            <h3 className="text-xl md:text-2xl font-black text-[#0f52ba] leading-tight">{step}</h3>
+                            <h3 className="text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] leading-tight">{step}</h3>
                           </div>
                         </div>
                       </div>
@@ -386,7 +386,7 @@ export default function TrainingsRedesignPage() {
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-black text-[#0f52ba]" style={{ fontFamily: "var(--font-heading)" }}>
+            <h2 className="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080]" style={{ fontFamily: "var(--font-heading)" }}>
               What You'll Learn
             </h2>
           </div>
@@ -457,7 +457,7 @@ export default function TrainingsRedesignPage() {
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-black text-[#0f52ba]" style={{ fontFamily: "var(--font-heading)" }}>
+            <h2 className="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080]" style={{ fontFamily: "var(--font-heading)" }}>
               Career Opportunities
             </h2>
             <p className="text-gray-600 text-lg max-w-2xl mx-auto">
@@ -479,7 +479,7 @@ export default function TrainingsRedesignPage() {
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-black text-[#0f52ba] mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+            <h2 className="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-4" style={{ fontFamily: "var(--font-heading)" }}>
               Why Choose Our Institute?
             </h2>
           </div>
@@ -502,7 +502,7 @@ export default function TrainingsRedesignPage() {
         <section className="py-20 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-5xl font-black text-[#0f52ba] mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+              <h2 className="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-4" style={{ fontFamily: "var(--font-heading)" }}>
                 Student Success Stories
               </h2>
             </div>
@@ -534,7 +534,7 @@ export default function TrainingsRedesignPage() {
       <section className="py-20 bg-gray-50">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-5xl font-black text-[#0f52ba] mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+            <h2 className="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-4" style={{ fontFamily: "var(--font-heading)" }}>
               Frequently Asked Questions
             </h2>
           </div>
@@ -562,7 +562,7 @@ export default function TrainingsRedesignPage() {
       {/* SECTION 12: READY TO BEGIN */}
       <section className="py-24 bg-white border-t border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl md:text-5xl font-black text-[#0f52ba] mb-6" style={{ fontFamily: "var(--font-heading)" }}>
+          <h2 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-6" style={{ fontFamily: "var(--font-heading)" }}>
             Ready to Start Your Journey?
           </h2>
           <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">

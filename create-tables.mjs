@@ -1,6 +1,9 @@
 import { Pool } from 'pg';
+import dotenv from 'dotenv';
+dotenv.config({ path: '.env.local' });
+
 const pool = new Pool({
-  connectionString: "postgresql://postgres:strongpassword%40123%40@db.hosspruhzrversremqef.supabase.co:5432/postgres"
+  connectionString: process.env.DATABASE_URL
 });
 
 async function run() {

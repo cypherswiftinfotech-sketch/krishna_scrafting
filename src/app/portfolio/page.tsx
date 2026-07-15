@@ -55,10 +55,10 @@ export default function PortfolioPage() {
       : items.filter((i) => i.category === activeFilter);
 
   return (
-    <div className="min-h-screen bg-white pt-24 pb-20" style={{ fontFamily: "var(--font-body)" }}>
+    <div className="min-h-screen bg-white pt-0 pb-20" style={{ fontFamily: "var(--font-body)" }}>
       
       {/* Page Header */}
-      <div className="relative mb-16 flex flex-col justify-center min-h-[300px] overflow-hidden">
+      <div className="relative mb-16 flex flex-col justify-center min-h-[50vh] overflow-hidden pt-24">
         {settings?.heroVideoUrl && (
           <div className="absolute inset-0 z-0">
             {settings.heroVideoUrl.match(/\.(mp4|webm|ogg)$/i) || settings.heroVideoUrl.includes("video/upload") ? (
