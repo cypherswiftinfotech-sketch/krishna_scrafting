@@ -315,7 +315,7 @@ export default function ProductDetailPage() {
               {related.map((rp) => (
                 <Link
                   key={rp.id}
-                  href={`/store/${rp.mainCategory ? rp.mainCategory.toLowerCase().replace(/[^a-z0-9]+/g, '') : categorySlug}/${encodeURIComponent(rp.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'))}-${rp.id}`}
+                  href={`/store/${rp.category ? rp.category.toLowerCase().replace(/[^a-z0-9]+/g, '') : categorySlug}/${encodeURIComponent(rp.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'))}-${rp.id}`}
                   className="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-lg hover:border-gray-200 transition-all"
                 >
                   <div className="relative aspect-square bg-gray-50 overflow-hidden">
