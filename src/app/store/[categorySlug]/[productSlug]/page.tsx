@@ -42,7 +42,8 @@ const highlights = [
 ];
 
 export default function ProductDetailPage() {
-  const { id } = useParams<{ id: string }>();
+  const { categorySlug, productSlug } = useParams<{ categorySlug: string, productSlug: string }>();
+  const id = productSlug ? productSlug.split('-').pop() : null;
   const router = useRouter();
   const addItem = useCartStore((s) => s.addItem);
 
@@ -99,7 +100,7 @@ export default function ProductDetailPage() {
     return (
       <div className="pt-24 min-h-screen bg-white flex flex-col items-center justify-center gap-4">
         <p className="text-gray-500 text-lg">Product not found</p>
-        <Link href="/store" className="text-amber-600 hover:underline font-medium">
+        <Link href={`/store/${categorySlug}`} className="text-amber-600 hover:underline font-medium">
           Back to Store
         </Link>
       </div>
@@ -113,7 +114,7 @@ export default function ProductDetailPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-2 text-sm text-gray-500">
           <Link href="/" className="hover:text-black transition-colors">Home</Link>
           <span>/</span>
-          <Link href="/store" className="hover:text-black transition-colors">Store</Link>
+          <Link href={`/store/${categorySlug}`} className="hover:text-black transition-colors">Store</Link>
           <span>/</span>
           <span className="text-gray-900 font-medium truncate">{product.name}</span>
         </div>
@@ -176,7 +177,7 @@ export default function ProductDetailPage() {
             {/* Price */}
             <div className="flex items-baseline gap-3 mb-6">
               <span className="text-4xl font-black" style={{ color: "#b45309" }}>
-                ₹{Number(product.price).toLocaleString("en-IN")}
+                Custom Price
               </span>
               <span className="text-sm text-green-600 font-medium bg-green-50 px-2 py-1 rounded-full">
                 Free Shipping
@@ -230,7 +231,7 @@ export default function ProductDetailPage() {
                     className="flex-1 flex items-center justify-center gap-3 py-4 text-lg font-bold text-white rounded-xl transition-all hover:scale-[1.02] shadow-lg"
                     style={{ background: "var(--blue-gradient)" }}
                   >
-                    Shop — ₹{(Number(product.price) * qty).toLocaleString("en-IN")}
+                    Shop
                     <ArrowRight className="w-5 h-5" />
                   </button>
                   <button
@@ -314,7 +315,7 @@ export default function ProductDetailPage() {
               {related.map((rp) => (
                 <Link
                   key={rp.id}
-                  href={`/store/${rp.id}`}
+                  href={`/store/${rp.mainCategory ? rp.mainCategory.toLowerCase().replace(/[^a-z0-9]+/g, '') : categorySlug}/${encodeURIComponent(rp.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'))}-${rp.id}`}
                   className="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-lg hover:border-gray-200 transition-all"
                 >
                   <div className="relative aspect-square bg-gray-50 overflow-hidden">
@@ -335,7 +336,7 @@ export default function ProductDetailPage() {
                     <p className="text-gray-900 font-semibold text-sm line-clamp-2 mb-1">{rp.name}</p>
                     <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">{rp.category}</p>
                     <p className="font-black text-amber-700">
-                      ₹{Number(rp.price).toLocaleString("en-IN")}
+                      Custom Price
                     </p>
                   </div>
                 </Link>

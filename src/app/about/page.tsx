@@ -140,7 +140,7 @@ export default function AboutPage() {
       {gallery.length > 0 && (
         <section className="py-24 bg-gray-950 overflow-hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 text-center">
-            <h2 className="text-3xl md:text-5xl font-black text-white mb-4">
+            <h2 className="text-3xl md:text-5xl font-black text-white-force mb-4">
               Our Journey in Pictures
             </h2>
             <p className="text-gray-400 max-w-2xl mx-auto text-lg">
@@ -159,7 +159,7 @@ export default function AboutPage() {
                     />
                     {img.caption && (
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                         <p className="text-white text-sm font-medium">{img.caption}</p>
+                         <p className="text-white-force text-sm font-medium">{img.caption}</p>
                       </div>
                     )}
                   </div>
@@ -194,26 +194,22 @@ export default function AboutPage() {
                     )}
                   >
                     {/* Image Side */}
-                    <div className="w-full md:w-1/2 flex justify-center">
-                      <div className="relative w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-full overflow-hidden shadow-2xl border-8 border-gray-50 bg-gray-100">
-                        {partner.imageUrl ? (
+                    {partner.imageUrl && (
+                      <div className="w-full md:w-1/2 flex justify-center">
+                        <div className="relative w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-full overflow-hidden shadow-2xl border-8 border-gray-50 bg-gray-100">
                           <img
                             src={partner.imageUrl}
                             alt={partner.name}
                             className="w-full h-full object-cover"
                           />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-400">
-                            <Star className="w-16 h-16" />
-                          </div>
-                        )}
-                        {/* Decorative ring */}
-                        <div className="absolute inset-0 rounded-full border border-gray-200/50" />
+                          {/* Decorative ring */}
+                          <div className="absolute inset-0 rounded-full border border-gray-200/50" />
+                        </div>
                       </div>
-                    </div>
+                    )}
 
                     {/* Content Side */}
-                    <div className="w-full md:w-1/2 text-center md:text-left">
+                    <div className={cn("w-full text-center", partner.imageUrl ? "md:w-1/2 md:text-left" : "max-w-4xl mx-auto")}>
                       <h3 className="text-3xl lg:text-4xl font-black text-gray-900 mb-2">
                         {partner.name}
                       </h3>

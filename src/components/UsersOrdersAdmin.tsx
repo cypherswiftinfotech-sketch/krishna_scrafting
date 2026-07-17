@@ -85,7 +85,7 @@ export default function UsersOrdersAdmin() {
         <button
           onClick={() => setViewTab("orders")}
           className={`px-4 py-2 font-bold text-sm uppercase tracking-wider rounded-md transition-colors ${
-            viewTab === "orders" ? "bg-[#1c1d1f] text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+            viewTab === "orders" ? "bg-[#135db6] text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
           }`}
         >
           Orders
@@ -93,7 +93,7 @@ export default function UsersOrdersAdmin() {
         <button
           onClick={() => setViewTab("users")}
           className={`px-4 py-2 font-bold text-sm uppercase tracking-wider rounded-md transition-colors ${
-            viewTab === "users" ? "bg-[#1c1d1f] text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+            viewTab === "users" ? "bg-[#135db6] text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
           }`}
         >
           Users
@@ -178,23 +178,40 @@ export default function UsersOrdersAdmin() {
           </table>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {users.map(user => (
-            <div key={user.id} className="bg-white border rounded-xl p-5 hover:shadow-lg transition-all" style={{ borderColor: "var(--cream-white-border)" }}>
-              <div className="flex justify-between items-start mb-2">
-                <h3 className="font-bold text-lg text-gray-900">{user.name}</h3>
-                <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${user.role === 'admin' ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-600'}`}>
-                  {user.role}
-                </span>
-              </div>
-              <p className="text-gray-500 text-sm mb-1">{user.email}</p>
-              {user.phone && <p className="text-gray-500 text-sm mb-3">Phone: {user.phone}</p>}
-              <p className="text-xs text-gray-400 mt-4">Joined: {new Date(user.createdAt).toLocaleDateString()}</p>
-            </div>
-          ))}
-          {users.length === 0 && (
-            <div className="col-span-full py-8 text-center text-gray-500">No users found.</div>
-          )}
+        <div className="overflow-x-auto bg-white border rounded-lg shadow-sm" style={{ borderColor: "var(--cream-white-border)" }}>
+          <table className="min-w-full divide-y divide-gray-200 text-sm">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left font-bold text-gray-500 uppercase">Name</th>
+                <th className="px-6 py-3 text-left font-bold text-gray-500 uppercase">Email</th>
+                <th className="px-6 py-3 text-left font-bold text-gray-500 uppercase">Phone</th>
+                <th className="px-6 py-3 text-left font-bold text-gray-500 uppercase">Role</th>
+                <th className="px-6 py-3 text-left font-bold text-gray-500 uppercase">Joined</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {users.map(user => (
+                <tr key={user.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{user.name}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-gray-500">{user.email}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-gray-500">{user.phone || "-"}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${user.role === 'admin' ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-600'}`}>
+                      {user.role}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-gray-500 text-xs">
+                    {new Date(user.createdAt).toLocaleDateString()}
+                  </td>
+                </tr>
+              ))}
+              {users.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="px-6 py-8 text-center text-gray-500">No users found.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       )}
     </div>

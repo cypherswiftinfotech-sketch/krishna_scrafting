@@ -75,7 +75,7 @@ const PrimaryButton = ({ children, className = "", onClick, icon }: any) => (
 const ProductCard = ({ product }: any) => (
   <div className="bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-lg shadow-gray-200/40 hover:-translate-y-2 hover:shadow-2xl transition-all group flex flex-col h-full relative">
     {product.badge && (
-      <div className={`absolute top-4 left-4 z-10 px-3 py-1 rounded-full text-xs font-bold text-white shadow-md ${product.badge === 'NEW' ? 'bg-[#ff4d4d]' : 'bg-[#135db6]'}`}>
+      <div className={`absolute top-4 left-4 z-10 px-3 py-1 rounded-full text-xs font-bold text-white-force shadow-md ${product.badge === 'NEW' ? 'bg-[#ff4d4d]' : 'bg-[#135db6]'}`}>
         {product.badge}
       </div>
     )}
@@ -97,7 +97,7 @@ const ProductCard = ({ product }: any) => (
         <div>
           <span className="text-2xl font-black text-[#135db6]">₹{product.price}</span>
         </div>
-        <button suppressHydrationWarning onClick={() => toast.success("Added to cart")} className="w-10 h-10 rounded-full bg-gray-50 text-gray-900 flex items-center justify-center hover:bg-[#135db6] hover:text-white transition-colors border border-gray-200 hover:border-transparent">
+        <button suppressHydrationWarning onClick={() => toast.success("Added to cart")} className="w-10 h-10 rounded-full bg-gray-50 text-gray-900 flex items-center justify-center hover:bg-[#135db6] hover:text-white-force transition-colors border border-gray-200 hover:border-transparent">
           <ShoppingCart className="w-5 h-5" />
         </button>
       </div>
@@ -230,7 +230,7 @@ export default function AccessoriesPage() {
       )}
 
       {/* 1. HERO SECTION */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden bg-white pt-20">
+      <section className="relative h-[52vh] min-h-[380px] flex items-center justify-center overflow-hidden bg-white pt-10">
         <div className="absolute inset-0 z-0 overflow-hidden group">
           {settings?.heroVideoUrl ? (
             settings?.heroVideoUrl?.match(/\.(mp4|webm|ogg)$/i) || settings?.heroVideoUrl?.includes("video/upload") ? (
@@ -258,14 +258,14 @@ export default function AccessoriesPage() {
         </div>
         
         <div className="relative z-20 text-center max-w-5xl px-4 flex flex-col items-center">
-          <div className="inline-block px-4 py-1.5 rounded-full border border-white/20 bg-white/10 text-[#ffffff] text-sm font-semibold tracking-widest uppercase mb-6 backdrop-blur-sm">
+          <div className="inline-block px-4 py-1.5 rounded-full border border-white/20 bg-white/10 text-[#ffffff] text-xs font-semibold tracking-widest uppercase mb-4 backdrop-blur-sm">
             Premium Epoxy Accessories
           </div>
-          <h1 className="text-5xl md:text-7xl font-black text-[#ffffff] mb-6 leading-tight drop-shadow-lg">
+          <h1 className="text-4xl md:text-6xl font-black text-[#ffffff] mb-4 leading-tight drop-shadow-lg">
             Everything You Need to <br className="hidden md:block" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4db4ff] to-[#00d0e8] drop-shadow-md">Create Beautiful Resin Art</span>
           </h1>
-          <div className="flex flex-col sm:flex-row gap-5 mt-10">
+          <div className="flex flex-col sm:flex-row gap-4 mt-6">
             <PrimaryButton className="px-10 py-5 text-lg" onClick={() => document.getElementById('shop')?.scrollIntoView({ behavior: 'smooth' })}>
               Shop Now
             </PrimaryButton>
@@ -386,7 +386,7 @@ export default function AccessoriesPage() {
         
         {kits.length >= 3 && kits.length % 3 !== 0 && (
           <div className="mt-12 text-center">
-            <button onClick={() => setShowAllKits(!showAllKits)} className="px-8 py-3 rounded-full border-2 border-[#135db6] text-[#135db6] font-bold hover:bg-[#135db6] hover:text-white transition-all">
+            <button onClick={() => setShowAllKits(!showAllKits)} className="px-8 py-3 rounded-full border-2 border-[#135db6] text-[#135db6] font-bold hover:bg-[#135db6] hover:text-white-force transition-all">
               {showAllKits ? "View Less" : "View More Kits"}
             </button>
           </div>
@@ -456,7 +456,7 @@ export default function AccessoriesPage() {
         
         {guides.length >= 3 && guides.length % 3 !== 0 && (
           <div className="mt-12 text-center">
-            <button onClick={() => setShowAllGuides(!showAllGuides)} className="px-8 py-3 rounded-full border-2 border-[#135db6] text-[#135db6] font-bold hover:bg-[#135db6] hover:text-white transition-all">
+            <button onClick={() => setShowAllGuides(!showAllGuides)} className="px-8 py-3 rounded-full border-2 border-[#135db6] text-[#135db6] font-bold hover:bg-[#135db6] hover:text-white-force transition-all">
               {showAllGuides ? "View Less" : "View More Guides"}
             </button>
           </div>
@@ -579,7 +579,7 @@ export default function AccessoriesPage() {
               onChange={(e) => setEmail(e.target.value)}
               className="flex-grow px-6 py-4 rounded-full text-gray-900 text-lg bg-white border-2 border-gray-100 focus:outline-none focus:ring-4 focus:ring-[#1a56db]/20 focus:border-[#1a56db] transition-all shadow-sm"
             />
-            <button suppressHydrationWarning type="submit" className="px-10 py-4 bg-[#1a56db] text-white font-semibold text-lg rounded-full hover:bg-[#1e40af] transition-colors shadow-md hover:shadow-lg hover:-translate-y-0.5 whitespace-nowrap">
+            <button suppressHydrationWarning type="submit" className="px-10 py-4 bg-[#1a56db] text-white-force font-semibold text-lg rounded-full hover:bg-[#1e40af] transition-colors shadow-md hover:shadow-lg hover:-translate-y-0.5 whitespace-nowrap">
               Join waitlist
             </button>
           </form>
@@ -595,7 +595,7 @@ export default function AccessoriesPage() {
               </div>
               
               <div className="flex items-center bg-gray-100 rounded-full pl-1 pr-6 py-1 shadow-inner border border-gray-200">
-                <div className="w-10 h-10 bg-[#1a56db] rounded-full flex items-center justify-center text-white font-bold text-sm shadow-md">
+                <div className="w-10 h-10 bg-[#1a56db] rounded-full flex items-center justify-center text-white-force font-bold text-sm shadow-md">
                   {subscriberCount}
                 </div>
                 <span className="ml-3 text-gray-600 font-medium tracking-wide">Joined already</span>

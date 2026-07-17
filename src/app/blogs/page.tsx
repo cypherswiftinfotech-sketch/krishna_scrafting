@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Image as ImageIcon } from "lucide-react";
 import PageHeroSlider from "@/components/PageHeroSlider";
+import { slugify } from "@/lib/utils";
 
 interface Blog {
   id: number;
@@ -43,7 +44,7 @@ export default function BlogsPage() {
   }, [activeCategory]);
 
   return (
-    <div className="min-h-screen bg-black text-white pb-20 font-sans selection:bg-teal-500/30">
+    <div className="min-h-screen bg-black text-white-force pb-20 font-sans selection:bg-teal-500/30">
 
       {/* Hero Slider */}
       <div>
@@ -68,8 +69,8 @@ export default function BlogsPage() {
               onClick={() => setActiveCategory(c)}
               className={`px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all ${
                 activeCategory === c 
-                  ? "bg-gradient-to-r from-blue-600 to-teal-500 text-white shadow-[0_0_15px_rgba(45,212,191,0.5)] scale-105" 
-                  : "bg-gray-900 text-gray-400 hover:bg-gray-800 hover:text-white"
+                  ? "bg-gradient-to-r from-blue-600 to-teal-500 text-white-force shadow-[0_0_15px_rgba(45,212,191,0.5)] scale-105" 
+                  : "bg-gray-900 text-gray-400 hover:bg-gray-800 hover:text-white-force"
               }`}
               style={{ color: activeCategory === c ? "#ffffff" : undefined }}
             >
@@ -87,7 +88,7 @@ export default function BlogsPage() {
           <>
             <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
               {(showAllBlogs ? blogs : blogs.slice(0, blogs.length >= 4 ? blogs.length - (blogs.length % 4) : blogs.length)).map(blog => (
-                <Link key={blog.id} href={`/blogs/${blog.id}`} className="block break-inside-avoid group">
+                <Link key={blog.id} href={`/blogs/${slugify(blog.title)}-${blog.id}`} className="block break-inside-avoid group">
                   <div className="bg-[#111] rounded-2xl overflow-hidden border border-gray-800 hover:border-teal-500/50 transition-all duration-500 hover:-translate-y-2 shadow-2xl">
                     
                     {/* Image Container */}

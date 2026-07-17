@@ -74,11 +74,14 @@ export const portfolio = pgTable("portfolio", {
   imageUrl: text("image_url").notNull(),
   imagePublicId: text("image_public_id"),
   category: varchar("category", { length: 100 }),
+  subCategory: varchar("sub_category", { length: 100 }),
   featured: boolean("featured").default(false).notNull(),
   sortOrder: integer("sort_order").default(0).notNull(),
   cost: varchar("cost", { length: 100 }),
   place: varchar("place", { length: 255 }),
   review: text("review"),
+  reviewPhotoUrl: text("review_photo_url"),
+  clientExperience: text("client_experience"),
   socialLink: varchar("social_link", { length: 1000 }),
   additionalImages: text("additional_images"), // JSON string of array of URLs
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -159,6 +162,9 @@ export const trainingBannerSettings = pgTable("training_banner_settings", {
   ctaText: varchar("cta_text", { length: 100 }),
   ctaLink: varchar("cta_link", { length: 255 }).default("/trainings"),
   whatsappNumber: varchar("whatsapp_number", { length: 50 }).default("918319668016"),
+  youtubeVideoUrl: text("youtube_video_url"),
+  youtubeVideoBackgroundUrl: text("youtube_video_background_url"),
+  youtubeVideoBackgroundPublicId: text("youtube_video_background_public_id"),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
@@ -220,6 +226,8 @@ export const trainings = pgTable("trainings", {
   seats: integer("seats").default(10),
   imageUrl: varchar("image_url", { length: 1000 }),
   videoUrl: varchar("video_url", { length: 1000 }),
+  youtubeThumbnailUrl: varchar("youtube_thumbnail_url", { length: 1000 }),
+  youtubeThumbnailPublicId: varchar("youtube_thumbnail_public_id", { length: 255 }),
   learnings: text("learnings"),
   fullDetails: text("full_details"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -435,6 +443,20 @@ export const portfolioSettings = pgTable("portfolio_settings", {
   heroVideoPublicId: text("hero_video_public_id"),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
+export const portfolioRequests = pgTable("portfolio_requests", {
+  id: serial("id").primaryKey(),
+  portfolioId: integer("portfolio_id").references(() => portfolio.id, { onDelete: "cascade" }),
+  portfolioTitle: varchar("portfolio_title", { length: 255 }).notNull(),
+  customerName: varchar("customer_name", { length: 255 }).notNull(),
+  customerPhone: varchar("customer_phone", { length: 50 }).notNull(),
+  message: text("message"),
+  status: varchar("status", { length: 50 }).default("new").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export type PortfolioRequest = typeof portfolioRequests.$inferSelect;
+export type NewPortfolioRequest = typeof portfolioRequests.$inferInsert;
 
 export const accessoriesKits = pgTable("accessories_kits", {
   id: serial("id").primaryKey(),

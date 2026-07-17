@@ -102,7 +102,7 @@ export default function SuccessStoriesAdmin() {
               <button
                 key={t}
                 onClick={() => setType(t)}
-                className={`px-4 py-2 rounded-xl border text-sm font-bold flex items-center gap-2 transition-colors ${type === t ? "bg-[#0f52ba] text-white border-[#0f52ba]" : "bg-gray-50 hover:bg-gray-100"}`}
+                className={`px-4 py-2 rounded-xl border text-sm font-bold flex items-center gap-2 transition-colors ${type === t ? "bg-gradient-to-r from-[#0f52ba] to-[#008080] text-white border-transparent bg-clip-border bg-gradient-to-r from-[#0f52ba] to-[#008080]" : "bg-gray-50 hover:bg-gray-100"}`}
               >
                 {t === "review" && <Star className="w-4 h-4" />}
                 {t === "video" && <Video className="w-4 h-4" />}

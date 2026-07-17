@@ -28,13 +28,17 @@ export async function PUT(req: NextRequest) {
     const ctaText = formData.get("ctaText") as string;
     const ctaLink = formData.get("ctaLink") as string;
     const whatsappNumber = formData.get("whatsappNumber") as string;
+    const youtubeVideoUrl = formData.get("youtubeVideoUrl") as string;
     const file = formData.get("media") as File | null;
+    const youtubeBgFile = formData.get("youtubeVideoBackground") as File | null;
 
     const rows = await db.select().from(trainingBannerSettings).limit(1);
     const existing = rows[0];
 
     let mediaUrl = existing?.mediaUrl ?? null;
     let mediaPublicId = existing?.mediaPublicId ?? null;
+    let youtubeVideoBackgroundUrl = existing?.youtubeVideoBackgroundUrl ?? null;
+    let youtubeVideoBackgroundPublicId = existing?.youtubeVideoBackgroundPublicId ?? null;
 
     if (file && file.size > 0) {
       if (mediaPublicId) await deleteFromCloudinary(mediaPublicId);
@@ -45,17 +49,26 @@ export async function PUT(req: NextRequest) {
       }
     }
 
+    if (youtubeBgFile && youtubeBgFile.size > 0) {
+      if (youtubeVideoBackgroundPublicId) await deleteFromCloudinary(youtubeVideoBackgroundPublicId);
+      const uploaded = await uploadToCloudinary(youtubeBgFile, "training_banner_youtube_bg");
+      if (uploaded) {
+        youtubeVideoBackgroundUrl = uploaded.url;
+        youtubeVideoBackgroundPublicId = uploaded.publicId;
+      }
+    }
+
     let updated;
     if (existing) {
       const [r] = await db
         .update(trainingBannerSettings)
-        .set({ headline, subheadline, ctaText, ctaLink, whatsappNumber, mediaUrl, mediaPublicId, updatedAt: new Date() })
+        .set({ headline, subheadline, ctaText, ctaLink, whatsappNumber, youtubeVideoUrl, mediaUrl, mediaPublicId, youtubeVideoBackgroundUrl, youtubeVideoBackgroundPublicId, updatedAt: new Date() })
         .returning();
       updated = r;
     } else {
       const [r] = await db
         .insert(trainingBannerSettings)
-        .values({ headline, subheadline, ctaText, ctaLink, whatsappNumber, mediaUrl, mediaPublicId })
+        .values({ headline, subheadline, ctaText, ctaLink, whatsappNumber, youtubeVideoUrl, mediaUrl, mediaPublicId, youtubeVideoBackgroundUrl, youtubeVideoBackgroundPublicId })
         .returning();
       updated = r;
     }

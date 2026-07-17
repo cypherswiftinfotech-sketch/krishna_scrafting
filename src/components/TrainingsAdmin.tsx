@@ -35,7 +35,8 @@ export default function TrainingsAdmin() {
   const [editTraining, setEditTraining] = useState<Training | null>(null);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [file, setFile] = useState<File | null>(null);
-  const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [youtubeThumbnailFile, setYoutubeThumbnailFile] = useState<File | null>(null);
+  const [videoUrl, setVideoUrl] = useState<string>("");
 
   const [activeSubTab, setActiveSubTab] = useState<"courses" | "banner" | "success_stories">("courses");
 
@@ -93,7 +94,8 @@ export default function TrainingsAdmin() {
 
     const formData = new FormData(e.currentTarget);
     if (file) formData.append("image", file);
-    if (videoFile) formData.append("video", videoFile);
+    if (youtubeThumbnailFile) formData.append("youtubeThumbnail", youtubeThumbnailFile);
+    formData.append("videoUrlString", videoUrl);
 
     const url = editTraining ? `/api/trainings/${editTraining.id}` : "/api/trainings";
     const method = editTraining ? "PUT" : "POST";
@@ -110,7 +112,7 @@ export default function TrainingsAdmin() {
       setEditTraining(null);
       setIsAdding(false);
       setFile(null);
-      setVideoFile(null);
+      setVideoUrl("");
       fetchTrainings();
     } catch (err: any) {
       toast.error(err.message || "Error");
@@ -211,8 +213,8 @@ export default function TrainingsAdmin() {
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold mb-1">Price (₹)</label>
-                    <input name="price" type="number" step="0.01" defaultValue={editTraining?.price || "0"} required className="w-full p-2 border rounded" />
+                    <label className="block text-sm font-semibold mb-1">Price (₹ or Custom)</label>
+                    <input name="price" type="text" defaultValue={editTraining?.price || "Custom Price"} required className="w-full p-2 border rounded" />
                   </div>
                   <div>
                     <label className="block text-sm font-semibold mb-1">Duration</label>
@@ -234,11 +236,19 @@ export default function TrainingsAdmin() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold mb-1">Background Video <span className="text-gray-400 font-normal text-xs">(plays behind the course title on the details page)</span></label>
-                  {editTraining?.videoUrl && (
-                    <div className="mb-2 text-xs text-green-600 font-medium">✓ Video already uploaded — upload a new one to replace it</div>
-                  )}
-                  <input type="file" accept="video/*" onChange={(e) => setVideoFile(e.target.files?.[0] || null)} className="w-full p-2 border rounded" />
+                  <label className="block text-sm font-semibold mb-1">YouTube Video Link <span className="text-gray-400 font-normal text-xs">(for the preview card)</span></label>
+                  <input 
+                    type="url" 
+                    placeholder="https://www.youtube.com/watch?v=..."
+                    defaultValue={editTraining?.videoUrl || ""}
+                    onChange={(e) => setVideoUrl(e.target.value)} 
+                    className="w-full p-2 border rounded" 
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold mb-1">YouTube Video Thumbnail (Image) <span className="text-gray-400 font-normal text-xs">(Optional cover for video)</span></label>
+                  <input type="file" accept="image/*" onChange={(e) => setYoutubeThumbnailFile(e.target.files?.[0] || null)} className="w-full p-2 border rounded" />
                 </div>
 
                 <button type="submit" disabled={submitLoading} className="btn-peacock mt-4">
@@ -264,7 +274,7 @@ export default function TrainingsAdmin() {
                   <p className="font-black text-gray-900 mb-4">₹{Number(training.price).toLocaleString("en-IN")}</p>
                   
                   <div className="mt-auto flex gap-2">
-                    <button onClick={() => { setEditTraining(training); setIsAdding(false); window.scrollTo(0,0); }} className="flex-1 btn-peacock-outline !py-1.5 !text-sm">Edit</button>
+                    <button onClick={() => { setEditTraining(training); setVideoUrl(training.videoUrl || ""); setIsAdding(false); window.scrollTo(0,0); }} className="flex-1 btn-peacock-outline !py-1.5 !text-sm">Edit</button>
                     <button onClick={() => handleDelete(training.id)} className="flex-1 bg-red-50 text-red-600 font-medium rounded-lg hover:bg-red-100 transition-colors !py-1.5 !text-sm">Delete</button>
                   </div>
                 </div>
@@ -285,6 +295,16 @@ export default function TrainingsAdmin() {
               <label className="block text-sm font-semibold mb-1">WhatsApp Contact Number</label>
               <input name="whatsappNumber" defaultValue={trainingBannerSettings?.whatsappNumber || "918319668016"} required className="w-full p-3 rounded-xl border focus:ring-2 outline-none transition-all" style={{ borderColor: "var(--cream-white-border)" }} />
               <p className="text-xs text-gray-500 mt-1">Include country code (e.g. 91 for India) without the + sign.</p>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-1">YouTube Video Preview Link <span className="text-gray-400 font-normal text-xs">(optional)</span></label>
+              <input name="youtubeVideoUrl" type="url" placeholder="https://www.youtube.com/watch?v=..." defaultValue={trainingBannerSettings?.youtubeVideoUrl || ""} className="w-full p-3 rounded-xl border focus:ring-2 outline-none transition-all" style={{ borderColor: "var(--cream-white-border)" }} />
+              <p className="text-xs text-gray-500 mt-1">This video will be displayed at the bottom right of the Trainings hero section.</p>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-1">YouTube Video Thumbnail Background (Image)</label>
+              <input type="file" name="youtubeVideoBackground" accept="image/*" className="w-full p-3 rounded-xl border bg-white focus:ring-2 outline-none transition-all" style={{ borderColor: "var(--cream-white-border)" }} />
+              {trainingBannerSettings?.youtubeVideoBackgroundUrl && <p className="mt-2 text-sm text-green-600 font-medium">✓ Current thumbnail is active.</p>}
             </div>
             <div>
               <label className="block text-sm font-semibold mb-1">Background Media (Image or Video)</label>

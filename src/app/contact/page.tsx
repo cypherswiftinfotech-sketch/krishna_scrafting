@@ -148,7 +148,7 @@ export default function ContactPage() {
                 </p>
                 <button
                   onClick={() => { setSent(false); setFile(null); }}
-                  className="px-8 py-3 bg-gray-900 hover:bg-black text-white font-bold rounded-xl transition-all"
+                  className="px-8 py-3 bg-gray-900 hover:bg-black text-white-force font-bold rounded-xl transition-all"
                 >
                   Submit Another Request
                 </button>
@@ -234,8 +234,7 @@ export default function ContactPage() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full flex items-center justify-center gap-2 py-4 bg-gray-900 hover:bg-black text-white font-bold text-lg rounded-xl transition-all shadow-lg hover:shadow-xl disabled:opacity-70"
-                    style={{ backgroundColor: "var(--peacock-blue)", color: "#ffffff" }}
+                    className="w-full flex items-center justify-center gap-2 py-4 bg-gradient-to-r from-[#0f52ba] to-[#008080] text-white-force font-bold text-lg rounded-xl transition-all shadow-lg hover:shadow-xl hover:scale-[1.02] disabled:opacity-70"
                   >
                     {loading ? (
                       <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />

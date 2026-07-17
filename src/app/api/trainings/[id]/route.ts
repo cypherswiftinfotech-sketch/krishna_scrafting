@@ -44,7 +44,8 @@ export async function PUT(
   const learnings = formData.get("learnings") as string;
   const fullDetails = formData.get("fullDetails") as string;
   const file = formData.get("image") as File | null;
-  const videoFile = formData.get("video") as File | null;
+  const youtubeThumbnailFile = formData.get("youtubeThumbnail") as File | null;
+  const videoUrlString = formData.get("videoUrlString") as string | null;
   
   let imageUrl = existing.imageUrl;
   if (file && file.size > 0) {
@@ -52,11 +53,17 @@ export async function PUT(
     if (uploaded) imageUrl = uploaded.url;
   }
 
-  let videoUrl = existing.videoUrl;
-  if (videoFile && videoFile.size > 0) {
-    const uploaded = await uploadToCloudinary(videoFile, "trainings/videos");
-    if (uploaded) videoUrl = uploaded.url;
+  let youtubeThumbnailUrl = existing.youtubeThumbnailUrl;
+  let youtubeThumbnailPublicId = existing.youtubeThumbnailPublicId;
+  if (youtubeThumbnailFile && youtubeThumbnailFile.size > 0) {
+    const uploaded = await uploadToCloudinary(youtubeThumbnailFile, "trainings_thumbnails");
+    if (uploaded) {
+      youtubeThumbnailUrl = uploaded.url;
+      youtubeThumbnailPublicId = uploaded.publicId;
+    }
   }
+
+  let videoUrl = videoUrlString !== null ? videoUrlString : existing.videoUrl;
 
   const [updated] = await db
     .update(trainings)
@@ -70,6 +77,8 @@ export async function PUT(
       seats: seats ? parseInt(seats) : existing.seats,
       imageUrl,
       videoUrl,
+      youtubeThumbnailUrl,
+      youtubeThumbnailPublicId,
       learnings: learnings !== null && learnings !== undefined ? learnings : existing.learnings,
       fullDetails: fullDetails !== null && fullDetails !== undefined ? fullDetails : existing.fullDetails,
       updatedAt: new Date(),

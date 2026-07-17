@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, ChevronDown, ChevronUp, MapPin, Calculator, Calendar, Upload, MessageCircle, Phone, X, Target, FileText, PenTool, Hammer, Wrench, ChevronsRight, ChevronsLeft, ChevronsDown } from "lucide-react";
+import { ArrowRight, CheckCircle2, CheckCircle, ChevronDown, ChevronUp, MapPin, Calculator, Calendar, Upload, MessageCircle, Phone, X, Target, FileText, PenTool, Hammer, Wrench, ChevronsRight, ChevronsLeft, ChevronsDown } from "lucide-react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
@@ -28,7 +28,7 @@ const FAQS = [
 const PrimaryButton = ({ children, onClick, className = "", icon = null }: any) => (
   <button 
     onClick={onClick} 
-    className={`bg-gradient-to-r from-[#135db6] to-[#008493] text-white font-bold rounded-full hover:shadow-[0_8px_20px_rgba(19,93,182,0.3)] hover:-translate-y-1 transition-all flex items-center justify-center gap-2 ${className}`}
+    className={`bg-gradient-to-r from-[#135db6] to-[#008493] text-white-force font-bold rounded-full hover:shadow-[0_8px_20px_rgba(19,93,182,0.3)] hover:-translate-y-1 transition-all flex items-center justify-center gap-2 ${className}`}
   >
     {children} {icon}
   </button>
@@ -61,6 +61,7 @@ export default function CustomSolutionsPage() {
   const [visitModalOpen, setVisitModalOpen] = useState(false);
   const [imageSelectModalOpen, setImageSelectModalOpen] = useState(false);
   const [selectedSolutionImage, setSelectedSolutionImage] = useState<any>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   
   // Calculator State
   const [calcLength, setCalcLength] = useState("");
@@ -228,7 +229,7 @@ Map Link: ${formData.get("mapLocation") || 'N/A'}`;
                       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
                       {heroImages[0].title && (
                         <div className="absolute bottom-6 left-6 right-6">
-                          <span className="!text-white text-2xl md:text-3xl font-black drop-shadow-lg leading-tight block">{heroImages[0].title}</span>
+                          <span className="text-white-force text-2xl md:text-3xl font-black drop-shadow-2xl leading-tight block">{heroImages[0].title}</span>
                         </div>
                       )}
                     </>
@@ -250,7 +251,7 @@ Map Link: ${formData.get("mapLocation") || 'N/A'}`;
                         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
                         {heroImages[1].title && (
                           <div className="absolute bottom-5 left-5 right-5">
-                            <span className="!text-white text-xl md:text-2xl font-black drop-shadow-lg leading-tight block">{heroImages[1].title}</span>
+                            <span className="text-white-force text-xl md:text-2xl font-black drop-shadow-2xl leading-tight block">{heroImages[1].title}</span>
                           </div>
                         )}
                       </>
@@ -268,7 +269,7 @@ Map Link: ${formData.get("mapLocation") || 'N/A'}`;
                         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
                         {heroImages[2].title && (
                           <div className="absolute bottom-5 left-5 right-5">
-                            <span className="!text-white text-xl md:text-2xl font-black drop-shadow-lg leading-tight block">{heroImages[2].title}</span>
+                            <span className="text-white-force text-xl md:text-2xl font-black drop-shadow-2xl leading-tight block">{heroImages[2].title}</span>
                           </div>
                         )}
                       </>
@@ -470,7 +471,7 @@ Map Link: ${formData.get("mapLocation") || 'N/A'}`;
                   {proj.beforeImageUrl ? <img src={proj.beforeImageUrl} className="absolute inset-0 w-full h-full object-cover" /> : "📷"}
                 </div>
                 <div className="w-1/2 bg-gray-200 flex items-center justify-center text-gray-500 relative overflow-hidden">
-                  <span className="absolute top-2 right-2 bg-gradient-to-r from-[#135db6] to-[#008493] text-xs px-2 py-1 rounded shadow-sm text-white font-bold z-10">After</span>
+                  <span className="absolute top-2 right-2 bg-gradient-to-r from-[#135db6] to-[#008493] text-xs px-2 py-1 rounded shadow-sm text-white-force font-bold z-10">After</span>
                   {proj.afterImageUrl ? <img src={proj.afterImageUrl} className="absolute inset-0 w-full h-full object-cover" /> : "📸"}
                 </div>
               </div>
@@ -683,7 +684,7 @@ Map Link: ${formData.get("mapLocation") || 'N/A'}`;
             <OutlineButton onClick={() => window.location.href='tel:+917204468429'} className="w-full sm:w-auto px-10 py-5 text-lg" icon={<Phone className="w-5 h-5" />}>
               Call Now
             </OutlineButton>
-            <a href="https://wa.me/917204468429" target="_blank" rel="noreferrer" className="w-full sm:w-auto px-10 py-5 bg-[#25D366] hover:bg-[#1ebe57] text-white font-bold rounded-full transition-all hover:shadow-lg hover:-translate-y-1 flex items-center justify-center gap-3 text-lg">
+            <a href="https://wa.me/917204468429" target="_blank" rel="noreferrer" className="w-full sm:w-auto px-10 py-5 bg-[#25D366] hover:bg-[#1ebe57] text-white-force font-bold rounded-full transition-all hover:shadow-lg hover:-translate-y-1 flex items-center justify-center gap-3 text-lg">
               <MessageCircle className="w-6 h-6" /> WhatsApp
             </a>
           </div>
@@ -715,7 +716,7 @@ Map Link: ${formData.get("mapLocation") || 'N/A'}`;
                 >
                   <img src={img.url} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <span className="bg-[#135db6] text-white px-4 py-2 rounded-full font-bold">Select</span>
+                    <span className="bg-[#135db6] text-white-force px-4 py-2 rounded-full font-bold">Select</span>
                   </div>
                 </div>
               ))}
@@ -758,9 +759,19 @@ Map Link: ${formData.get("mapLocation") || 'N/A'}`;
                 <div><label className="block text-sm font-bold text-gray-700 mb-1">Preferred Date</label><input name="preferredDate" type="date" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:border-[#135db6] focus:ring-2 focus:ring-[#135db6]/20 focus:outline-none transition-all" /></div>
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-1">Upload Images</label>
-                  <label className="w-full bg-gray-50 border-2 border-gray-200 border-dashed rounded-xl px-4 py-3 text-gray-500 flex items-center justify-center gap-2 cursor-pointer hover:border-[#135db6] hover:bg-[#135db6]/5 transition-colors">
-                    <Upload className="w-4 h-4" /> <span className="text-sm">Click to Upload</span>
-                    <input type="file" name="image" accept="image/*" className="hidden" />
+                  <label className={`w-full bg-gray-50 border-2 ${selectedFile ? 'border-[#135db6] bg-[#135db6]/5' : 'border-gray-200 border-dashed'} rounded-xl px-4 py-3 text-gray-500 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-[#135db6] hover:bg-[#135db6]/5 transition-colors`}>
+                    {selectedFile ? (
+                      <>
+                        <CheckCircle className="w-5 h-5 text-[#135db6]" />
+                        <span className="text-sm font-medium text-[#135db6] truncate w-full text-center">{selectedFile.name}</span>
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="w-4 h-4" /> 
+                        <span className="text-sm">Click to Upload</span>
+                      </>
+                    )}
+                    <input type="file" name="image" accept="image/*" className="hidden" onChange={(e) => setSelectedFile(e.target.files?.[0] || null)} />
                   </label>
                 </div>
               </div>

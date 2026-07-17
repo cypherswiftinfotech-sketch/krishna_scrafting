@@ -22,10 +22,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${josefinSans.variable} font-sans antialiased`} style={{ backgroundColor: "#ffffff", color: "#1f1f1f" }} suppressHydrationWarning>
+      <body className={`${josefinSans.variable} font-sans antialiased overflow-x-hidden w-full`} style={{ backgroundColor: "#ffffff", color: "#1f1f1f" }} suppressHydrationWarning>
         <Providers>
           <Header />
-          <main className="min-h-screen pt-24">{children}</main>
+          <main className="min-h-screen pt-24 overflow-x-hidden w-full flex flex-col">{children}</main>
           <Footer />
         </Providers>
       </body>

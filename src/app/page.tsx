@@ -278,7 +278,7 @@ export default function HomePage() {
               backdropFilter: "blur(8px)",
             }}
           >
-            <Sparkles className="w-4 h-4" style={{ color: "#a5f3fc" }} />
+            <Sparkles className="w-4 h-4" style={{ color: "#008080" }} />
             <span className="text-sm font-medium" style={{ color: "#ffffff" }}>
               Handcrafted Epoxy Resin Artistry
             </span>
@@ -346,7 +346,7 @@ export default function HomePage() {
           >
             <div
               className="w-1.5 h-3 rounded-full animate-pulse"
-              style={{ backgroundColor: "#a5f3fc" }}
+              style={{ background: "var(--blue-gradient)" }}
             />
           </div>
         </div>
@@ -605,8 +605,7 @@ export default function HomePage() {
               Have Something{" "}
               <span
                 style={{
-                  backgroundImage:
-                    "linear-gradient(to right, #a5f3fc, #ffffff)",
+                  backgroundImage: "var(--blue-gradient)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   backgroundClip: "text",

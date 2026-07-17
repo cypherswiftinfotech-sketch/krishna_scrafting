@@ -16,6 +16,7 @@ export default function SolutionDetailPage() {
   const [allImages, setAllImages] = useState<string[]>([]);
   // The currently selected image for the form reference
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const [quoteLoading, setQuoteLoading] = useState(false);
 
@@ -192,9 +193,19 @@ Requirement: ${formData.get("description") || 'N/A'}`;
               </div>
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-2">Upload Own Images (Optional)</label>
-                <label className="w-full bg-gray-50 border-2 border-gray-200 border-dashed rounded-xl px-4 py-3 text-gray-500 flex items-center justify-center gap-2 cursor-pointer hover:border-[#135db6] hover:bg-[#135db6]/5 transition-colors">
-                  <Upload className="w-4 h-4" /> <span className="text-sm">Click to Upload</span>
-                  <input type="file" name="image" accept="image/*" className="hidden" />
+                <label className={`w-full bg-gray-50 border-2 ${selectedFile ? 'border-[#135db6] bg-[#135db6]/5' : 'border-gray-200 border-dashed'} rounded-xl px-4 py-3 text-gray-500 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-[#135db6] hover:bg-[#135db6]/5 transition-colors`}>
+                  {selectedFile ? (
+                    <>
+                      <CheckCircle className="w-5 h-5 text-[#135db6]" />
+                      <span className="text-sm font-medium text-[#135db6] truncate w-full text-center">{selectedFile.name}</span>
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="w-4 h-4" /> 
+                      <span className="text-sm">Click to Upload</span>
+                    </>
+                  )}
+                  <input type="file" name="image" accept="image/*" className="hidden" onChange={(e) => setSelectedFile(e.target.files?.[0] || null)} />
                 </label>
               </div>
             </div>
@@ -204,7 +215,7 @@ Requirement: ${formData.get("description") || 'N/A'}`;
             </div>
             <button 
               type="submit" 
-              className="w-full bg-[#135db6] hover:bg-[#0f4d99] text-white font-bold py-4 rounded-xl text-lg shadow-lg shadow-[#135db6]/30 transition-all hover:-translate-y-1"
+              className="w-full bg-[#135db6] hover:bg-[#0f4d99] text-white-force font-bold py-4 rounded-xl text-lg shadow-lg shadow-[#135db6]/30 transition-all hover:-translate-y-1"
               disabled={quoteLoading}
             >
               {quoteLoading ? "Submitting Request..." : "Submit Request"}

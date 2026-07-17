@@ -26,7 +26,7 @@ export const pool =
     ssl: { rejectUnauthorized: false },
     connectionTimeoutMillis: 10000,
     idleTimeoutMillis: 30000,
-    max: 1, // serverless-friendly: one connection per function instance
+    max: 20, // Increased for parallel queries
   });
 
 if (process.env.NODE_ENV !== "production") {

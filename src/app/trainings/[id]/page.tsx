@@ -21,6 +21,8 @@ interface Training {
   seats: number | null;
   imageUrl: string | null;
   videoUrl: string | null;
+  youtubeThumbnailUrl: string | null;
+  youtubeThumbnailPublicId: string | null;
   fullDetails: string | null;
 }
 
@@ -46,7 +48,14 @@ export default function TrainingDetailsPage() {
   const [activeMethodologyStep, setActiveMethodologyStep] = useState(0);
   const [showModal, setShowModal] = useState(false); // Counselling
   const [showEnrollModal, setShowEnrollModal] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [banner, setBanner] = useState<{ mediaUrl: string; whatsappNumber?: string } | null>(null);
+
+  const getEmbedUrl = (url: string) => {
+    if (!url) return null;
+    const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+    return match ? `https://www.youtube.com/embed/${match[1]}?autoplay=1` : null;
+  };
 
   useEffect(() => {
     if (!id) return;
@@ -149,60 +158,135 @@ export default function TrainingDetailsPage() {
     );
   if (!course) return null;
 
-  const originalPrice = (Number(course.price) * 1.5).toLocaleString("en-IN");
+  const isCustomPrice = isNaN(Number(course.price));
+  const originalPrice = isCustomPrice ? null : (Number(course.price) * 1.5).toLocaleString("en-IN");
   
   // The layout follows the exact structure provided by the user
   return (
-    <div className="bg-white min-h-screen pt-[72px]" style={{ fontFamily: "var(--font-body)" }}>
+    <div className="bg-white min-h-screen" style={{ fontFamily: "var(--font-body)" }}>
 
       {/* SECTION 1: HERO SECTION */}
-      <section className="relative bg-gray-900 text-white overflow-hidden py-24">
-        {banner?.mediaUrl ? (
-          banner.mediaUrl.match(/\.(mp4|webm)$/i) ? (
-            <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-30">
-              <source src={banner.mediaUrl} />
-            </video>
+      <section className="relative bg-[#000000] text-[#ffffff] py-24 z-10">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+          {banner?.mediaUrl ? (
+            banner.mediaUrl.match(/\.(mp4|webm)$/i) ? (
+              <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover">
+                <source src={banner.mediaUrl} />
+              </video>
+            ) : (
+              <Image src={banner.mediaUrl} alt="Background" fill className="object-cover" />
+            )
           ) : (
-            <div className="absolute inset-0">
-              <Image src={banner.mediaUrl} alt="Background" fill className="object-cover opacity-30" />
+            <div className="absolute inset-0 bg-gradient-to-r from-gray-900 to-black"></div>
+          )}
+          {/* Dark overlay for readability */}
+          <div className="absolute inset-0 bg-[#000000]/70 backdrop-blur-[2px]"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#000000] via-transparent to-transparent"></div>
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col lg:flex-row items-center lg:items-end justify-between gap-12">
+            <div className={`flex-1 text-center ${course.videoUrl ? 'lg:text-left' : ''}`}>
+              <span className="inline-block px-4 py-1.5 bg-gradient-to-r from-[#0f52ba] to-[#008080] text-[#ffffff] font-bold rounded-full text-xs uppercase tracking-widest mb-6">
+                {course.category}
+              </span>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-6 leading-tight text-transparent bg-clip-text bg-gradient-to-r from-[#4aa0ff] to-[#00d8d8] drop-shadow-[0_2px_15px_rgba(0,0,0,0.8)]" style={{ fontFamily: "var(--font-heading)" }}>
+                {details.hero.heading}
+              </h1>
+              <p className={`text-lg text-[#e5e7eb] max-w-4xl mx-auto mb-10 whitespace-pre-line leading-relaxed drop-shadow-md ${course.videoUrl ? 'lg:mx-0 lg:max-w-2xl' : ''}`}>
+                {details.hero.paragraph}
+              </p>
+
+              <div className={`flex flex-wrap items-center justify-center ${course.videoUrl ? 'lg:justify-start' : ''} gap-x-8 gap-y-4 text-sm font-bold text-[#e5e7eb] mb-10`}>
+                {details.hero.duration && <div className="flex items-center gap-2"><Clock className="w-5 h-5 text-[#00a8e8]" /> {details.hero.duration}</div>}
+                {details.hero.level && <div className="flex items-center gap-2"><Target className="w-5 h-5 text-[#00a8e8]" /> {details.hero.level}</div>}
+                {details.hero.mode && <div className="flex items-center gap-2"><Users className="w-5 h-5 text-[#00a8e8]" /> {details.hero.mode}</div>}
+                {details.hero.type && <div className="flex items-center gap-2"><Layout className="w-5 h-5 text-[#00a8e8]" /> {details.hero.type}</div>}
+                {details.hero.certificate && <div className="flex items-center gap-2"><Shield className="w-5 h-5 text-[#00a8e8]" /> {details.hero.certificate}</div>}
+                {course.language && <div className="flex items-center gap-2"><Globe className="w-5 h-5 text-[#00a8e8]" /> Language: {course.language}</div>}
+                {details.hero.support && <div className="flex items-center gap-2"><RotateCcw className="w-5 h-5 text-[#00a8e8]" /> {details.hero.support}</div>}
+              </div>
+
+              <div className={`flex flex-wrap items-center justify-center ${course.videoUrl ? 'lg:justify-start' : ''} gap-4`}>
+                <button onClick={() => setShowEnrollModal(true)} className="px-8 py-4 bg-gradient-to-r from-[#0f52ba] to-[#008080] hover:opacity-90 text-[#ffffff] font-bold rounded-full shadow-[0_0_20px_rgba(15,82,186,0.4)] transition-all hover:scale-105 flex items-center gap-2">
+                  Enroll Now <ChevronRight className="w-5 h-5" />
+                </button>
+                <button onClick={() => toast.success("Brochure downloading...")} className="px-8 py-4 bg-white/20 hover:bg-white/30 text-[#ffffff] font-bold rounded-full backdrop-blur-md border border-white/40 shadow-lg transition-all flex items-center gap-2">
+                  <Download className="w-5 h-5" /> Download Course Brochure
+                </button>
+                <button onClick={() => setShowModal(true)} className="px-8 py-4 bg-white hover:bg-gray-100 text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] font-bold rounded-full shadow-lg transition-all flex items-center gap-2">
+                  <Phone className="w-5 h-5" /> Book Free Counselling
+                </button>
+              </div>
             </div>
-          )
-        ) : (
-          <div className="absolute inset-0 bg-gradient-to-r from-gray-900 to-black"></div>
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent"></div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <span className="inline-block px-4 py-1.5 bg-[#008080] text-white font-bold rounded-full text-xs uppercase tracking-widest mb-6">
-            {course.category}
-          </span>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-6 leading-tight" style={{ fontFamily: "var(--font-heading)" }}>
-            {details.hero.heading}
-          </h1>
-          <p className="text-lg text-gray-300 max-w-4xl mx-auto mb-10 whitespace-pre-line leading-relaxed">
-            {details.hero.paragraph}
-          </p>
-
-          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-sm font-bold text-gray-300 mb-10">
-            {details.hero.duration && <div className="flex items-center gap-2"><Clock className="w-5 h-5 text-[#00a8e8]" /> {details.hero.duration}</div>}
-            {details.hero.level && <div className="flex items-center gap-2"><Target className="w-5 h-5 text-[#00a8e8]" /> {details.hero.level}</div>}
-            {details.hero.mode && <div className="flex items-center gap-2"><Users className="w-5 h-5 text-[#00a8e8]" /> {details.hero.mode}</div>}
-            {details.hero.type && <div className="flex items-center gap-2"><Layout className="w-5 h-5 text-[#00a8e8]" /> {details.hero.type}</div>}
-            {details.hero.certificate && <div className="flex items-center gap-2"><Shield className="w-5 h-5 text-[#00a8e8]" /> {details.hero.certificate}</div>}
-            {course.language && <div className="flex items-center gap-2"><Globe className="w-5 h-5 text-[#00a8e8]" /> Language: {course.language}</div>}
-            {details.hero.support && <div className="flex items-center gap-2"><RotateCcw className="w-5 h-5 text-[#00a8e8]" /> {details.hero.support}</div>}
-          </div>
-
-          <div className="flex flex-wrap items-center justify-center gap-4">
-            <button onClick={() => setShowEnrollModal(true)} className="px-8 py-4 bg-gradient-to-r from-[#0f52ba] to-[#008080] hover:opacity-90 text-white font-bold rounded-full shadow-[0_0_20px_rgba(15,82,186,0.4)] transition-all hover:scale-105 flex items-center gap-2">
-              Enroll Now <ChevronRight className="w-5 h-5" />
-            </button>
-            <button onClick={() => toast.success("Brochure downloading...")} className="px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-bold rounded-full backdrop-blur border border-white/20 transition-all flex items-center gap-2">
-              <Download className="w-5 h-5" /> Download Course Brochure
-            </button>
-            <button onClick={() => setShowModal(true)} className="px-8 py-4 bg-white hover:bg-gray-100 text-[#0f52ba] font-bold rounded-full shadow-lg transition-all flex items-center gap-2">
-              <Phone className="w-5 h-5" /> Book Free Counselling
-            </button>
+            {/* Right Video Floating Card */}
+            {course.videoUrl && (
+              <div className="w-full lg:w-[380px] shrink-0 relative lg:-mb-52 z-20">
+                <div className="bg-white rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.3)] overflow-hidden border border-gray-100 flex flex-col text-left">
+                  <div className="relative aspect-[16/10] bg-gray-100 group flex items-center justify-center">
+                    {isPlaying && getEmbedUrl(course.videoUrl) ? (
+                      <iframe
+                        src={getEmbedUrl(course.videoUrl)!}
+                        className="w-full h-full absolute inset-0 z-10"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      ></iframe>
+                    ) : (
+                      <>
+                        {(course.youtubeThumbnailUrl || course.imageUrl) ? (
+                          <Image src={course.youtubeThumbnailUrl || course.imageUrl} alt={course.title} fill className="object-cover" />
+                        ) : (
+                          <div className="text-gray-400 font-medium">No Image</div>
+                        )}
+                        <div 
+                          className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors flex items-center justify-center cursor-pointer z-10"
+                          onClick={() => setIsPlaying(true)}
+                        >
+                          <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
+                            <PlayCircle className="w-8 h-8 text-gray-900 ml-1" />
+                          </div>
+                        </div>
+                        <div className="absolute bottom-4 left-0 right-0 text-center font-bold text-white drop-shadow-md z-10 pointer-events-none">
+                          Preview this course
+                        </div>
+                      </>
+                    )}
+                  </div>
+                  
+                  <div className="p-6 text-gray-900">
+                    <div className="flex items-baseline gap-2 mb-4">
+                      {isCustomPrice ? (
+                        <span className="text-3xl font-black">{course.price}</span>
+                      ) : (
+                        <>
+                          <span className="text-3xl font-black">₹{Number(course.price).toLocaleString("en-IN")}</span>
+                          <span className="text-sm text-gray-400 line-through">₹{originalPrice}</span>
+                        </>
+                      )}
+                    </div>
+                    
+                    <button onClick={() => setShowEnrollModal(true)} className="w-full py-3.5 mb-3 bg-gradient-to-r from-[#0f52ba] to-[#008080] hover:bg-[#006666] text-white font-bold rounded-lg transition-colors text-center shadow-md">
+                      Book Slot
+                    </button>
+                    
+                    <div className="text-center text-[11px] text-gray-500 mb-6 font-medium tracking-wide">
+                      30-Day Money-Back Guarantee
+                    </div>
+                    
+                    <div>
+                      <h5 className="font-bold text-sm mb-3">This course includes:</h5>
+                      <ul className="space-y-3">
+                        <li className="flex gap-3 text-sm text-gray-600"><PlayCircle className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" /> {details.hero.duration}</li>
+                        <li className="flex gap-3 text-sm text-gray-600"><Globe className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" /> Taught in {course.language || 'English'}</li>
+                        <li className="flex gap-3 text-sm text-gray-600"><Award className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" /> {details.hero.certificate || 'Certificate of completion'}</li>
+                        <li className="flex gap-3 text-sm text-gray-600"><RotateCcw className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" /> Full lifetime access</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -210,7 +294,7 @@ export default function TrainingDetailsPage() {
       {/* SECTION 2: COURSE OVERVIEW */}
       <section className="py-20 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-sm font-bold text-[#008080] uppercase tracking-widest mb-2">{details.overview.heading}</h2>
+          <h2 className="text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] uppercase tracking-widest mb-2">{details.overview.heading}</h2>
           <h3 className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-8" style={{ fontFamily: "var(--font-heading)" }}>
             {details.overview.subheading}
           </h3>
@@ -221,13 +305,13 @@ export default function TrainingDetailsPage() {
             </div>
             {!showOverviewMore && (
               <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent flex items-end justify-center">
-                <button onClick={() => setShowOverviewMore(true)} className="flex items-center gap-1 font-bold text-[#0f52ba] hover:underline">
+                <button onClick={() => setShowOverviewMore(true)} className="flex items-center gap-1 font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] hover:underline">
                   View More <ChevronDown className="w-4 h-4" />
                 </button>
               </div>
             )}
             {showOverviewMore && (
-              <button onClick={() => setShowOverviewMore(false)} className="mt-4 flex items-center justify-center w-full gap-1 font-bold text-[#0f52ba] hover:underline">
+              <button onClick={() => setShowOverviewMore(false)} className="mt-4 flex items-center justify-center w-full gap-1 font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] hover:underline">
                 View Less
               </button>
             )}
@@ -239,7 +323,7 @@ export default function TrainingDetailsPage() {
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-sm font-bold text-[#008080] uppercase tracking-widest mb-2">{details.whyChoose.heading}</h2>
+            <h2 className="text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] uppercase tracking-widest mb-2">{details.whyChoose.heading}</h2>
             <h3 className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-4" style={{ fontFamily: "var(--font-heading)" }}>
               {details.whyChoose.subheading}
             </h3>
@@ -251,10 +335,10 @@ export default function TrainingDetailsPage() {
               const icons = [<Target key="1" />, <Layout key="2" />, <Users key="3" />, <Settings key="4" />, <CheckCircle key="5" />, <Briefcase key="6" />, <RotateCcw key="7" />, <Globe key="8" />];
               return (
                 <div key={i} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:border-[#0f52ba] hover:-translate-y-1 transition-all group">
-                  <div className="w-12 h-12 bg-[#0f52ba]/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-[#0f52ba] transition-colors">
-                    <div className="text-[#0f52ba] group-hover:text-white transition-colors">{icons[i % icons.length]}</div>
+                  <div className="w-12 h-12 bg-gradient-to-r from-[#0f52ba] to-[#008080]/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-gradient-to-r from-[#0f52ba] to-[#008080] transition-colors">
+                    <div className="text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] group-hover:text-white transition-colors">{icons[i % icons.length]}</div>
                   </div>
-                  <h4 className="font-bold text-[#0f52ba] mb-2">{reason.title}</h4>
+                  <h4 className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-2">{reason.title}</h4>
                   <p className="text-sm text-gray-600">{reason.desc}</p>
                 </div>
               );
@@ -289,14 +373,14 @@ export default function TrainingDetailsPage() {
             <div className="lg:col-span-2">
               <h2 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-6" style={{ fontFamily: "var(--font-heading)" }}>{details.whoCanJoin.heading}</h2>
               <p className="text-gray-600 text-lg mb-8 whitespace-pre-line leading-relaxed">{details.whoCanJoin.intro}</p>
-              <div className="p-6 bg-cyan-50 rounded-2xl border-l-4 border-[#008080]">
-                <p className="font-bold text-[#008080]">{details.whoCanJoin.outro}</p>
+              <div className="p-6 bg-cyan-50 rounded-2xl border-l-4 border-[#0f52ba]">
+                <p className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080]">{details.whoCanJoin.outro}</p>
               </div>
             </div>
 
             {/* Right Column (Scrolling Points) */}
             <div className="lg:col-span-3 relative h-[400px] flex flex-col justify-center gap-6 overflow-hidden fade-edges-x">
-              <h3 className="text-xl font-bold text-[#0f52ba] mb-6 text-center">{details.whoCanJoin.listTitle}</h3>
+              <h3 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-6 text-center">{details.whoCanJoin.listTitle}</h3>
               
               {/* Row 1: Right Scroll */}
               <div className="flex w-[200%] animate-scroll-right gap-6">
@@ -331,7 +415,7 @@ export default function TrainingDetailsPage() {
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-sm font-bold text-[#008080] uppercase tracking-widest mb-2">{details.learningOutcomes.heading}</h2>
+            <h2 className="text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] uppercase tracking-widest mb-2">{details.learningOutcomes.heading}</h2>
             <h3 className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-4" style={{ fontFamily: "var(--font-heading)" }}>{details.learningOutcomes.subheading}</h3>
             <p className="text-gray-600 text-lg max-w-3xl mx-auto whitespace-pre-line">{details.learningOutcomes.intro}</p>
           </div>
@@ -373,17 +457,17 @@ export default function TrainingDetailsPage() {
               {[...Array(2)].map((_, i) => (
                 <div key={i} className="flex items-center gap-8 px-4 shrink-0">
                   <span>Certification of Completion</span>
-                  <span className="text-[#008080]">♦</span>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080]">♦</span>
                   <span>Practical Hands-on Training</span>
-                  <span className="text-[#008080]">♦</span>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080]">♦</span>
                   <span>Business Startup Guidance</span>
-                  <span className="text-[#008080]">♦</span>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080]">♦</span>
                   <span>Lifetime Technical Support</span>
-                  <span className="text-[#008080]">♦</span>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080]">♦</span>
                   <span>Expert Instructors</span>
-                  <span className="text-[#008080]">♦</span>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080]">♦</span>
                   <span>Industry Recognized</span>
-                  <span className="text-[#008080]">♦</span>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080]">♦</span>
                 </div>
               ))}
             </div>
@@ -395,92 +479,104 @@ export default function TrainingDetailsPage() {
       <section className="py-20 bg-gray-50 border-y border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-sm font-bold text-[#008080] uppercase tracking-widest mb-2">{details.curriculum.heading}</h2>
+            <h2 className="text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] uppercase tracking-widest mb-2">{details.curriculum.heading}</h2>
             <h3 className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-4" style={{ fontFamily: "var(--font-heading)" }}>{details.curriculum.subheading}</h3>
             <p className="text-gray-600 text-lg max-w-3xl mx-auto">{details.curriculum.intro}</p>
           </div>
 
-          <div className="flex flex-col lg:flex-row gap-8">
-            {/* Left side: Module List */}
-            <div className="w-full lg:w-1/2 flex flex-col gap-2">
-              {details.curriculum.modules.map((mod) => (
-                <button
-                  key={mod.id}
-                  onClick={() => setActiveModule(mod.id)}
-                  className={`p-4 rounded-2xl text-left border transition-all flex items-center justify-between group ${activeModule === mod.id ? "bg-[#0f52ba] text-white border-[#0f52ba] shadow-lg shadow-blue-900/20" : "bg-white border-gray-200 hover:border-[#0f52ba] hover:shadow"}`}
-                >
+          {(() => {
+            const renderModuleDetails = (mod: any) => (
+              <div key={`details-${mod.id}`} className="bg-white rounded-3xl p-6 md:p-10 border border-gray-200 shadow-xl animate-in fade-in duration-300 mt-2 lg:mt-0">
+                <div className="flex flex-wrap items-center justify-between mb-6 pb-6 border-b border-gray-100 gap-4">
                   <div>
-                    <span className={`text-xs font-bold uppercase tracking-widest mb-1 block ${activeModule === mod.id ? "text-blue-200" : "text-gray-400"}`}>Module {mod.id}</span>
-                    <span className="font-bold text-lg">{mod.title}</span>
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] font-black uppercase tracking-widest text-sm mb-2 block">Module {mod.id}</span>
+                    <h4 className="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080]" style={{ fontFamily: "var(--font-heading)" }}>{mod.title}</h4>
                   </div>
-                  <ChevronRight className={`w-5 h-5 ${activeModule === mod.id ? "text-white" : "text-gray-400 group-hover:text-[#0f52ba]"}`} />
-                </button>
-              ))}
-            </div>
+                  <div className="bg-gradient-to-r from-[#0f52ba] to-[#008080] text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 shadow-sm text-sm">
+                    <Clock className="w-4 h-4 text-teal-500" /> Duration: {mod.duration}
+                  </div>
+                </div>
 
-            {/* Right side: Module Details */}
-            <div className="w-full lg:w-1/2">
-              {details.curriculum.modules.map((mod) => (
-                activeModule === mod.id && (
-                  <div key={mod.id} className="bg-white rounded-3xl p-8 md:p-10 border border-gray-200 shadow-xl animate-in fade-in slide-in-from-right-4 duration-300">
-                    <div className="flex flex-wrap items-center justify-between mb-6 pb-6 border-b border-gray-100 gap-4">
+                <div className="mb-8">
+                  <h5 className="font-bold text-lg text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-2">Module Overview</h5>
+                  <p className="text-gray-600 leading-relaxed text-sm md:text-base">{mod.overview}</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                  <div>
+                    <h5 className="font-bold text-lg text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-4 flex items-center gap-2"><BookOpen className="w-5 h-5 text-[#0f52ba]" /> Topics Covered</h5>
+                    <ul className="space-y-2">
+                      {mod.topics.map((t: string, i: number) => (
+                        <li key={i} className="flex items-start gap-2 text-gray-600 text-sm md:text-base">
+                          <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-[#0f52ba] to-[#008080] mt-2 shrink-0"></div> {t}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="space-y-8">
+                    {mod.activities.length > 0 && (
                       <div>
-                        <span className="text-[#0f52ba] font-black uppercase tracking-widest text-sm mb-2 block">Module {mod.id}</span>
-                        <h4 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080]" style={{ fontFamily: "var(--font-heading)" }}>{mod.title}</h4>
-                      </div>
-                      <div className="bg-gradient-to-r from-[#0f52ba] to-[#008080] text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 shadow-sm">
-                        <Clock className="w-4 h-4 text-cyan-200" /> Duration: {mod.duration}
-                      </div>
-                    </div>
-
-                    <div className="mb-8">
-                      <h5 className="font-bold text-lg text-[#0f52ba] mb-2">Module Overview</h5>
-                      <p className="text-gray-600 leading-relaxed">{mod.overview}</p>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                      <div>
-                        <h5 className="font-bold text-lg text-[#0f52ba] mb-4 flex items-center gap-2"><BookOpen className="w-5 h-5 text-[#008080]" /> Topics Covered</h5>
+                        <h5 className="font-bold text-lg text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-4 flex items-center gap-2"><Layout className="w-5 h-5 text-[#0f52ba]" /> Practical Activities</h5>
                         <ul className="space-y-2">
-                          {mod.topics.map((t, i) => (
-                            <li key={i} className="flex items-start gap-2 text-gray-600">
-                              <div className="w-1.5 h-1.5 rounded-full bg-[#008080] mt-2 shrink-0"></div> {t}
+                          {mod.activities.map((t: string, i: number) => (
+                            <li key={i} className="flex items-start gap-2 text-gray-600 text-sm md:text-base">
+                              <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-[#0f52ba] to-[#008080] mt-2 shrink-0"></div> {t}
                             </li>
                           ))}
                         </ul>
                       </div>
-                      <div className="space-y-8">
-                        {mod.activities.length > 0 && (
-                          <div>
-                            <h5 className="font-bold text-lg text-[#0f52ba] mb-4 flex items-center gap-2"><Layout className="w-5 h-5 text-[#0f52ba]" /> Practical Activities</h5>
-                            <ul className="space-y-2">
-                              {mod.activities.map((t, i) => (
-                                <li key={i} className="flex items-start gap-2 text-gray-600">
-                                  <div className="w-1.5 h-1.5 rounded-full bg-[#0f52ba] mt-2 shrink-0"></div> {t}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                        {mod.skills.length > 0 && (
-                          <div>
-                            <h5 className="font-bold text-lg text-[#0f52ba] mb-4 flex items-center gap-2"><Target className="w-5 h-5 text-amber-600" /> Skills You'll Gain</h5>
-                            <ul className="space-y-2">
-                              {mod.skills.map((t, i) => (
-                                <li key={i} className="flex items-start gap-2 text-gray-800 font-medium">
-                                  <Check className="w-4 h-4 text-green-500 mt-1 shrink-0" /> {t}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
+                    )}
+                    {mod.skills.length > 0 && (
+                      <div>
+                        <h5 className="font-bold text-lg text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-4 flex items-center gap-2"><Target className="w-5 h-5 text-amber-600" /> Skills You'll Gain</h5>
+                        <ul className="space-y-2">
+                          {mod.skills.map((t: string, i: number) => (
+                            <li key={i} className="flex items-start gap-2 text-gray-800 font-medium text-sm md:text-base">
+                              <Check className="w-4 h-4 text-green-500 mt-1 shrink-0" /> {t}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+
+            return (
+              <div className="flex flex-col lg:flex-row gap-8">
+                {/* Left side: Module List */}
+                <div className="w-full lg:w-1/2 flex flex-col gap-2">
+                  {details.curriculum.modules.map((mod: any) => (
+                    <div key={mod.id} className="flex flex-col">
+                      <button
+                        onClick={() => setActiveModule(mod.id)}
+                        className={`p-4 rounded-2xl text-left border transition-all flex items-center justify-between group ${activeModule === mod.id ? "bg-gradient-to-r from-[#0f52ba] to-[#008080] text-white border-[#0f52ba] shadow-lg shadow-blue-900/20" : "bg-white border-gray-200 hover:border-[#0f52ba] hover:shadow"}`}
+                      >
+                        <div>
+                          <span className={`text-xs font-bold uppercase tracking-widest mb-1 block ${activeModule === mod.id ? "text-blue-200" : "text-gray-400"}`}>Module {mod.id}</span>
+                          <span className="font-bold text-lg">{mod.title}</span>
+                        </div>
+                        <ChevronRight className={`w-5 h-5 transition-transform ${activeModule === mod.id ? "text-white rotate-90 lg:rotate-0" : "text-gray-400 group-hover:text-[#0f52ba]"}`} />
+                      </button>
+                      
+                      {/* Mobile Module Details */}
+                      <div className="block lg:hidden mt-2">
+                        {activeModule === mod.id && renderModuleDetails(mod)}
                       </div>
                     </div>
-                  </div>
-                )
-              ))}
-            </div>
-          </div>
+                  ))}
+                </div>
+
+                {/* Right side: Module Details (Desktop) */}
+                <div className="hidden lg:block w-full lg:w-1/2">
+                  {details.curriculum.modules.map((mod: any) => (
+                    activeModule === mod.id && renderModuleDetails(mod)
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
         </div>
       </section>
 
@@ -488,7 +584,7 @@ export default function TrainingDetailsPage() {
       <section className="py-20 bg-white border-t border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-sm font-bold text-[#008080] uppercase tracking-widest mb-2">Process</h2>
+            <h2 className="text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] uppercase tracking-widest mb-2">Process</h2>
             <h3 className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-6" style={{ fontFamily: "var(--font-heading)" }}>
               {details.methodology.heading}
             </h3>
@@ -505,7 +601,7 @@ export default function TrainingDetailsPage() {
                   <div key={i} className="bg-white rounded-3xl p-8 md:p-10 border border-gray-200 shadow-xl animate-in fade-in slide-in-from-right-4 duration-300">
                     <div className="flex items-center justify-between mb-8 border-b border-gray-100 pb-6">
                       <div>
-                        <span className="text-[#008080] font-bold tracking-widest uppercase text-sm mb-2 block">Step {i + 1}</span>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] font-bold tracking-widest uppercase text-sm mb-2 block">Step {i + 1}</span>
                         <h4 className="text-2xl font-black text-[#0f172a]">{step.title}</h4>
                       </div>
                     </div>
@@ -523,10 +619,10 @@ export default function TrainingDetailsPage() {
                 <button
                   key={i}
                   onClick={() => setActiveMethodologyStep(i)}
-                  className={`p-4 rounded-2xl text-left border transition-all flex items-center justify-between group ${activeMethodologyStep === i ? "bg-[#0f52ba] text-white border-[#0f52ba] shadow-lg shadow-blue-900/20" : "bg-white border-gray-200 hover:border-[#0f52ba] hover:shadow"}`}
+                  className={`p-4 rounded-2xl text-left border transition-all flex items-center justify-between group ${activeMethodologyStep === i ? "bg-gradient-to-r from-[#0f52ba] to-[#008080] text-white border-[#0f52ba] shadow-lg shadow-blue-900/20" : "bg-white border-gray-200 hover:border-[#0f52ba] hover:shadow"}`}
                 >
                   <div className="flex items-center gap-4">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold shrink-0 ${activeMethodologyStep === i ? "bg-white/20 text-white" : "bg-[#0f52ba]/10 text-[#0f52ba]"}`}>
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold shrink-0 ${activeMethodologyStep === i ? "bg-white/20 text-white" : "bg-gradient-to-r from-[#0f52ba] to-[#008080]/10 text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080]"}`}>
                       {i + 1}
                     </div>
                     <div>
@@ -547,7 +643,7 @@ export default function TrainingDetailsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-4" style={{ fontFamily: "var(--font-heading)" }}>{details.projects.heading}</h2>
-            <h3 className="text-xl font-bold text-[#0f52ba] mb-4">{details.projects.sub1}</h3>
+            <h3 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-4">{details.projects.sub1}</h3>
             <p className="text-gray-600 text-lg max-w-4xl mx-auto whitespace-pre-line">{details.projects.desc1}</p>
           </div>
 
@@ -577,7 +673,7 @@ export default function TrainingDetailsPage() {
             <div className="flex justify-center mb-16">
               <button 
                 onClick={() => setShowProjectsMore(!showProjectsMore)}
-                className="px-8 py-3 rounded-full border-2 border-[#0f52ba] text-[#0f52ba] font-bold hover:bg-[#0f52ba] hover:text-white transition-all flex items-center gap-2"
+                className="px-8 py-3 rounded-full border-2 border-[#0f52ba] text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] font-bold hover:bg-gradient-to-r from-[#0f52ba] to-[#008080] hover:text-white transition-all flex items-center gap-2"
               >
                 {showProjectsMore ? "View Less" : "View More Projects"}
                 <ChevronRight className={`w-5 h-5 transition-transform ${showProjectsMore ? "-rotate-90" : "rotate-90"}`} />
@@ -597,8 +693,8 @@ export default function TrainingDetailsPage() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
               {details.projects.masteredSkillsList.map((skill, i) => (
-                <div key={i} className="flex items-center gap-2 p-3 bg-[#0f52ba]/5 rounded-lg text-[#0f52ba] font-medium text-sm border border-[#0f52ba]/10 hover:border-[#008080]/30 transition-colors">
-                  <Check className="w-4 h-4 text-[#008080] shrink-0" /> {skill}
+                <div key={i} className="flex items-center gap-2 p-3 bg-gradient-to-r from-[#0f52ba] to-[#008080]/5 rounded-lg text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] font-medium text-sm border border-[#0f52ba]/10 hover:border-[#0f52ba]/30 transition-colors">
+                  <Check className="w-4 h-4 text-[#0f52ba] shrink-0" /> {skill}
                 </div>
               ))}
             </div>
@@ -611,7 +707,7 @@ export default function TrainingDetailsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-black mb-4 text-[#0f172a]" style={{ fontFamily: "var(--font-heading)" }}>{details.toolsAndMaterials.heading}</h2>
-            <p className="text-[#008080] text-lg font-bold tracking-wider mb-4 uppercase">{details.toolsAndMaterials.subheading}</p>
+            <p className="text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] text-lg font-bold tracking-wider mb-4 uppercase">{details.toolsAndMaterials.subheading}</p>
             <p className="text-gray-600 max-w-3xl mx-auto">{details.toolsAndMaterials.desc}</p>
           </div>
 
@@ -638,7 +734,7 @@ export default function TrainingDetailsPage() {
                 {details.toolsAndMaterials.tools.length > 5 && (
                   <button 
                     onClick={() => setExpandedTools({...expandedTools, tools: !expandedTools.tools})} 
-                    className="mt-6 w-full py-2 text-sm font-bold text-[#00a8e8] hover:text-[#008080] transition-colors flex items-center justify-center gap-1"
+                    className="mt-6 w-full py-2 text-sm font-bold text-[#00a8e8] hover:text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] transition-colors flex items-center justify-center gap-1"
                   >
                     {expandedTools.tools ? "View Less" : `View All ${details.toolsAndMaterials.tools.length}`} <ChevronDown className={`w-4 h-4 transition-transform ${expandedTools.tools ? "rotate-180" : ""}`} />
                   </button>
@@ -671,7 +767,7 @@ export default function TrainingDetailsPage() {
                 {details.toolsAndMaterials.materials.length > 5 && (
                   <button 
                     onClick={() => setExpandedTools({...expandedTools, materials: !expandedTools.materials})} 
-                    className="mt-6 w-full py-2 text-sm font-bold text-[#0f52ba] hover:text-[#0f52ba]/80 transition-colors flex items-center justify-center gap-1"
+                    className="mt-6 w-full py-2 text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] hover:text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080]/80 transition-colors flex items-center justify-center gap-1"
                   >
                     {expandedTools.materials ? "View Less" : `View All ${details.toolsAndMaterials.materials.length}`} <ChevronDown className={`w-4 h-4 transition-transform ${expandedTools.materials ? "rotate-180" : ""}`} />
                   </button>
@@ -687,7 +783,7 @@ export default function TrainingDetailsPage() {
                   <h3 className="text-xl font-bold text-gray-900">Safety Equipment</h3>
                 </div>
                 <div className="flex items-center justify-center py-6">
-                  <Shield className="w-16 h-16 text-[#008080]" strokeWidth={1.5} />
+                  <Shield className="w-16 h-16 text-[#0f52ba]" strokeWidth={1.5} />
                 </div>
               </div>
               
@@ -700,7 +796,7 @@ export default function TrainingDetailsPage() {
                 {details.toolsAndMaterials.safety.length > 5 && (
                   <button 
                     onClick={() => setExpandedTools({...expandedTools, safety: !expandedTools.safety})} 
-                    className="mt-6 w-full py-2 text-sm font-bold text-[#008080] hover:text-[#008080]/80 transition-colors flex items-center justify-center gap-1"
+                    className="mt-6 w-full py-2 text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] hover:text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080]/80 transition-colors flex items-center justify-center gap-1"
                   >
                     {expandedTools.safety ? "View Less" : `View All ${details.toolsAndMaterials.safety.length}`} <ChevronDown className={`w-4 h-4 transition-transform ${expandedTools.safety ? "rotate-180" : ""}`} />
                   </button>
@@ -720,12 +816,12 @@ export default function TrainingDetailsPage() {
             <div>
               <div className="mb-10">
                 <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-2" style={{ fontFamily: "var(--font-heading)" }}>{details.careers.heading}</h2>
-                <p className="text-[#0f52ba] font-bold mb-4">{details.careers.subheading}</p>
+                <p className="text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] font-bold mb-4">{details.careers.subheading}</p>
                 <p className="text-gray-600">{details.careers.desc}</p>
               </div>
               
               <div className="mb-8">
-                <h4 className="font-bold text-[#0f52ba] mb-4 uppercase tracking-widest text-sm">Career Options</h4>
+                <h4 className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-4 uppercase tracking-widest text-sm">Career Options</h4>
                 <div className="flex flex-wrap gap-2">
                   {details.careers.options.map((opt, i) => (
                     <span key={i} className="bg-blue-50 text-blue-800 border border-blue-100 px-3 py-1.5 rounded-lg text-sm font-medium">{opt}</span>
@@ -734,7 +830,7 @@ export default function TrainingDetailsPage() {
               </div>
 
               <div>
-                <h4 className="font-bold text-[#0f52ba] mb-4 uppercase tracking-widest text-sm">Industries You Can Work With</h4>
+                <h4 className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-4 uppercase tracking-widest text-sm">Industries You Can Work With</h4>
                 <div className="flex flex-wrap gap-2">
                   {details.careers.industries.map((ind, i) => (
                     <span key={i} className="bg-gray-100 text-gray-700 border border-gray-200 px-3 py-1.5 rounded-lg text-sm font-medium">{ind}</span>
@@ -745,11 +841,11 @@ export default function TrainingDetailsPage() {
 
             <div className="bg-white border border-gray-200 rounded-3xl p-8 md:p-10 shadow-sm">
               <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-2" style={{ fontFamily: "var(--font-heading)" }}>{details.business.heading}</h2>
-              <p className="text-[#008080] font-bold mb-4">{details.business.subheading}</p>
+              <p className="text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] font-bold mb-4">{details.business.subheading}</p>
               <p className="text-gray-600 mb-8 whitespace-pre-line">{details.business.desc}</p>
 
               <div className="mb-8">
-                <h4 className="font-bold text-[#0f52ba] mb-4 flex items-center gap-2"><Briefcase className="w-5 h-5 text-[#008080]" /> Start Your Own Business In</h4>
+                <h4 className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-4 flex items-center gap-2"><Briefcase className="w-5 h-5 text-[#0f52ba]" /> Start Your Own Business In</h4>
                 <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {details.business.startList.map((item, i) => (
                     <li key={i} className="flex items-center gap-2 text-sm text-gray-700"><Check className="w-4 h-4 text-green-500" /> {item}</li>
@@ -758,7 +854,7 @@ export default function TrainingDetailsPage() {
               </div>
 
               <div>
-                <h4 className="font-bold text-[#0f52ba] mb-4 flex items-center gap-2"><Layout className="w-5 h-5 text-[#008080]" /> Business Skills Introduced</h4>
+                <h4 className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-4 flex items-center gap-2"><Layout className="w-5 h-5 text-[#0f52ba]" /> Business Skills Introduced</h4>
                 <div className="flex flex-wrap gap-2 mb-6">
                   {details.business.skillsList.map((skill, i) => (
                     <span key={i} className="bg-white border border-gray-200 shadow-sm text-gray-700 px-3 py-1.5 rounded-lg text-sm font-medium">{skill}</span>
@@ -832,7 +928,7 @@ export default function TrainingDetailsPage() {
               <span key={i} className="px-5 py-2 bg-gray-50 border border-gray-200 rounded-full font-bold text-gray-800">{pt}</span>
             ))}
           </div>
-          <p className="font-bold text-xl text-[#0f52ba] italic">{details.academy.outro}</p>
+          <p className="font-bold text-xl text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] italic">{details.academy.outro}</p>
         </div>
       </section>
 
@@ -849,7 +945,7 @@ export default function TrainingDetailsPage() {
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
                   className="w-full flex items-center justify-between p-6 text-left"
                 >
-                  <span className="font-bold text-[#0f52ba] pr-4">{faq.q}</span>
+                  <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] pr-4">{faq.q}</span>
                   <ChevronDown className={`w-5 h-5 text-gray-500 transition-transform ${openFaq === i ? "rotate-180" : ""}`} />
                 </button>
                 {openFaq === i && (
@@ -885,8 +981,8 @@ export default function TrainingDetailsPage() {
                     <Link href={`/trainings/${courseName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} className="w-full group">
                       <div className="w-full bg-white border border-gray-200 p-6 rounded-2xl flex items-center justify-between group-hover:border-[#0f52ba] group-hover:shadow-[0_4px_20px_rgba(15,82,186,0.08)] transition-all shadow-sm group-hover:-translate-y-1">
                         <div>
-                          <span className="text-xs font-bold text-[#008080] uppercase tracking-widest block mb-1">{courseLevel}</span>
-                          <h4 className="text-xl font-bold text-[#0f52ba] transition-colors">{courseName}</h4>
+                          <span className="text-xs font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] uppercase tracking-widest block mb-1">{courseLevel}</span>
+                          <h4 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] transition-colors">{courseName}</h4>
                         </div>
                         <ChevronRight className="w-6 h-6 text-gray-400 group-hover:text-[#0f52ba] transition-colors" />
                       </div>
@@ -905,16 +1001,16 @@ export default function TrainingDetailsPage() {
       <section className="py-24 bg-gray-50 border-t border-gray-100 text-center relative overflow-hidden">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-6" style={{ fontFamily: "var(--font-heading)" }}>{details.readyToBegin.heading}</h2>
-          <h3 className="text-xl md:text-2xl font-bold text-[#008080] mb-6">{details.readyToBegin.subheading}</h3>
+          <h3 className="text-xl md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-6">{details.readyToBegin.subheading}</h3>
           <p className="text-gray-600 text-lg mb-12 max-w-3xl mx-auto whitespace-pre-line">{details.readyToBegin.desc}</p>
           <div className="flex flex-wrap items-center justify-center gap-4">
             <button onClick={() => setShowEnrollModal(true)} className="px-8 py-4 bg-gradient-to-r from-[#0f52ba] to-[#008080] hover:opacity-90 text-white font-bold rounded-full shadow-[0_4px_20px_rgba(15,82,186,0.2)] transition-all hover:-translate-y-1 text-lg flex items-center gap-2">
               Enroll in the Next Batch <ChevronRight className="w-5 h-5" />
             </button>
-            <button onClick={() => setShowModal(true)} className="px-8 py-4 bg-white border border-gray-200 text-gray-800 font-bold rounded-full shadow-sm transition-all flex items-center gap-2 hover:border-[#0f52ba] hover:text-[#0f52ba] hover:-translate-y-1">
+            <button onClick={() => setShowModal(true)} className="px-8 py-4 bg-white border border-gray-200 text-gray-800 font-bold rounded-full shadow-sm transition-all flex items-center gap-2 hover:border-[#008080] hover:text-[#0f52ba] hover:-translate-y-1">
               <Phone className="w-5 h-5" /> Book a Free Counselling Session
             </button>
-            <button onClick={() => toast.success("Brochure downloading...")} className="px-8 py-4 bg-transparent border-2 border-[#0f52ba] text-[#0f52ba] hover:bg-[#0f52ba] hover:text-white font-bold rounded-full transition-all hover:-translate-y-1">
+            <button onClick={() => toast.success("Brochure downloading...")} className="px-8 py-4 bg-transparent border-2 border-[#0f52ba] text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] hover:bg-gradient-to-r from-[#0f52ba] to-[#008080] hover:text-white font-bold rounded-full transition-all hover:-translate-y-1">
               Download the Course Brochure
             </button>
           </div>
@@ -965,7 +1061,7 @@ export default function TrainingDetailsPage() {
             </button>
             <div className="text-center mb-6">
               <h3 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-2">Enroll Now</h3>
-              <p className="text-gray-500 text-sm">Submit your details for: <span className="font-bold text-[#0f52ba]">{course.title}</span></p>
+              <p className="text-gray-500 text-sm">Submit your details for: <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080]">{course.title}</span></p>
             </div>
             
             <form onSubmit={handleEnrollSubmit} className="space-y-4">

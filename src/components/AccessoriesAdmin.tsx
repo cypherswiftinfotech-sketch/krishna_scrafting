@@ -240,7 +240,7 @@ export default function AccessoriesAdmin() {
               activeSubTab === tab ? "border-[#135db6] text-[#135db6]" : "border-transparent text-gray-500 hover:text-gray-800"
             }`}
           >
-            {tab === "settings" ? "Hero Video" : tab === "kits" ? "Package Kits" : tab === "guides" ? "Learning Guides" : "Newsletter Subscribers"}
+            {tab === "settings" ? "Hero Media" : tab === "kits" ? "Package Kits" : tab === "guides" ? "Learning Guides" : "Newsletter Subscribers"}
           </button>
         ))}
       </div>
@@ -250,9 +250,9 @@ export default function AccessoriesAdmin() {
           <h3 className="text-xl font-bold mb-6">Hero Section Configuration</h3>
           <form onSubmit={handleSettingsSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold mb-1">Background Video</label>
-              <input type="file" accept="video/*" onChange={(e) => setSettingsFile(e.target.files?.[0] || null)} className="w-full p-2 rounded border bg-white border-gray-300" />
-              {settings?.heroVideoUrl && <p className="mt-2 text-sm text-green-600 font-medium">Currently using a custom video.</p>}
+              <label className="block text-sm font-semibold mb-1">Background Media (Video or Image)</label>
+              <input type="file" accept="video/*,image/*" onChange={(e) => setSettingsFile(e.target.files?.[0] || null)} className="w-full p-2 rounded border bg-white border-gray-300" />
+              {settings?.heroVideoUrl && <p className="mt-2 text-sm text-green-600 font-medium">Currently using custom background media.</p>}
             </div>
             <button type="submit" disabled={settingsLoading} className="px-6 py-2 bg-[#135db6] text-white rounded-lg font-bold hover:bg-[#0f4b94] transition-colors mt-4">
               {settingsLoading ? "Saving..." : "Save Settings"}

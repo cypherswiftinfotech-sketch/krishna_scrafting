@@ -6,12 +6,18 @@ import { ArrowLeft, ExternalLink, MapPin, Tag } from "lucide-react";
 import { db } from "@/db";
 import { portfolio } from "@/db/schema";
 import { eq, ne } from "drizzle-orm";
+import { slugify } from "@/lib/utils";
+import PortfolioTabs from "@/components/PortfolioTabs";
+import PortfolioRequestButton from "@/components/PortfolioRequestButton";
 
-export const revalidate = 0; // Dynamic rendering
+export const revalidate = 60; // Cache for 60 seconds (ISR) for faster loading
 
 export default async function PortfolioItemPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const itemId = parseInt(id, 10);
+  
+  // Extract ID from slug format "elegant-epoxy-table-15" or just "15"
+  const itemIdMatch = id.match(/-(\d+)$/);
+  const itemId = itemIdMatch ? parseInt(itemIdMatch[1], 10) : parseInt(id, 10);
 
   if (isNaN(itemId)) return notFound();
 
@@ -59,7 +65,7 @@ export default async function PortfolioItemPage({ params }: { params: Promise<{ 
                 </span>
               )}
               {item.featured && (
-                <span className="text-xs font-black uppercase tracking-[0.15em] text-white bg-gradient-to-r from-blue-700 to-teal-500 px-3 py-1.5 rounded-full shadow-md">
+                <span className="text-xs font-black uppercase tracking-[0.15em] text-white-force bg-gradient-to-r from-blue-700 to-teal-500 px-3 py-1.5 rounded-full shadow-md">
                   Featured
                 </span>
               )}
@@ -94,6 +100,8 @@ export default async function PortfolioItemPage({ params }: { params: Promise<{ 
                 </div>
               )}
 
+              <PortfolioRequestButton portfolioId={item.id} portfolioTitle={item.title} />
+
               {item.socialLink && (
                 <div className="flex items-start gap-4">
                   <div className="p-2 bg-gray-50 rounded-lg border border-gray-200">
@@ -111,27 +119,13 @@ export default async function PortfolioItemPage({ params }: { params: Promise<{ 
           </div>
         </div>
 
-        {/* Full-width Description and Review */}
-        <div className="mt-16 w-full max-w-4xl">
-          <div className="prose max-w-none mb-12">
-            <p className="text-gray-600 leading-relaxed text-lg md:text-xl whitespace-pre-wrap font-medium">
-              {item.description || "A beautiful custom epoxy creation crafted with precision and care."}
-            </p>
-          </div>
-
-          {item.review && (
-            <div className="relative p-8 md:p-10 bg-gray-50 rounded-2xl border border-gray-200">
-              <div className="absolute -top-6 left-8 text-6xl text-blue-300 font-serif">"</div>
-              <p className="text-gray-700 italic leading-relaxed relative z-10 text-xl font-medium">
-                {item.review}
-              </p>
-              <div className="mt-6 flex items-center gap-3">
-                <div className="w-10 h-[2px] bg-blue-700"></div>
-                <p className="text-sm uppercase tracking-widest font-black text-blue-700">Client Feedback</p>
-              </div>
-            </div>
-          )}
-        </div>
+        {/* Full-width Description and Review Tabs */}
+        <PortfolioTabs 
+          description={item.description}
+          review={item.review}
+          reviewPhotoUrl={item.reviewPhotoUrl}
+          clientExperience={item.clientExperience}
+        />
       </div>
 
       {/* Recommended Projects Section */}
@@ -148,7 +142,7 @@ export default async function PortfolioItemPage({ params }: { params: Promise<{ 
             {recommendedItems.map((rec) => (
               <Link
                 key={rec.id}
-                href={`/portfolio/${rec.id}`}
+                href={`/portfolio/${slugify(rec.title)}-${rec.id}`}
                 className="group relative rounded-2xl overflow-hidden cursor-pointer shadow-sm hover:shadow-xl border border-gray-100 transition-all duration-500 block h-[300px]"
               >
                 <div className="relative w-full h-full overflow-hidden">

@@ -18,7 +18,7 @@
   --cream-white-border: #e5e5e5;
   --peacock-blue: #0f52ba;
   --peacock-eye: #d4af37;
-  --blue-gradient: linear-gradient(to right, #0f52ba, #0891b2);
+  --blue-gradient: linear-gradient(to right, #0f52ba, #008080);
 }
 
 /* Force entire website to cream white background */
@@ -60,6 +60,17 @@ body {
   color: #1f1f1f !important;
 }
 
+/* Exception: If text-white is used inside or on a gradient background, keep it white */
+[class*="bg-gradient-"] .text-white,
+.text-white[class*="bg-gradient-"] {
+  color: #ffffff !important;
+}
+
+.text-white-force,
+.hover\:text-white-force:hover {
+  color: #ffffff !important;
+}
+
 .text-gray-300,
 .text-gray-400,
 .text-gray-500 {
@@ -76,7 +87,10 @@ body {
    Peacock Blue Text + Background Utility Classes
    ============================== */
 .peacock-blue-text {
-  color: #0f52ba; /* Teal */
+  background: var(--blue-gradient) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  color: transparent !important;
 }
 
 .peacock-blue-text:hover {
@@ -193,7 +207,10 @@ body {
 .hover\:text-amber-400:hover,
 .hover\:text-amber-500:hover,
 .hover\:text-amber-600:hover {
-  color: #0f52ba !important; /* peacock-blue (teal) */
+  background: var(--blue-gradient) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  color: transparent !important;
 }
 
 /* Amber borders → peacock-blue */
@@ -220,7 +237,10 @@ body {
 }
 
 [class*="text-amber-"] {
-  color: #0f52ba !important;
+  background: var(--blue-gradient) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  color: transparent !important;
 }
 
 [class*="hover:text-amber-"]:hover {
@@ -249,6 +269,9 @@ body {
 .text-yellow-300,
 .text-yellow-400,
 .text-yellow-500 {
-  color: #0f52ba !important;
+  background: var(--blue-gradient) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  color: transparent !important;
 }
 

@@ -4,6 +4,7 @@ import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, Clock, Heart, MessageSquare, Share2, ArrowRight, Image as ImageIcon } from "lucide-react";
+import { slugify } from "@/lib/utils";
 
 interface Blog {
   id: number;
@@ -15,15 +16,20 @@ interface Blog {
 }
 
 export default function BlogDetailsPage() {
-  const { id } = useParams<{ id: string }>();
+  const { id: slugId } = useParams<{ id: string }>();
   const router = useRouter();
+  
+  // Extract actual ID from slug format "my-title-4" or just "4"
+  const itemIdMatch = slugId.match(/-(\d+)$/);
+  const actualId = itemIdMatch ? itemIdMatch[1] : slugId;
+
   const [blog, setBlog] = useState<Blog | null>(null);
   const [relatedBlogs, setRelatedBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
   const [liked, setLiked] = useState(false);
 
   useEffect(() => {
-    fetch(`/api/blogs/${id}`)
+    fetch(`/api/blogs/${actualId}`)
       .then(r => r.json())
       .then(d => {
         if (d.blog) setBlog(d.blog);
@@ -36,11 +42,11 @@ export default function BlogDetailsPage() {
       .then(r => r.json())
       .then(d => {
         if (d.blogs) {
-          setRelatedBlogs(d.blogs.filter((b: Blog) => b.id.toString() !== id).slice(0, 3));
+          setRelatedBlogs(d.blogs.filter((b: Blog) => b.id.toString() !== actualId).slice(0, 3));
         }
       })
       .catch(console.error);
-  }, [id, router]);
+  }, [actualId, router]);
 
   if (loading) {
     return (
@@ -112,15 +118,19 @@ export default function BlogDetailsPage() {
               <div className="flex items-center gap-4">
                 <button 
                   onClick={() => setLiked(!liked)}
-                  className={`flex items-center gap-2 text-sm font-bold uppercase tracking-widest transition-colors ${liked ? 'text-pink-500' : 'text-gray-400 hover:text-pink-500'}`}
+                  className={`flex items-center gap-2 text-sm font-bold uppercase tracking-widest transition-all px-4 py-2 rounded-full border ${
+                    liked 
+                      ? 'bg-pink-500/20 text-pink-400 border-pink-500/50 shadow-[0_0_10px_rgba(236,72,153,0.3)]' 
+                      : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
+                  }`}
                 >
                   <Heart className={`w-5 h-5 ${liked ? 'fill-current' : ''}`} /> {liked ? 'Liked' : 'Like'}
                 </button>
-                <button className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-gray-400 hover:text-teal-400 transition-colors">
+                <button className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-white bg-white/10 border border-white/20 px-4 py-2 rounded-full hover:bg-teal-500/20 hover:text-teal-400 hover:border-teal-500/50 transition-all">
                   <MessageSquare className="w-5 h-5" /> Comment
                 </button>
               </div>
-              <button className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-gray-400 hover:text-blue-400 transition-colors">
+              <button className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-white bg-white/10 border border-white/20 px-4 py-2 rounded-full hover:bg-blue-500/20 hover:text-blue-400 hover:border-blue-500/50 transition-all">
                 <Share2 className="w-5 h-5" /> Share
               </button>
             </div>
@@ -149,7 +159,7 @@ export default function BlogDetailsPage() {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {relatedBlogs.map(rb => (
-                <Link key={rb.id} href={`/blogs/${rb.id}`} className="block group">
+                <Link key={rb.id} href={`/blogs/${slugify(rb.title)}-${rb.id}`} className="block group">
                   <div className="bg-[#111]/80 backdrop-blur-md rounded-2xl overflow-hidden border border-gray-800 hover:border-teal-500/50 transition-all duration-500 hover:-translate-y-2 shadow-xl h-full flex flex-col">
                     
                     <div className="relative aspect-[4/3] w-full overflow-hidden bg-gray-900">

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
-import { Lock, Eye, EyeOff, LogOut } from "lucide-react";
+import { Lock, Eye, EyeOff, LogOut, ChevronDown, ChevronRight, LayoutDashboard, Home, ShoppingBag, Briefcase, FileText, Settings, PenTool, Image as ImageIcon, Users, MessageSquare, GraduationCap, Info, Package } from "lucide-react";
 import AboutAdmin from "@/components/AboutAdmin";
 import CategoriesAdmin from "@/components/CategoriesAdmin";
 import TrainingsAdmin from "@/components/TrainingsAdmin";
@@ -13,6 +13,7 @@ import ContactRequestsAdmin from "@/components/ContactRequestsAdmin";
 import CustomSolutionsAdmin from "@/components/CustomSolutionsAdmin";
 import AccessoriesAdmin from "@/components/AccessoriesAdmin";
 import CRMAdmin from "@/components/CRMAdmin";
+import PortfolioRequestsAdmin from "@/components/PortfolioRequestsAdmin";
 import StoreHeroAdmin from "@/components/StoreHeroAdmin";
 import HeroSliderAdmin from "@/components/HeroSliderAdmin";
 import ServicesHeroAdmin from "@/components/ServicesHeroAdmin";
@@ -45,6 +46,7 @@ interface PortfolioItem {
   title: string;
   description: string | null;
   category: string | null;
+  subCategory: string | null;
   imageUrl: string;
   featured: boolean;
   sortOrder: number;
@@ -52,6 +54,8 @@ interface PortfolioItem {
   place?: string | null;
   socialLink?: string | null;
   review?: string | null;
+  reviewPhotoUrl?: string | null;
+  clientExperience?: string | null;
   additionalImages?: string[];
 }
 
@@ -62,7 +66,110 @@ export default function AdminPage() {
   const [showPass, setShowPass] = useState(false);
   const [loginLoading, setLoginLoading] = useState(false);
 
-  const [activeTab, setActiveTab] = useState<"hero" | "training_banner" | "instagram" | "testimonials" | "products" | "categories" | "service_categories" | "gallery" | "about" | "trainings" | "users_orders" | "blogs" | "home_categories" | "menu_settings" | "contact_requests" | "custom_solutions" | "accessories" | "crm" | "store_hero" | "blogs_hero" | "contact_hero" | "services_hero" | "success_stories">("products");
+  const [activeTab, setActiveTab] = useState<string>("users_orders");
+  const [expandedCategory, setExpandedCategory] = useState<string>("Leads & CRM");
+
+  const menuGroups = [
+    {
+      title: 'Leads & CRM',
+      icon: <Users className="w-4 h-4" />,
+      items: [
+        { id: 'users_orders', label: 'Users & Orders' },
+        { id: 'contact_requests', label: 'Form Submissions' },
+        { id: 'crm', label: 'CRM' },
+      ]
+    },
+    {
+      title: 'Home Page',
+      icon: <Home className="w-4 h-4" />,
+      items: [
+        { id: 'hero', label: 'Hero Settings' },
+        { id: 'home_categories', label: 'Home Categories' },
+        { id: 'success_stories', label: 'Success Stories' },
+        { id: 'instagram', label: 'Instagram Feed' },
+        { id: 'testimonials', label: 'Testimonials (Global)' },
+      ]
+    },
+    {
+      title: 'Store Page',
+      icon: <ShoppingBag className="w-4 h-4" />,
+      items: [
+        { id: 'store_hero', label: 'Store Hero Slider' },
+        { id: 'products', label: 'Manage Products' },
+        { id: 'categories', label: 'Product Categories' },
+      ]
+    },
+    {
+      title: 'Accessories Page',
+      icon: <Package className="w-4 h-4" />,
+      items: [
+        { id: 'accessories', label: 'Manage Accessories' },
+      ]
+    },
+    {
+      title: 'Custom Services',
+      icon: <PenTool className="w-4 h-4" />,
+      items: [
+        { id: 'custom_solutions_hero', label: 'Hero Video' },
+        { id: 'custom_solutions_cards', label: 'Services Cards' },
+        { id: 'custom_solutions_projects', label: 'Recent Projects' },
+        { id: 'custom_solutions_reviews', label: 'Customer Reviews' },
+        { id: 'custom_solutions_inquiries', label: 'Inquiries & Leads' },
+      ]
+    },
+    {
+      title: 'Services Page',
+      icon: <Briefcase className="w-4 h-4" />,
+      items: [
+        { id: 'services_hero', label: 'Services Hero' },
+        { id: 'service_categories', label: 'Service Categories' },
+      ]
+    },
+    {
+      title: 'Blogs Page',
+      icon: <FileText className="w-4 h-4" />,
+      items: [
+        { id: 'blogs_hero', label: 'Blogs Hero Slider' },
+        { id: 'blogs', label: 'Manage Blogs' },
+      ]
+    },
+    {
+      title: 'Contact Page',
+      icon: <MessageSquare className="w-4 h-4" />,
+      items: [
+        { id: 'contact_hero', label: 'Contact Hero Slider' },
+      ]
+    },
+    {
+      title: 'Training Page',
+      icon: <GraduationCap className="w-4 h-4" />,
+      items: [
+        { id: 'trainings', label: 'Manage Trainings' },
+      ]
+    },
+    {
+      title: 'Portfolio Page',
+      icon: <ImageIcon className="w-4 h-4" />,
+      items: [
+        { id: 'gallery', label: 'Gallery Upload' },
+        { id: 'portfolio_requests', label: 'Custom Requests' },
+      ]
+    },
+    {
+      title: 'About Page',
+      icon: <Info className="w-4 h-4" />,
+      items: [
+        { id: 'about', label: 'About Page Settings' },
+      ]
+    },
+    {
+      title: 'Other Pages',
+      icon: <Settings className="w-4 h-4" />,
+      items: [
+        { id: 'menu_settings', label: 'Menu Visibility' },
+      ]
+    }
+  ];
 
   // Hero State
   const [heroSettings, setHeroSettings] = useState<HeroSettings | null>(null);
@@ -508,17 +615,36 @@ export default function AdminPage() {
       </div>
 
       <div className="flex flex-col md:flex-row gap-8">
-        {/* Sidebar Menu */}
-        <div className="w-full md:w-64 flex-shrink-0 bg-white rounded-2xl shadow p-4 h-fit sticky top-24" style={{ border: "1px solid var(--cream-white-border)" }}>
-          <div className="flex flex-col gap-1">
-            {(["users_orders", "contact_requests", "crm", "products", "home_categories", "categories", "service_categories", "gallery", "trainings", "store_hero", "blogs_hero", "contact_hero", "services_hero", "instagram", "testimonials", "blogs", "hero", "about", "menu_settings", "custom_solutions", "accessories"] as const).map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-4 py-3 text-left font-semibold rounded-xl transition-all ${activeTab === tab ? "bg-[#135db6] text-white shadow-md translate-x-1" : "text-gray-600 hover:bg-gray-50 hover:translate-x-1"}`}
-              >
-                {tab === "users_orders" ? "Users & Orders" : tab === "contact_requests" ? "Form Submissions" : tab === "crm" ? "CRM" : tab === "products" ? "Manage Products" : tab === "home_categories" ? "Home Categories" : tab === "categories" ? "Product Categories" : tab === "service_categories" ? "Service Categories" : tab === "trainings" ? "Trainings" : tab === "store_hero" ? "Store Hero Slider" : tab === "blogs_hero" ? "Blogs Hero Slider" : tab === "contact_hero" ? "Contact Hero Slider" : tab === "services_hero" ? "Services Hero Masonry" : tab === "instagram" ? "Instagram Feed" : tab === "testimonials" ? "Testimonials" : tab === "blogs" ? "Blogs" : tab === "gallery" ? "Gallery Upload" : tab === "hero" ? "Hero Settings" : tab === "menu_settings" ? "Menu Visibility" : tab === "custom_solutions" ? "Custom Solutions" : tab === "accessories" ? "Accessories Page" : "About Page"}
-              </button>
+        {/* Sidebar Menu Accordion */}
+        <div className="w-full md:w-64 flex-shrink-0 bg-white rounded-2xl shadow p-4 h-fit sticky top-24 overflow-y-auto max-h-[calc(100vh-8rem)]" style={{ border: "1px solid var(--cream-white-border)" }}>
+          <div className="flex flex-col gap-2">
+            {menuGroups.map((group) => (
+              <div key={group.title} className="border-b border-gray-100 last:border-0 pb-2 last:pb-0">
+                <button
+                  onClick={() => setExpandedCategory(expandedCategory === group.title ? "" : group.title)}
+                  className="w-full flex items-center justify-between py-2 px-3 text-sm font-bold text-gray-800 hover:bg-gray-50 rounded-lg transition-colors"
+                >
+                  <div className="flex items-center gap-2">
+                    {group.icon}
+                    <span>{group.title}</span>
+                  </div>
+                  {expandedCategory === group.title ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4 text-gray-400" />}
+                </button>
+                
+                {expandedCategory === group.title && (
+                  <div className="flex flex-col gap-1 mt-1 pl-6">
+                    {group.items.map((item) => (
+                      <button
+                        key={item.id}
+                        onClick={() => setActiveTab(item.id)}
+                        className={`text-left px-3 py-2 text-sm font-medium rounded-lg transition-all ${activeTab === item.id ? "bg-[#135db6] text-white shadow" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"}`}
+                      >
+                        {item.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             ))}
           </div>
         </div>
@@ -561,6 +687,36 @@ export default function AdminPage() {
       {activeTab === "custom_solutions" && (
         <div className="p-6 rounded-2xl shadow" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
           <CustomSolutionsAdmin />
+        </div>
+      )}
+
+      {activeTab === "custom_solutions_hero" && (
+        <div className="p-6 rounded-2xl shadow" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
+          <CustomSolutionsAdmin activeSection="hero" />
+        </div>
+      )}
+
+      {activeTab === "custom_solutions_cards" && (
+        <div className="p-6 rounded-2xl shadow" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
+          <CustomSolutionsAdmin activeSection="solutions" />
+        </div>
+      )}
+
+      {activeTab === "custom_solutions_projects" && (
+        <div className="p-6 rounded-2xl shadow" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
+          <CustomSolutionsAdmin activeSection="projects" />
+        </div>
+      )}
+
+      {activeTab === "custom_solutions_reviews" && (
+        <div className="p-6 rounded-2xl shadow" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
+          <CustomSolutionsAdmin activeSection="reviews" />
+        </div>
+      )}
+
+      {activeTab === "custom_solutions_inquiries" && (
+        <div className="p-6 rounded-2xl shadow" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
+          <CustomSolutionsAdmin activeSection="inquiries" />
         </div>
       )}
 
@@ -748,7 +904,7 @@ export default function AdminPage() {
             <>
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold">Products ({products.length})</h2>
-                <button onClick={() => setIsAdding(true)} className="btn-peacock">Add New Product</button>
+                <button onClick={() => { setIsAdding(true); setSelectedMainCategory("Home Products"); }} className="btn-peacock">Add New Product</button>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {products.map((p) => (
@@ -766,7 +922,7 @@ export default function AdminPage() {
                       ₹{Number(p.price).toLocaleString("en-IN")} • {p.mainCategory} / {p.subCategory}
                     </p>
                     <div className="mt-auto pt-4 flex gap-2">
-                      <button onClick={() => setEditProduct(p)} className="flex-1 btn-peacock-outline !text-sm !py-1.5">Edit</button>
+                      <button onClick={() => { setEditProduct(p); setSelectedMainCategory(p.mainCategory); }} className="flex-1 btn-peacock-outline !text-sm !py-1.5">Edit</button>
                       <button onClick={() => handleDeleteProduct(p.id)} className="flex-1 bg-red-50 text-red-600 font-medium rounded-lg hover:bg-red-100 transition-colors !text-sm !py-1.5">Delete</button>
                     </div>
                   </div>
@@ -793,7 +949,7 @@ export default function AdminPage() {
                     <label className="block text-sm font-semibold mb-1">Main Category</label>
                     <select 
                       name="mainCategory" 
-                      defaultValue={editProduct?.mainCategory || "Home Products"}
+                      value={selectedMainCategory}
                       onChange={(e) => setSelectedMainCategory(e.target.value)}
                       required 
                       className="w-full p-2 rounded border focus:ring-2 outline-none transition-all" 
@@ -815,11 +971,11 @@ export default function AdminPage() {
                       style={{ borderColor: "var(--cream-white-border)" }}
                     >
                       {categories
-                        .filter(c => c.mainCategory === (editProduct ? (editProduct.mainCategory || selectedMainCategory) : selectedMainCategory))
+                        .filter(c => c.mainCategory === selectedMainCategory)
                         .map(c => (
                           <option key={c.id} value={c.subCategory}>{c.subCategory}</option>
                         ))}
-                      {categories.length === 0 && <option value="Others">Others</option>}
+                      {categories.filter(c => c.mainCategory === selectedMainCategory).length === 0 && <option value="Others">Others</option>}
                     </select>
                   </div>
                 </div>
@@ -854,6 +1010,10 @@ export default function AdminPage() {
             </div>
           )}
         </div>
+      )}
+
+      {activeTab === "portfolio_requests" && (
+        <PortfolioRequestsAdmin />
       )}
 
       {activeTab === "gallery" && (
@@ -910,14 +1070,23 @@ export default function AdminPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-semibold mb-1">Category</label>
-                    <select name="category" defaultValue={editGallery?.category || "Residential"} className="w-full p-2 rounded border focus:ring-2 outline-none transition-all" style={{ borderColor: "var(--cream-white-border)" }}>
-                      <option value="Residential">Residential</option>
-                      <option value="Commercial">Commercial</option>
-                      <option value="Corporate">Corporate</option>
-                      <option value="Temple Projects">Temple Projects</option>
-                      <option value="International Orders">International Orders</option>
+                    <select name="category" defaultValue={editGallery?.category || "Epoxy Table"} className="w-full p-2 rounded border focus:ring-2 outline-none transition-all" style={{ borderColor: "var(--cream-white-border)" }}>
+                      <option value="Epoxy Table">Epoxy Table</option>
+                      <option value="Epoxy Flooring">Epoxy Flooring</option>
+                      <option value="Epoxy Clock">Epoxy Clock</option>
+                      <option value="Epoxy Wall Art">Epoxy Wall Art</option>
                     </select>
                   </div>
+                  <div>
+                    <label className="block text-sm font-semibold mb-1">Sub Category</label>
+                    <select name="subCategory" defaultValue={editGallery?.subCategory || "All"} className="w-full p-2 rounded border focus:ring-2 outline-none transition-all" style={{ borderColor: "var(--cream-white-border)" }}>
+                      <option value="All">All</option>
+                      <option value="Home">Home</option>
+                      <option value="Commercial">Commercial</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-semibold mb-1">Sort Order</label>
                     <input name="sortOrder" type="number" defaultValue={editGallery?.sortOrder || 0} className="w-full p-2 rounded border focus:ring-2 outline-none transition-all" style={{ borderColor: "var(--cream-white-border)" }} />
@@ -944,6 +1113,15 @@ export default function AdminPage() {
                 <div>
                   <label className="block text-sm font-semibold mb-1">Customer Review (Optional)</label>
                   <textarea name="review" defaultValue={editGallery?.review || ""} className="w-full p-2 rounded border focus:ring-2 outline-none transition-all" style={{ borderColor: "var(--cream-white-border)" }} rows={2} />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1">Review Photo (Optional)</label>
+                  <input type="file" name="reviewPhoto" accept="image/*" className="w-full p-2 rounded border" style={{ borderColor: "var(--cream-white-border)" }} />
+                  {editGallery?.reviewPhotoUrl && <p className="mt-2 text-sm text-green-600">Current photo will be kept if you don&apos;t upload a new one.</p>}
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1">Client Experience (Optional)</label>
+                  <textarea name="clientExperience" defaultValue={editGallery?.clientExperience || ""} className="w-full p-2 rounded border focus:ring-2 outline-none transition-all" style={{ borderColor: "var(--cream-white-border)" }} rows={3} />
                 </div>
                 <div className="flex items-center gap-2 mt-4">
                   <input name="featured" type="checkbox" id="galleryFeatured" value="true" defaultChecked={editGallery?.featured || false} className="w-4 h-4" />

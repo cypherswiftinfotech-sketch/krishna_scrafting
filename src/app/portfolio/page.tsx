@@ -4,6 +4,7 @@ import Image from "next/image";
 import { X, ZoomIn } from "lucide-react";
 
 import Link from "next/link";
+import { slugify } from "@/lib/utils";
 
 interface PortfolioItem {
   id: number;
@@ -11,6 +12,7 @@ interface PortfolioItem {
   description: string | null;
   imageUrl: string;
   category: string | null;
+  subCategory: string | null;
   featured: boolean;
   cost?: string | null;
   place?: string | null;
@@ -18,21 +20,24 @@ interface PortfolioItem {
   socialLink?: string | null;
 }
 
-const CATEGORIES = [
+const MAIN_CATEGORIES = [
   "All",
-  "Residential",
-  "Commercial",
-  "Corporate",
-  "Temple Projects",
-  "International Orders",
+  "Epoxy Table",
+  "Epoxy Flooring",
+  "Epoxy Clock",
+  "Epoxy Wall Art",
 ];
+
+const SUB_CATEGORIES = ["All", "Home", "Commercial"];
 
 const COLUMN_HEIGHTS = ["h-[280px]", "h-[380px]", "h-[320px]", "h-[420px]", "h-[260px]", "h-[360px]", "h-[440px]", "h-[300px]"];
 
 export default function PortfolioPage() {
   const [items, setItems] = useState<PortfolioItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeFilter, setActiveFilter] = useState("All");
+  const [activeMainCategory, setActiveMainCategory] = useState("All");
+  const [activeSubCategory, setActiveSubCategory] = useState("All");
+  const [visibleCount, setVisibleCount] = useState(3);
 
   const [settings, setSettings] = useState<any>(null);
 
@@ -49,10 +54,18 @@ export default function PortfolioPage() {
     .finally(() => setLoading(false));
   }, []);
 
-  const filtered =
-    activeFilter === "All"
-      ? items
-      : items.filter((i) => i.category === activeFilter);
+  const filtered = items.filter((i) => {
+    const matchMain = activeMainCategory === "All" || i.category === activeMainCategory;
+    const matchSub = activeSubCategory === "All" || i.subCategory === activeSubCategory;
+    return matchMain && matchSub;
+  });
+
+  const visibleItems = filtered.slice(0, visibleCount);
+
+  // Reset visible count when filters change
+  useEffect(() => {
+    setVisibleCount(3);
+  }, [activeMainCategory, activeSubCategory]);
 
   return (
     <div className="min-h-screen bg-white pt-0 pb-20" style={{ fontFamily: "var(--font-body)" }}>
@@ -78,54 +91,73 @@ export default function PortfolioPage() {
                 className="object-cover"
               />
             )}
-            <div className="absolute inset-0 bg-white/30 z-10" />
+            <div className="absolute inset-0 bg-black/60 z-10" />
           </div>
         )}
         <div className="relative z-20 px-4 max-w-7xl mx-auto w-full flex flex-col md:flex-row justify-between items-end">
           <div>
-            <p className="text-teal-600 uppercase tracking-[0.2em] text-xs font-semibold mb-4 flex items-center gap-4">
-              <span className="w-8 h-[1px] bg-teal-600"></span> SELECTED WORK
+            <p className="text-teal-400 uppercase tracking-[0.2em] text-xs font-semibold mb-4 flex items-center gap-4 drop-shadow-sm">
+              <span className="w-8 h-[1px] bg-teal-400"></span> SELECTED WORK
             </p>
-            <h1 className="text-5xl sm:text-6xl font-black bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-teal-500 tracking-wide" style={{ fontFamily: "var(--font-heading)" }}>
+            <h1 className="text-5xl sm:text-6xl font-black bg-clip-text text-transparent bg-gradient-to-r from-[#0f52ba] to-[#008080] tracking-wide" style={{ fontFamily: "var(--font-heading)" }}>
               Our portfolio
             </h1>
           </div>
-          <p className="text-gray-600 font-medium text-sm md:text-base max-w-sm mt-6 md:mt-0 leading-relaxed text-right md:text-left drop-shadow-sm">
+          <p className="text-gray-200 font-medium text-sm md:text-base max-w-sm mt-6 md:mt-0 leading-relaxed text-right md:text-left drop-shadow-sm">
             A showcase of our finest epoxy and resin creations across India and beyond — filter by the kind of space it was made for.
           </p>
         </div>
       </div>
 
       {/* Category Filter Tabs */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
         <div className="flex gap-8 overflow-x-auto pb-4 scrollbar-hide border-b border-gray-200">
-          {CATEGORIES.map((cat) => (
+          {MAIN_CATEGORIES.map((cat) => (
             <button
               key={cat}
-              onClick={() => setActiveFilter(cat)}
+              onClick={() => setActiveMainCategory(cat)}
               className={`flex-shrink-0 text-xs tracking-[0.1em] font-bold uppercase pb-4 relative transition-colors ${
-                activeFilter === cat
-                  ? "text-blue-700"
+                activeMainCategory === cat
+                  ? "text-[#0f52ba]"
                   : "text-gray-500 hover:text-gray-800"
               }`}
             >
               {cat}
-              {activeFilter === cat && (
-                <span className="absolute bottom-[-1px] left-0 w-full h-[2px] bg-blue-700"></span>
+              {activeMainCategory === cat && (
+                <span className="absolute bottom-[-1px] left-0 w-full h-[2px] bg-[#0f52ba]"></span>
               )}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Bento Grid */}
+      {/* Sub Category Filter Tabs */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+        <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+          {SUB_CATEGORIES.map((sub) => (
+            <button
+              key={sub}
+              onClick={() => setActiveSubCategory(sub)}
+              className={`flex-shrink-0 px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-colors border ${
+                activeSubCategory === sub
+                  ? "bg-[#0f52ba]/10 border-[#0f52ba]/20 text-[#0f52ba] shadow-sm"
+                  : "bg-white border-gray-200 text-gray-500 hover:bg-gray-50"
+              }`}
+            >
+              {sub}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {loading ? (
-          <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
-            {Array.from({ length: 6 }).map((_, i) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 3 }).map((_, i) => (
               <div
                 key={i}
-                className="break-inside-avoid rounded-xl bg-gray-100 animate-pulse h-[300px]"
+                className="rounded-xl bg-gray-100 animate-pulse h-[380px]"
               />
             ))}
           </div>
@@ -134,16 +166,15 @@ export default function PortfolioPage() {
             <p className="text-gray-500 text-lg font-semibold">No items in this category yet.</p>
           </div>
         ) : (
-          <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
-            {filtered.map((item, index) => {
-              const hClass = COLUMN_HEIGHTS[index % COLUMN_HEIGHTS.length];
-              return (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {visibleItems.map((item) => (
                 <Link
                   key={item.id}
-                  href={`/portfolio/${item.id}`}
-                  className="break-inside-avoid group relative rounded-2xl overflow-hidden cursor-pointer shadow-sm hover:shadow-xl border border-gray-100 transition-all duration-500 block"
+                  href={`/portfolio/${slugify(item.title)}-${item.id}`}
+                  className="group relative rounded-2xl overflow-hidden cursor-pointer shadow-md hover:shadow-xl border border-gray-100 transition-all duration-500 block h-[400px]"
                 >
-                  <div className={`relative w-full overflow-hidden ${hClass}`}>
+                  <div className="relative w-full h-full overflow-hidden">
                     <Image
                       src={item.imageUrl}
                       alt={item.title}
@@ -188,9 +219,20 @@ export default function PortfolioPage() {
                     </div>
                   </div>
                 </Link>
-              );
-            })}
-          </div>
+              ))}
+            </div>
+
+            {filtered.length > visibleCount && (
+              <div className="mt-16 text-center">
+                <button
+                  onClick={() => setVisibleCount((prev) => prev + 3)}
+                  className="px-8 py-3 bg-white border border-gray-200 text-gray-800 font-bold rounded-full shadow-sm hover:shadow-md hover:bg-gray-50 transition-all text-sm uppercase tracking-wider"
+                >
+                  View More
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

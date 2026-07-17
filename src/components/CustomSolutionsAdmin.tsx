@@ -3,8 +3,14 @@ import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { Upload, X, Plus } from "lucide-react";
 
-export default function CustomSolutionsAdmin() {
+export default function CustomSolutionsAdmin({ activeSection }: { activeSection?: "hero" | "solutions" | "projects" | "reviews" | "inquiries" }) {
   const [activeSubTab, setActiveSubTab] = useState<"hero" | "solutions" | "projects" | "reviews" | "inquiries">("hero");
+
+  useEffect(() => {
+    if (activeSection) {
+      setActiveSubTab(activeSection);
+    }
+  }, [activeSection]);
 
   // Hero State
   const [heroSettings, setHeroSettings] = useState<{ heroVideoUrl: string | null } | null>(null);
@@ -32,6 +38,18 @@ export default function CustomSolutionsAdmin() {
 
   // Inquiries State
   const [inquiries, setInquiries] = useState<any[]>([]);
+  const [inquiryFilter, setInquiryFilter] = useState<"all" | "quote" | "site_visit">("all");
+  const [inquiryCols, setInquiryCols] = useState({
+    name: true,
+    email: true,
+    phone: true,
+    location: true,
+    projectType: true,
+    budget: false,
+    date: true,
+    message: false,
+    image: true
+  });
 
   useEffect(() => {
     fetchHero();
@@ -216,23 +234,25 @@ export default function CustomSolutionsAdmin() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-6 text-gray-900">Custom Solutions Page Admin</h2>
+      <h2 className="text-2xl font-bold mb-6 text-gray-900">Custom Services Page Admin</h2>
       
-      <div className="flex gap-4 mb-8 border-b border-gray-200 overflow-x-auto">
-        {(["hero", "solutions", "projects", "reviews", "inquiries"] as const).map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveSubTab(tab)}
-            className={`px-4 py-2 font-semibold transition-colors whitespace-nowrap ${activeSubTab === tab ? "border-b-2 border-blue-600 text-blue-600" : "text-gray-500 hover:text-gray-900"}`}
-          >
-            {tab === "hero" ? "Hero Video" : tab === "solutions" ? "Solutions Cards" : tab === "projects" ? "Recent Projects" : tab === "reviews" ? "Customer Reviews" : "Inquiries & Leads"}
-          </button>
-        ))}
-      </div>
+      {!activeSection && (
+        <div className="flex gap-4 mb-8 border-b border-gray-200 overflow-x-auto">
+          {(["hero", "solutions", "projects", "reviews", "inquiries"] as const).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveSubTab(tab)}
+              className={`px-4 py-2 font-semibold transition-colors whitespace-nowrap ${activeSubTab === tab ? "border-b-2 border-blue-600 text-blue-600" : "text-gray-500 hover:text-gray-900"}`}
+            >
+              {tab === "hero" ? "Hero Video" : tab === "solutions" ? "Services Cards" : tab === "projects" ? "Recent Projects" : tab === "reviews" ? "Customer Reviews" : "Inquiries & Leads"}
+            </button>
+          ))}
+        </div>
+      )}
 
       {activeSubTab === "hero" && (
         <div className="max-w-2xl">
-          <p className="text-gray-600 mb-6">Upload the background video for the Custom Solutions hero section.</p>
+          <p className="text-gray-600 mb-6">Upload the background video for the Custom Services hero section.</p>
           
           {heroSettings?.heroVideoUrl && (
             <div className="mb-6">
@@ -258,9 +278,9 @@ export default function CustomSolutionsAdmin() {
           {!isAddingSolution ? (
             <>
               <div className="flex justify-between items-center mb-6">
-                <p className="text-gray-600">Manage the 6 Solution cards displayed on the page.</p>
+                <p className="text-gray-600">Manage the 6 Services cards displayed on the page.</p>
                 <button onClick={() => setIsAddingSolution(true)} className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg flex items-center gap-2 hover:bg-blue-700">
-                  <Plus className="w-4 h-4" /> Add Solution
+                  <Plus className="w-4 h-4" /> Add Service
                 </button>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -316,7 +336,7 @@ export default function CustomSolutionsAdmin() {
           ) : (
             <div className="max-w-xl bg-gray-50 border border-gray-200 rounded-2xl p-6">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-bold">Add Solution Card</h3>
+                <h3 className="text-xl font-bold">Add Service Card</h3>
                 <button onClick={() => setIsAddingSolution(false)} className="text-gray-500 hover:text-black"><X className="w-5 h-5" /></button>
               </div>
               <form onSubmit={handleSolutionSubmit} className="space-y-4">
@@ -337,12 +357,12 @@ export default function CustomSolutionsAdmin() {
                   <input type="file" accept="image/*" onChange={(e) => setSolutionFile(e.target.files?.[0] || null)} required className="w-full p-2 rounded border border-gray-200 bg-white" />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold mb-1">Additional Images (Optional, for solution detail page)</label>
+                  <label className="block text-sm font-semibold mb-1">Additional Images (Optional, for service detail page)</label>
                   <input id="additional-images-input" type="file" multiple accept="image/*" className="w-full p-2 rounded border border-gray-200 bg-white" />
                   <p className="text-xs text-gray-500 mt-1">Select multiple images at once (Ctrl+Click or Cmd+Click)</p>
                 </div>
                 <button type="submit" disabled={solutionLoading} className="w-full py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors">
-                  {solutionLoading ? "Adding..." : "Add Solution Card"}
+                  {solutionLoading ? "Adding..." : "Add Service Card"}
                 </button>
               </form>
             </div>
@@ -498,53 +518,173 @@ export default function CustomSolutionsAdmin() {
 
       {activeSubTab === "inquiries" && (
         <div>
-          <div className="flex justify-between items-center mb-6">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
             <p className="text-gray-600">Manage all quote requests and site visit bookings.</p>
+            <div className="flex gap-2 bg-gray-100 p-1 rounded-lg">
+              <button 
+                onClick={() => setInquiryFilter("all")} 
+                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${inquiryFilter === "all" ? "bg-white shadow text-gray-900" : "text-gray-600 hover:text-gray-900"}`}
+              >
+                All
+              </button>
+              <button 
+                onClick={() => setInquiryFilter("quote")} 
+                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${inquiryFilter === "quote" ? "bg-white shadow text-gray-900" : "text-gray-600 hover:text-gray-900"}`}
+              >
+                Quotes
+              </button>
+              <button 
+                onClick={() => setInquiryFilter("site_visit")} 
+                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${inquiryFilter === "site_visit" ? "bg-white shadow text-gray-900" : "text-gray-600 hover:text-gray-900"}`}
+              >
+                Site Visits
+              </button>
+            </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {inquiries.map((inq) => (
-              <div key={inq.id} className="border border-gray-200 rounded-xl p-5 shadow-sm bg-white relative">
-                <span className={`absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded uppercase ${inq.type === 'quote' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'}`}>
-                  {inq.type}
-                </span>
-                
-                <h3 className="font-bold text-lg mb-1">{inq.name || "Unknown Name"}</h3>
-                <p className="text-sm text-gray-500 mb-4">{new Date(inq.createdAt).toLocaleString()}</p>
-                
-                <div className="space-y-2 text-sm text-gray-700 mb-4 bg-gray-50 p-3 rounded-lg">
-                  {inq.phone && <p><strong>Phone:</strong> {inq.phone}</p>}
-                  {inq.email && <p><strong>Email:</strong> {inq.email}</p>}
-                  {inq.city && <p><strong>Location:</strong> {inq.city}{inq.state ? `, ${inq.state}` : ''}</p>}
-                  {inq.projectType && <p><strong>Project Type:</strong> {inq.projectType}</p>}
-                  {inq.area && <p><strong>Area:</strong> {inq.area} sq.ft</p>}
-                  {inq.budget && <p><strong>Budget:</strong> {inq.budget}</p>}
-                  {inq.preferredDate && <p><strong>Preferred Date:</strong> {inq.preferredDate}</p>}
-                  {inq.preferredTime && <p><strong>Preferred Time:</strong> {inq.preferredTime}</p>}
-                  {inq.address && <p><strong>Address:</strong> {inq.address}</p>}
-                  {inq.mapLocation && <p><strong>Map Location:</strong> <a href={inq.mapLocation} target="_blank" className="text-blue-500 underline">View</a></p>}
+          <div className="mb-6">
+            <p className="text-xs font-bold text-gray-500 mb-3 tracking-wider uppercase">Show/Hide Columns:</p>
+            <div className="flex flex-wrap gap-3">
+              {Object.entries(inquiryCols).map(([col, isVisible]) => (
+                <label key={col} className="flex items-center gap-2 px-3 py-1.5 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors bg-white shadow-sm">
+                  <input
+                    type="checkbox"
+                    checked={isVisible}
+                    onChange={() => setInquiryCols(prev => ({ ...prev, [col]: !prev[col as keyof typeof inquiryCols] }))}
+                    className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                  />
+                  <span className="text-sm font-medium text-gray-700 capitalize">{col.replace(/([A-Z])/g, ' $1').trim()}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+          
+          {/* Desktop Table View */}
+          <div className="hidden md:block bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm whitespace-nowrap">
+                <thead className="bg-gray-50 border-b border-gray-200 text-gray-600 uppercase text-xs font-bold tracking-wider">
+                  <tr>
+                    {inquiryCols.name && <th className="px-6 py-4">Name</th>}
+                    {inquiryCols.email && <th className="px-6 py-4">Email</th>}
+                    {inquiryCols.phone && <th className="px-6 py-4">Phone</th>}
+                    {inquiryCols.location && <th className="px-6 py-4">Location</th>}
+                    {inquiryCols.projectType && <th className="px-6 py-4">Project Type</th>}
+                    {inquiryCols.budget && <th className="px-6 py-4">Budget</th>}
+                    {inquiryCols.date && <th className="px-6 py-4">Appointment/Date</th>}
+                    <th className="px-6 py-4">Type</th>
+                    {inquiryCols.message && <th className="px-6 py-4">Message</th>}
+                    {inquiryCols.image && <th className="px-6 py-4">Image</th>}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {inquiries
+                    .filter(inq => inquiryFilter === "all" || inq.type === inquiryFilter)
+                    .map((inq) => (
+                    <tr key={inq.id} className="hover:bg-gray-50 transition-colors">
+                      {inquiryCols.name && <td className="px-6 py-4 font-medium text-gray-900">{inq.name || "Unknown"}</td>}
+                      {inquiryCols.email && <td className="px-6 py-4 text-gray-500">{inq.email || "-"}</td>}
+                      {inquiryCols.phone && <td className="px-6 py-4 text-gray-500">{inq.phone || "-"}</td>}
+                      {inquiryCols.location && <td className="px-6 py-4 text-gray-500">{inq.city || "-"} {inq.state ? `, ${inq.state}` : ''}</td>}
+                      {inquiryCols.projectType && (
+                        <td className="px-6 py-4">
+                          {inq.projectType ? <span className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-semibold">{inq.projectType}</span> : "-"}
+                        </td>
+                      )}
+                      {inquiryCols.budget && <td className="px-6 py-4 text-gray-500">{inq.budget || "-"}</td>}
+                      {inquiryCols.date && (
+                        <td className="px-6 py-4 text-gray-500">
+                          {inq.preferredDate ? `Appt: ${inq.preferredDate}` : ''}
+                          {inq.preferredDate && <br />}
+                          <span className="text-xs text-gray-400">Sent: {new Date(inq.createdAt).toLocaleDateString()}</span>
+                        </td>
+                      )}
+                      <td className="px-6 py-4">
+                        <span className={`text-xs font-bold px-2 py-1 rounded uppercase ${inq.type === 'quote' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'}`}>
+                          {inq.type === 'site_visit' ? 'Site Visit' : inq.type}
+                        </span>
+                      </td>
+                      {inquiryCols.message && (
+                        <td className="px-6 py-4 text-gray-500 max-w-[200px] truncate" title={inq.description}>
+                          {inq.description || "-"}
+                        </td>
+                      )}
+                      {inquiryCols.image && (
+                        <td className="px-6 py-4">
+                          {inq.imageUrl ? (
+                            <a href={inq.imageUrl} target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">
+                              View Image
+                            </a>
+                          ) : "-"}
+                        </td>
+                      )}
+                    </tr>
+                  ))}
+                  
+                  {inquiries.filter(inq => inquiryFilter === "all" || inq.type === inquiryFilter).length === 0 && (
+                    <tr>
+                      <td colSpan={10} className="px-6 py-8 text-center text-gray-500">
+                        No {inquiryFilter !== 'all' ? (inquiryFilter === 'site_visit' ? 'site visit' : inquiryFilter) : ''} inquiries found.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Mobile Card View */}
+          <div className="block md:hidden space-y-4">
+            {inquiries
+              .filter(inq => inquiryFilter === "all" || inq.type === inquiryFilter)
+              .map(inq => (
+                <div key={inq.id} className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm flex flex-col gap-3">
+                  <div className="flex justify-between items-start border-b border-gray-100 pb-2">
+                    <h4 className="font-bold text-gray-900 text-lg">{inq.name || "Unknown"}</h4>
+                    <span className={`text-xs font-bold px-2 py-1 rounded uppercase ${inq.type === 'quote' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'}`}>
+                      {inq.type === 'site_visit' ? 'Site Visit' : inq.type}
+                    </span>
+                  </div>
+                  <div className="text-sm text-gray-600 flex flex-col gap-2">
+                    {inquiryCols.phone && <div className="flex justify-between"><span className="font-semibold text-gray-700">Phone:</span> <span>{inq.phone || "-"}</span></div>}
+                    {inquiryCols.email && <div className="flex justify-between"><span className="font-semibold text-gray-700">Email:</span> <span className="truncate max-w-[200px]">{inq.email || "-"}</span></div>}
+                    {inquiryCols.location && <div className="flex justify-between"><span className="font-semibold text-gray-700">Location:</span> <span>{inq.city || "-"} {inq.state ? `, ${inq.state}` : ''}</span></div>}
+                    {inquiryCols.projectType && <div className="flex justify-between"><span className="font-semibold text-gray-700">Project Type:</span> <span>{inq.projectType || "-"}</span></div>}
+                    {inquiryCols.budget && <div className="flex justify-between"><span className="font-semibold text-gray-700">Budget:</span> <span>{inq.budget || "-"}</span></div>}
+                    {inquiryCols.date && (
+                      <div className="flex flex-col gap-1">
+                        <span className="font-semibold text-gray-700">Date/Time:</span>
+                        <span className="text-gray-500">
+                          {inq.preferredDate ? `Appt: ${inq.preferredDate}` : 'No specific date'} (Sent: {new Date(inq.createdAt).toLocaleDateString()})
+                        </span>
+                      </div>
+                    )}
+                    {inquiryCols.message && (
+                      <div className="flex flex-col gap-1">
+                        <span className="font-semibold text-gray-700">Message:</span>
+                        <span className="bg-gray-50 p-2 rounded border border-gray-100 text-gray-500">{inq.description || "-"}</span>
+                      </div>
+                    )}
+                    {inquiryCols.image && (
+                      <div className="flex justify-between items-center mt-2">
+                        <span className="font-semibold text-gray-700">Reference Image:</span> 
+                        <span>
+                          {inq.imageUrl ? (
+                            <a href={inq.imageUrl} target="_blank" rel="noreferrer" className="px-3 py-1 bg-blue-50 text-blue-600 rounded font-medium text-xs hover:bg-blue-100 transition-colors">
+                              View Image
+                            </a>
+                          ) : "-"}
+                        </span>
+                      </div>
+                    )}
+                  </div>
                 </div>
-                
-                {inq.description && (
-                  <div className="mb-4">
-                    <strong>Description:</strong>
-                    <p className="text-sm bg-gray-100 p-2 rounded italic mt-1">{inq.description}</p>
-                  </div>
-                )}
-                
-                {inq.imageUrl && (
-                  <div className="mt-2">
-                    <strong>Attached Image:</strong>
-                    <a href={inq.imageUrl} target="_blank" rel="noreferrer">
-                      <img src={inq.imageUrl} alt="attachment" className="w-20 h-20 object-cover mt-1 rounded border hover:opacity-80" />
-                    </a>
-                  </div>
-                )}
-              </div>
             ))}
             
-            {inquiries.length === 0 && (
-              <p className="text-gray-500 col-span-2">No inquiries received yet.</p>
+            {inquiries.filter(inq => inquiryFilter === "all" || inq.type === inquiryFilter).length === 0 && (
+              <div className="bg-white border border-gray-200 rounded-xl p-8 text-center text-gray-500 shadow-sm">
+                No {inquiryFilter !== 'all' ? (inquiryFilter === 'site_visit' ? 'site visit' : inquiryFilter) : ''} inquiries found.
+              </div>
             )}
           </div>
         </div>

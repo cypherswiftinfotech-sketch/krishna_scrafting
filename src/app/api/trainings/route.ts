@@ -38,7 +38,8 @@ export async function POST(req: NextRequest) {
   const learnings = formData.get("learnings") as string;
   const fullDetails = formData.get("fullDetails") as string;
   const file = formData.get("image") as File | null;
-  const videoFile = formData.get("video") as File | null;
+  const youtubeThumbnailFile = formData.get("youtubeThumbnail") as File | null;
+  const videoUrlString = formData.get("videoUrlString") as string | null;
   
   let imageUrl = null;
   if (file && file.size > 0) {
@@ -46,11 +47,17 @@ export async function POST(req: NextRequest) {
     if (uploaded) imageUrl = uploaded.url;
   }
 
-  let videoUrl = null;
-  if (videoFile && videoFile.size > 0) {
-    const uploaded = await uploadToCloudinary(videoFile, "trainings/videos");
-    if (uploaded) videoUrl = uploaded.url;
+  let youtubeThumbnailUrl = null;
+  let youtubeThumbnailPublicId = null;
+  if (youtubeThumbnailFile && youtubeThumbnailFile.size > 0) {
+    const uploaded = await uploadToCloudinary(youtubeThumbnailFile, "trainings_thumbnails");
+    if (uploaded) {
+      youtubeThumbnailUrl = uploaded.url;
+      youtubeThumbnailPublicId = uploaded.publicId;
+    }
   }
+
+  const videoUrl = videoUrlString || null;
 
   const [inserted] = await db
     .insert(trainings)
@@ -64,6 +71,8 @@ export async function POST(req: NextRequest) {
       seats: seats ? parseInt(seats) : 10,
       imageUrl,
       videoUrl,
+      youtubeThumbnailUrl,
+      youtubeThumbnailPublicId,
       learnings: learnings || null,
       fullDetails: fullDetails || null,
     })

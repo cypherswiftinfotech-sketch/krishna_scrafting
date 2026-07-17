@@ -25,13 +25,16 @@ export async function POST(req: NextRequest) {
   const title = formData.get("title") as string;
   const description = formData.get("description") as string;
   const category = formData.get("category") as string;
+  const subCategory = formData.get("subCategory") as string;
   const featured = formData.get("featured") === "true";
   const sortOrder = formData.get("sortOrder") as string;
   const cost = formData.get("cost") as string;
   const place = formData.get("place") as string;
   const review = formData.get("review") as string;
   const socialLink = formData.get("socialLink") as string;
+  const clientExperience = formData.get("clientExperience") as string;
   const file = formData.get("image") as File | null;
+  const reviewPhotoFile = formData.get("reviewPhoto") as File | null;
 
   if (!title || !file || file.size === 0) {
     return NextResponse.json(
@@ -55,18 +58,27 @@ export async function POST(req: NextRequest) {
   }
   const additionalImagesJson = additionalImageUrls.length > 0 ? JSON.stringify(additionalImageUrls) : null;
 
+  let reviewPhotoUrl = null;
+  if (reviewPhotoFile && reviewPhotoFile.size > 0) {
+    const uploadedReview = await uploadToCloudinary(reviewPhotoFile, "portfolio/reviews");
+    if (uploadedReview?.url) reviewPhotoUrl = uploadedReview.url;
+  }
+
   const [item] = await db
     .insert(portfolio)
     .values({
       title,
       description: description || null,
       category: category || null,
+      subCategory: subCategory || null,
       featured,
       imageUrl,
       imagePublicId,
       cost: cost || null,
       place: place || null,
       review: review || null,
+      reviewPhotoUrl,
+      clientExperience: clientExperience || null,
       socialLink: socialLink || null,
       additionalImages: additionalImagesJson,
       sortOrder: parseInt(sortOrder) || 0,

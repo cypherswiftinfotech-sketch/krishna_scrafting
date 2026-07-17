@@ -52,7 +52,7 @@ export default function PageHeroSlider({
 
   const textOverlay = (
     <div className="absolute inset-0 flex items-center px-8 md:px-16 lg:px-24">
-      <div className="text-white">
+      <div className="text-white-force">
         {badge && (
           <div className="inline-flex items-center gap-2 mb-4 bg-white/15 backdrop-blur-sm px-4 py-1.5 rounded-full border border-white/20 text-sm font-semibold tracking-wide">
             {badge}

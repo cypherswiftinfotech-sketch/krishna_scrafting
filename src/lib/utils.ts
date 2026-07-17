@@ -15,3 +15,13 @@ export function formatPrice(price: string | number): string {
 export function generateSessionId(): string {
   return Math.random().toString(36).substring(2) + Date.now().toString(36);
 }
+
+export function slugify(text: string): string {
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w\-]+/g, '')
+    .replace(/\-\-+/g, '-');
+}
