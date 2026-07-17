@@ -235,7 +235,7 @@ export default function TrainingDetailsPage() {
                     ) : (
                       <>
                         {(course.youtubeThumbnailUrl || course.imageUrl) ? (
-                          <Image src={course.youtubeThumbnailUrl || course.imageUrl} alt={course.title} fill className="object-cover" />
+                          <Image src={course.youtubeThumbnailUrl || course.imageUrl || ""} alt={course.title} fill className="object-cover" />
                         ) : (
                           <div className="text-gray-400 font-medium">No Image</div>
                         )}
