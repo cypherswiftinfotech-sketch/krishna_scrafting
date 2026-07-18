@@ -76,29 +76,25 @@ export default async function PortfolioItemPage({ params }: { params: Promise<{ 
             </h1>
 
             <div className="space-y-6 mb-10">
-              {item.place && (
-                <div className="flex items-start gap-4">
-                  <div className="p-2 bg-gray-50 rounded-lg border border-gray-200">
-                    <MapPin className="w-5 h-5 text-blue-700" />
-                  </div>
-                  <div>
-                    <p className="text-xs uppercase tracking-widest text-gray-500 font-bold mb-1">Location</p>
-                    <p className="text-gray-900 font-medium">{item.place}</p>
-                  </div>
+              <div className="flex items-start gap-4">
+                <div className="p-2 bg-gray-50 rounded-lg border border-gray-200">
+                  <MapPin className="w-5 h-5 text-blue-700" />
                 </div>
-              )}
+                <div>
+                  <p className="text-xs uppercase tracking-widest text-gray-500 font-bold mb-1">Location</p>
+                  <p className="text-gray-900 font-medium">{item.place || "Available PAN India"}</p>
+                </div>
+              </div>
 
-              {item.cost && (
-                <div className="flex items-start gap-4">
-                  <div className="p-2 bg-gray-50 rounded-lg border border-gray-200">
-                    <Tag className="w-5 h-5 text-blue-700" />
-                  </div>
-                  <div>
-                    <p className="text-xs uppercase tracking-widest text-gray-500 font-bold mb-1">Project Value</p>
-                    <p className="text-gray-900 font-medium">{item.cost}</p>
-                  </div>
+              <div className="flex items-start gap-4">
+                <div className="p-2 bg-gray-50 rounded-lg border border-gray-200">
+                  <Tag className="w-5 h-5 text-blue-700" />
                 </div>
-              )}
+                <div>
+                  <p className="text-xs uppercase tracking-widest text-gray-500 font-bold mb-1">Project Value</p>
+                  <p className="text-gray-900 font-medium">{item.cost || "On Request"}</p>
+                </div>
+              </div>
 
               <PortfolioRequestButton portfolioId={item.id} portfolioTitle={item.title} />
 

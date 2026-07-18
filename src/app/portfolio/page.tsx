@@ -17,7 +17,6 @@ interface PortfolioItem {
   cost?: string | null;
   place?: string | null;
   review?: string | null;
-  socialLink?: string | null;
 }
 
 const MAIN_CATEGORIES = [
@@ -28,7 +27,9 @@ const MAIN_CATEGORIES = [
   "Epoxy Wall Art",
 ];
 
-const SUB_CATEGORIES = ["All", "Home", "Commercial"];
+const SUB_CATEGORIES = ["All", "Home", "Residential"];
+
+
 
 const COLUMN_HEIGHTS = ["h-[280px]", "h-[380px]", "h-[320px]", "h-[420px]", "h-[260px]", "h-[360px]", "h-[440px]", "h-[300px]"];
 
@@ -56,7 +57,7 @@ export default function PortfolioPage() {
 
   const filtered = items.filter((i) => {
     const matchMain = activeMainCategory === "All" || i.category === activeMainCategory;
-    const matchSub = activeSubCategory === "All" || i.subCategory === activeSubCategory;
+    const matchSub = activeSubCategory === "All" || i.subCategory === activeSubCategory || i.category === activeSubCategory;
     return matchMain && matchSub;
   });
 
@@ -94,18 +95,20 @@ export default function PortfolioPage() {
             <div className="absolute inset-0 bg-black/60 z-10" />
           </div>
         )}
-        <div className="relative z-20 px-4 max-w-7xl mx-auto w-full flex flex-col md:flex-row justify-between items-end">
+        <div className="relative z-20 px-4 max-w-7xl mx-auto w-full flex flex-col md:flex-row justify-start items-start md:items-end gap-6 md:gap-12 -mt-16">
           <div>
             <p className="text-teal-400 uppercase tracking-[0.2em] text-xs font-semibold mb-4 flex items-center gap-4 drop-shadow-sm">
               <span className="w-8 h-[1px] bg-teal-400"></span> SELECTED WORK
             </p>
             <h1 className="text-5xl sm:text-6xl font-black bg-clip-text text-transparent bg-gradient-to-r from-[#0f52ba] to-[#008080] tracking-wide" style={{ fontFamily: "var(--font-heading)" }}>
-              Our portfolio
+              Our Portfolio
             </h1>
           </div>
-          <p className="text-gray-200 font-medium text-sm md:text-base max-w-sm mt-6 md:mt-0 leading-relaxed text-right md:text-left drop-shadow-sm">
-            A showcase of our finest epoxy and resin creations across India and beyond — filter by the kind of space it was made for.
-          </p>
+          <div className="md:mb-3">
+            <p className="text-gray-200 font-medium text-sm md:text-base max-w-lg mt-2 md:mt-0 leading-relaxed text-left drop-shadow-sm border-l-2 border-teal-400/30 pl-4">
+              A showcase of our finest epoxy and resin creations across India and beyond — filter by the kind of space it was made for.
+            </p>
+          </div>
         </div>
       </div>
 
@@ -196,26 +199,20 @@ export default function PortfolioPage() {
                     {/* Info */}
                     <div className="absolute bottom-0 left-0 right-0 p-6 z-20 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
                       <div className="flex items-center gap-2 mb-2">
-                        {item.category && (
-                          <span className="text-[10px] font-black uppercase tracking-[0.15em] text-teal-300">
-                            {item.category}
-                          </span>
-                        )}
-                        {item.category && item.place && <span className="text-gray-300 text-[10px]">—</span>}
-                        {item.place && (
-                          <span className="text-[10px] font-black uppercase tracking-[0.15em] text-teal-300">
-                            {item.place}
-                          </span>
-                        )}
+                        <span className="text-[10px] font-black uppercase tracking-[0.15em] text-teal-300">
+                          {item.subCategory || "General"}
+                        </span>
+                        <span className="text-gray-300 text-[10px]">—</span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.15em] text-teal-300">
+                          {item.category || "Portfolio"}
+                        </span>
                       </div>
                       <h3 className="text-gray-50 font-black text-2xl leading-tight drop-shadow-md" style={{ fontFamily: "var(--font-heading)" }}>
                         {item.title}
                       </h3>
-                      {item.cost && (
-                        <p className="mt-3 text-sm text-gray-200 font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-700 delay-100">
-                          {item.cost}
-                        </p>
-                      )}
+                      <p className="mt-3 text-sm text-gray-200 font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-700 delay-100 line-clamp-2">
+                        {item.description || "A beautiful custom epoxy creation crafted with precision and care."}
+                      </p>
                     </div>
                   </div>
                 </Link>

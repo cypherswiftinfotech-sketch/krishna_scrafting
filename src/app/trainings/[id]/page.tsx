@@ -168,7 +168,9 @@ export default function TrainingDetailsPage() {
       {/* SECTION 1: HERO SECTION */}
       <section className="relative bg-[#000000] text-[#ffffff] py-24 z-10">
         <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-          {banner?.mediaUrl ? (
+          {course?.imageUrl ? (
+            <Image src={course.imageUrl} alt="Background" fill className="object-cover" />
+          ) : banner?.mediaUrl ? (
             banner.mediaUrl.match(/\.(mp4|webm)$/i) ? (
               <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover">
                 <source src={banner.mediaUrl} />
@@ -214,8 +216,8 @@ export default function TrainingDetailsPage() {
                 <button onClick={() => toast.success("Brochure downloading...")} className="px-8 py-4 bg-white/20 hover:bg-white/30 text-[#ffffff] font-bold rounded-full backdrop-blur-md border border-white/40 shadow-lg transition-all flex items-center gap-2">
                   <Download className="w-5 h-5" /> Download Course Brochure
                 </button>
-                <button onClick={() => setShowModal(true)} className="px-8 py-4 bg-white hover:bg-gray-100 text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] font-bold rounded-full shadow-lg transition-all flex items-center gap-2">
-                  <Phone className="w-5 h-5" /> Book Free Counselling
+                <button onClick={() => setShowModal(true)} className="px-8 py-4 bg-white hover:bg-gray-100 text-[#0f52ba] font-bold rounded-full shadow-lg transition-all hover:scale-105 flex items-center gap-2">
+                  <Phone className="w-5 h-5 text-[#0f52ba]" /> Book Free Counselling
                 </button>
               </div>
             </div>

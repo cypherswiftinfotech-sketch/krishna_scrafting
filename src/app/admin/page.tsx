@@ -603,7 +603,7 @@ export default function AdminPage() {
 
   // Admin Dashboard
   return (
-    <div className="pt-24 pb-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-screen">
+    <div className="pt-32 pb-12 w-full px-4 sm:px-6 lg:px-8 min-h-screen">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-4xl font-black" style={{ fontFamily: "var(--font-heading)", color: "#1f1f1f" }}>Admin Dashboard</h1>
         <button
@@ -616,34 +616,28 @@ export default function AdminPage() {
 
       <div className="flex flex-col md:flex-row gap-8">
         {/* Sidebar Menu Accordion */}
-        <div className="w-full md:w-64 flex-shrink-0 bg-white rounded-2xl shadow p-4 h-fit sticky top-24 overflow-y-auto max-h-[calc(100vh-8rem)]" style={{ border: "1px solid var(--cream-white-border)" }}>
+        <div className="w-full md:w-64 flex-shrink-0 bg-white rounded-2xl shadow p-4 h-fit sticky top-32 overflow-y-auto max-h-[calc(100vh-10rem)]" style={{ border: "1px solid var(--cream-white-border)" }}>
           <div className="flex flex-col gap-2">
             {menuGroups.map((group) => (
-              <div key={group.title} className="border-b border-gray-100 last:border-0 pb-2 last:pb-0">
-                <button
-                  onClick={() => setExpandedCategory(expandedCategory === group.title ? "" : group.title)}
-                  className="w-full flex items-center justify-between py-2 px-3 text-sm font-bold text-gray-800 hover:bg-gray-50 rounded-lg transition-colors"
-                >
-                  <div className="flex items-center gap-2">
-                    {group.icon}
-                    <span>{group.title}</span>
-                  </div>
-                  {expandedCategory === group.title ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4 text-gray-400" />}
-                </button>
+              <div key={group.title} className="border-b border-gray-100 last:border-0 pb-4 mb-2 last:mb-0">
+                <div className="w-full flex items-center justify-between py-2 px-3 text-sm font-black text-gray-400 uppercase tracking-widest">
+                  <span>{group.title}</span>
+                </div>
                 
-                {expandedCategory === group.title && (
-                  <div className="flex flex-col gap-1 mt-1 pl-6">
-                    {group.items.map((item) => (
-                      <button
-                        key={item.id}
-                        onClick={() => setActiveTab(item.id)}
-                        className={`text-left px-3 py-2 text-sm font-medium rounded-lg transition-all ${activeTab === item.id ? "bg-[#135db6] text-white shadow" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"}`}
-                      >
+                <div className="flex flex-col gap-1 mt-2">
+                  {group.items.map((item) => (
+                    <button
+                      key={item.id}
+                      onClick={() => setActiveTab(item.id)}
+                      className={`text-left px-3 py-2 text-sm font-medium rounded-lg transition-all ${activeTab === item.id ? "bg-[#135db6] text-white shadow" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"}`}
+                    >
+                      <div className="flex items-center gap-2">
+                        {activeTab === item.id ? <ChevronRight className="w-3 h-3 text-white" /> : <ChevronRight className="w-3 h-3 text-transparent" />}
                         {item.label}
-                      </button>
-                    ))}
-                  </div>
-                )}
+                      </div>
+                    </button>
+                  ))}
+                </div>
               </div>
             ))}
           </div>
@@ -735,7 +729,7 @@ export default function AdminPage() {
       {activeTab === "hero" && (
         <div className="p-6 rounded-2xl shadow" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
           <h2 className="text-2xl font-bold mb-6">Hero Section Configuration</h2>
-          <form onSubmit={handleHeroSubmit} className="space-y-4 max-w-2xl">
+          <form onSubmit={handleHeroSubmit} className="space-y-4 w-full">
             <div>
               <label className="block text-sm font-semibold mb-1">Headline</label>
               <input name="headline" defaultValue={heroSettings?.headline || ""} className="w-full p-2 rounded border focus:ring-2 outline-none transition-all" style={{ borderColor: "var(--cream-white-border)" }} />
@@ -787,7 +781,7 @@ export default function AdminPage() {
               </div>
             </>
           ) : (
-            <div className="p-6 rounded-2xl shadow max-w-xl" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
+            <div className="p-6 rounded-2xl shadow w-full" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold">Add Instagram Post</h2>
                 <button onClick={() => { setIsAddingInstagram(false); setInstagramFile(null); }} className="text-gray-500 hover:text-black">Cancel</button>
@@ -850,7 +844,7 @@ export default function AdminPage() {
               </div>
             </>
           ) : (
-            <div className="p-6 rounded-2xl shadow max-w-xl" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
+            <div className="p-6 rounded-2xl shadow w-full" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold">Add Testimonial</h2>
                 <button onClick={() => { setIsAddingTestimonial(false); setTestimonialFile(null); }} className="text-gray-500 hover:text-black">Cancel</button>
@@ -930,7 +924,7 @@ export default function AdminPage() {
               </div>
             </>
           ) : (
-            <div className="p-6 rounded-2xl shadow max-w-2xl" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
+            <div className="p-6 rounded-2xl shadow w-full" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold">{editProduct ? "Edit Product" : "Add Product"}</h2>
                 <button onClick={() => { setIsAdding(false); setEditProduct(null); }} className="text-gray-500 hover:text-black">Cancel</button>
@@ -1021,7 +1015,7 @@ export default function AdminPage() {
           {!isAddingGallery && !editGallery && (
             <div className="mb-12 p-6 rounded-2xl shadow" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
               <h2 className="text-2xl font-bold mb-6">Portfolio Hero Settings</h2>
-              <form onSubmit={handlePortfolioSettingsSubmit} className="space-y-4 max-w-2xl">
+              <form onSubmit={handlePortfolioSettingsSubmit} className="space-y-4 w-full">
                 <div>
                   <label className="block text-sm font-semibold mb-1">Background Media (Image or Video)</label>
                   <input type="file" accept="image/*,video/mp4,video/webm" onChange={(e) => setPortfolioHeroFile(e.target.files?.[0] || null)} className="w-full p-2 rounded border" style={{ borderColor: "var(--cream-white-border)" }} />
@@ -1057,7 +1051,7 @@ export default function AdminPage() {
               </div>
             </>
           ) : (
-            <div className="p-6 rounded-2xl shadow max-w-2xl" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
+            <div className="p-6 rounded-2xl shadow w-full" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold">{editGallery ? "Edit Gallery Item" : "Add Gallery Item"}</h2>
                 <button onClick={() => { setIsAddingGallery(false); setEditGallery(null); }} className="text-gray-500 hover:text-black">Cancel</button>
@@ -1082,7 +1076,7 @@ export default function AdminPage() {
                     <select name="subCategory" defaultValue={editGallery?.subCategory || "All"} className="w-full p-2 rounded border focus:ring-2 outline-none transition-all" style={{ borderColor: "var(--cream-white-border)" }}>
                       <option value="All">All</option>
                       <option value="Home">Home</option>
-                      <option value="Commercial">Commercial</option>
+                      <option value="Residential">Residential</option>
                     </select>
                   </div>
                 </div>
