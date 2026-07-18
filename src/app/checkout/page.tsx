@@ -117,8 +117,7 @@ Thank you! 🙏`;
             href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center gap-3 w-full py-4 rounded-xl font-bold text-white mb-4 transition-all hover:opacity-90 shadow-lg"
-            style={{ backgroundColor: "#25D366" }}
+            className="flex items-center justify-center gap-3 w-full py-4 rounded-xl font-bold text-white mb-4 transition-all hover:opacity-90 shadow-lg bg-gradient-to-r from-[#0f52ba] to-[#008080] border-0"
           >
             <MessageCircle className="w-5 h-5" />
             Send Order to WhatsApp

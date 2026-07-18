@@ -684,7 +684,7 @@ Map Link: ${formData.get("mapLocation") || 'N/A'}`;
             <OutlineButton onClick={() => window.location.href='tel:+917204468429'} className="w-full sm:w-auto px-10 py-5 text-lg" icon={<Phone className="w-5 h-5" />}>
               Call Now
             </OutlineButton>
-            <a href="https://wa.me/917204468429" target="_blank" rel="noreferrer" className="w-full sm:w-auto px-10 py-5 bg-[#25D366] hover:bg-[#1ebe57] text-white-force font-bold rounded-full transition-all hover:shadow-lg hover:-translate-y-1 flex items-center justify-center gap-3 text-lg">
+            <a href="https://wa.me/917204468429" target="_blank" rel="noreferrer" className="w-full sm:w-auto px-10 py-5 bg-gradient-to-r from-[#0f52ba] to-[#008080] hover:opacity-90 text-white-force font-bold rounded-full transition-all hover:shadow-lg hover:-translate-y-1 flex items-center justify-center gap-3 text-lg border-0">
               <MessageCircle className="w-6 h-6" /> WhatsApp
             </a>
           </div>

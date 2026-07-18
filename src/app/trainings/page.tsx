@@ -243,7 +243,7 @@ export default function TrainingsRedesignPage() {
                 <button onClick={() => setShowModal(true)} className="px-8 py-4 bg-white hover:bg-gray-100 text-[#0f52ba] font-bold rounded-full transition-all hover:scale-105 shadow-lg flex items-center gap-2">
                   <Users className="w-5 h-5 text-[#0f52ba]" /> Book Free Counselling
                 </button>
-                <a href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi, I want to know more about the training programs`} target="_blank" rel="noopener noreferrer" className="px-8 py-4 bg-[#25D366] hover:bg-[#20bd5a] text-white-force font-bold rounded-full transition-all hover:scale-105 shadow-lg flex items-center gap-2">
+                <a href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi, I want to know more about the training programs`} target="_blank" rel="noopener noreferrer" className="px-8 py-4 bg-gradient-to-r from-[#0f52ba] to-[#008080] hover:opacity-90 text-white-force font-bold rounded-full transition-all hover:scale-105 shadow-lg flex items-center gap-2 border-0">
                   <Phone className="w-5 h-5" /> WhatsApp Now
                 </a>
               </div>
@@ -617,7 +617,7 @@ export default function TrainingsRedesignPage() {
             <button onClick={() => setShowModal(true)} className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-[#0f52ba] to-[#008080] hover:opacity-90 text-white-force font-bold rounded-full transition-all hover:scale-105 shadow-lg flex items-center justify-center gap-2">
               <Users className="w-5 h-5" /> Book Free Counselling
             </button>
-            <a href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi, I want to join the training program`} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto px-8 py-4 bg-[#25D366] hover:bg-[#20bd5a] text-white-force font-bold rounded-full transition-all hover:scale-105 shadow-lg flex items-center justify-center gap-2">
+            <a href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi, I want to join the training program`} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-[#0f52ba] to-[#008080] hover:opacity-90 text-white-force font-bold rounded-full transition-all hover:scale-105 shadow-lg flex items-center justify-center gap-2 border-0">
               <Phone className="w-5 h-5" /> Chat on WhatsApp
             </a>
           </div>

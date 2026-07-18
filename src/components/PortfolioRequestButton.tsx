@@ -54,7 +54,7 @@ export default function PortfolioRequestButton({
     <>
       <button 
         onClick={() => setIsOpen(true)}
-        className="mt-6 w-full py-3 bg-[#0f52ba] text-white font-bold rounded-xl shadow hover:shadow-lg hover:bg-[#008080] transition-all flex items-center justify-center gap-2 uppercase tracking-widest text-sm"
+        className="mt-6 w-full py-3 bg-gradient-to-r from-[#0f52ba] to-[#008080] hover:opacity-90 text-white font-bold rounded-xl shadow hover:shadow-lg transition-all flex items-center justify-center gap-2 uppercase tracking-widest text-sm border-0"
       >
         <MessageCircle className="w-5 h-5" />
         Request the same
@@ -103,7 +103,7 @@ export default function PortfolioRequestButton({
               <button 
                 type="submit" 
                 disabled={loading}
-                className="w-full mt-4 py-4 bg-[#0f52ba] text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:bg-[#008080] transition-all disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-widest text-sm"
+                className="w-full mt-4 py-4 bg-gradient-to-r from-[#0f52ba] to-[#008080] hover:opacity-90 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-widest text-sm border-0"
               >
                 {loading ? "Processing..." : "Continue to WhatsApp"}
               </button>
