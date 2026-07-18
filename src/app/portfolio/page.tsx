@@ -38,7 +38,7 @@ export default function PortfolioPage() {
   const [loading, setLoading] = useState(true);
   const [activeMainCategory, setActiveMainCategory] = useState("All");
   const [activeSubCategory, setActiveSubCategory] = useState("All");
-  const [visibleCount, setVisibleCount] = useState(3);
+  const [visibleCount, setVisibleCount] = useState(6);
 
   const [settings, setSettings] = useState<any>(null);
 
@@ -65,7 +65,7 @@ export default function PortfolioPage() {
 
   // Reset visible count when filters change
   useEffect(() => {
-    setVisibleCount(3);
+    setVisibleCount(6);
   }, [activeMainCategory, activeSubCategory]);
 
   return (
@@ -115,18 +115,18 @@ export default function PortfolioPage() {
       {/* Category Filter Tabs */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
         <div className="flex gap-8 overflow-x-auto pb-4 scrollbar-hide border-b border-gray-200">
-          {MAIN_CATEGORIES.map((cat) => (
+          {SUB_CATEGORIES.map((cat) => (
             <button
               key={cat}
-              onClick={() => setActiveMainCategory(cat)}
+              onClick={() => setActiveSubCategory(cat)}
               className={`flex-shrink-0 text-xs tracking-[0.1em] font-bold uppercase pb-4 relative transition-colors ${
-                activeMainCategory === cat
+                activeSubCategory === cat
                   ? "text-[#0f52ba]"
                   : "text-gray-500 hover:text-gray-800"
               }`}
             >
               {cat}
-              {activeMainCategory === cat && (
+              {activeSubCategory === cat && (
                 <span className="absolute bottom-[-1px] left-0 w-full h-[2px] bg-[#0f52ba]"></span>
               )}
             </button>
@@ -137,12 +137,12 @@ export default function PortfolioPage() {
       {/* Sub Category Filter Tabs */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
         <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
-          {SUB_CATEGORIES.map((sub) => (
+          {MAIN_CATEGORIES.map((sub) => (
             <button
               key={sub}
-              onClick={() => setActiveSubCategory(sub)}
+              onClick={() => setActiveMainCategory(sub)}
               className={`flex-shrink-0 px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-colors border ${
-                activeSubCategory === sub
+                activeMainCategory === sub
                   ? "bg-[#0f52ba]/10 border-[#0f52ba]/20 text-[#0f52ba] shadow-sm"
                   : "bg-white border-gray-200 text-gray-500 hover:bg-gray-50"
               }`}
@@ -222,7 +222,7 @@ export default function PortfolioPage() {
             {filtered.length > visibleCount && (
               <div className="mt-16 text-center">
                 <button
-                  onClick={() => setVisibleCount((prev) => prev + 3)}
+                  onClick={() => setVisibleCount((prev) => prev + 6)}
                   className="px-8 py-3 bg-white border border-gray-200 text-gray-800 font-bold rounded-full shadow-sm hover:shadow-md hover:bg-gray-50 transition-all text-sm uppercase tracking-wider"
                 >
                   View More

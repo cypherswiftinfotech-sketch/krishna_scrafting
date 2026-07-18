@@ -80,7 +80,7 @@ Area: ${formData.get("area") || 'N/A'} sq.ft
 Budget: ${formData.get("budget") || 'N/A'}
 Requirement: ${formData.get("description") || 'N/A'}`;
       
-      const whatsappUrl = `https://wa.me/917204468429?text=${encodeURIComponent(text)}`;
+      const whatsappUrl = `https://wa.me/918319668016?text=${encodeURIComponent(text)}`;
       window.open(whatsappUrl, '_blank');
       
       router.push("/customservices");

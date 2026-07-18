@@ -333,7 +333,7 @@ export default function HomePage() {
               }}
             >
               <Gem className="w-5 h-5" />
-              View Gallery
+              View Portfolio
             </Link>
           </div>
         </div>

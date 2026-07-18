@@ -35,7 +35,7 @@ export default function PortfolioRequestButton({
 
       if (res.ok) {
         // Redirect to WhatsApp
-        const whatsappNumber = "919019772277"; // fallback or hardcoded
+        const whatsappNumber = "918319668016"; // fallback or hardcoded
         const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
         window.open(whatsappUrl, "_blank");
         setIsOpen(false);

@@ -131,7 +131,7 @@ City: ${formData.get("city") || 'N/A'}
 Area: ${formData.get("area") || 'N/A'} sq.ft
 Budget: ${formData.get("budget") || 'N/A'}
 Requirement: ${formData.get("description") || 'N/A'}`;
-      const whatsappUrl = `https://wa.me/917204468429?text=${encodeURIComponent(text)}`;
+      const whatsappUrl = `https://wa.me/918319668016?text=${encodeURIComponent(text)}`;
       window.open(whatsappUrl, '_blank');
       
       setQuoteModalOpen(false);
@@ -158,7 +158,7 @@ Preferred Date: ${formData.get("preferredDate")}
 Preferred Time: ${formData.get("preferredTime") || 'N/A'}
 Address: ${formData.get("address")}
 Map Link: ${formData.get("mapLocation") || 'N/A'}`;
-      const whatsappUrl = `https://wa.me/917204468429?text=${encodeURIComponent(text)}`;
+      const whatsappUrl = `https://wa.me/918319668016?text=${encodeURIComponent(text)}`;
       window.open(whatsappUrl, '_blank');
       
       setVisitModalOpen(false);
@@ -681,10 +681,10 @@ Map Link: ${formData.get("mapLocation") || 'N/A'}`;
             <PrimaryButton onClick={() => setQuoteModalOpen(true)} className="w-full sm:w-auto px-10 py-5 text-lg">
               Request Quote
             </PrimaryButton>
-            <OutlineButton onClick={() => window.location.href='tel:+917204468429'} className="w-full sm:w-auto px-10 py-5 text-lg" icon={<Phone className="w-5 h-5" />}>
+            <OutlineButton onClick={() => window.location.href='tel:+918319668016'} className="w-full sm:w-auto px-10 py-5 text-lg" icon={<Phone className="w-5 h-5" />}>
               Call Now
             </OutlineButton>
-            <a href="https://wa.me/917204468429" target="_blank" rel="noreferrer" className="w-full sm:w-auto px-10 py-5 bg-gradient-to-r from-[#0f52ba] to-[#008080] hover:opacity-90 text-white-force font-bold rounded-full transition-all hover:shadow-lg hover:-translate-y-1 flex items-center justify-center gap-3 text-lg border-0">
+            <a href="https://wa.me/918319668016" target="_blank" rel="noreferrer" className="w-full sm:w-auto px-10 py-5 bg-gradient-to-r from-[#0f52ba] to-[#008080] hover:opacity-90 text-white-force font-bold rounded-full transition-all hover:shadow-lg hover:-translate-y-1 flex items-center justify-center gap-3 text-lg border-0">
               <MessageCircle className="w-6 h-6" /> WhatsApp
             </a>
           </div>

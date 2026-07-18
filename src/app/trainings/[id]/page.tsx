@@ -44,6 +44,7 @@ export default function TrainingDetailsPage() {
   const [showOutcomesMore, setShowOutcomesMore] = useState(false);
   const [showProjectsMore, setShowProjectsMore] = useState(false);
   const [showBenefitsMore, setShowBenefitsMore] = useState(false);
+  const [showFaqMore, setShowFaqMore] = useState(false);
   const [expandedTools, setExpandedTools] = useState({ tools: false, materials: false, safety: false });
   const [activeMethodologyStep, setActiveMethodologyStep] = useState(0);
   const [showModal, setShowModal] = useState(false); // Counselling
@@ -930,18 +931,18 @@ export default function TrainingDetailsPage() {
               <span key={i} className="px-5 py-2 bg-gray-50 border border-gray-200 rounded-full font-bold text-gray-800">{pt}</span>
             ))}
           </div>
-          <p className="font-bold text-xl text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] italic">{details.academy.outro}</p>
+<p className="font-bold text-xl text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] italic">{details.academy.outro}</p>
         </div>
       </section>
 
       {/* SECTION 16: FAQ */}
       <section className="py-20 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080]" style={{ fontFamily: "var(--font-heading)" }}>{details.faq.heading}</h2>
           </div>
-          <div className="space-y-4">
-            {details.faq.items.map((faq, i) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 items-start">
+            {details.faq.items.slice(0, showFaqMore ? details.faq.items.length : 8).map((faq, i) => (
               <div key={i} className="border border-gray-200 rounded-2xl bg-white overflow-hidden shadow-sm hover:shadow transition-shadow">
                 <button
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
@@ -958,6 +959,17 @@ export default function TrainingDetailsPage() {
               </div>
             ))}
           </div>
+
+          {details.faq.items.length > 8 && (
+            <div className="text-center">
+              <button 
+                onClick={() => setShowFaqMore(!showFaqMore)}
+                className="px-8 py-3 rounded-full bg-gradient-to-r from-[#0f52ba] to-[#008080] text-white font-bold hover:opacity-90 transition-all flex items-center gap-2 mx-auto shadow-md hover:shadow-lg"
+              >
+                {showFaqMore ? "View Less" : "View More"} <ChevronDown className={`w-5 h-5 transition-transform ${showFaqMore ? 'rotate-180' : ''}`} />
+              </button>
+            </div>
+          )}
         </div>
       </section>
 

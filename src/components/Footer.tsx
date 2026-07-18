@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Mail, Phone, MapPin } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -77,10 +78,10 @@ export default function Footer() {
 
           <div>
             <h4 className="font-semibold mb-4" style={{ color: "#1f1f1f" }}>Contact</h4>
-            <ul className="space-y-2 text-sm" style={{ color: "#4b4b4b" }}>
-              <li>📧 hello@srikrishnacrafting.com</li>
-              <li>📞 +91 831 966 8016</li>
-              <li>📍 Indore, Bengalore</li>
+            <ul className="space-y-3 text-sm" style={{ color: "#4b4b4b" }}>
+              <li className="flex items-center gap-2"><Mail className="w-4 h-4 text-[#0f52ba]" /> hello@srikrishnacrafting.com</li>
+              <li className="flex items-center gap-2"><Phone className="w-4 h-4 text-[#0f52ba]" /> +91 831 966 8016</li>
+              <li className="flex items-center gap-2"><MapPin className="w-4 h-4 text-[#0f52ba]" /> Indore, Bengalore</li>
             </ul>
           </div>
         </div>

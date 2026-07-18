@@ -603,8 +603,24 @@ export default function AdminPage() {
 
   // Admin Dashboard
   return (
-    <div className="pt-32 pb-12 w-full px-4 sm:px-6 lg:px-8 min-h-screen">
-      <div className="flex justify-between items-center mb-8">
+    <div className="pt-28 pb-4 w-full px-4 sm:px-6 lg:px-8 h-screen flex flex-col overflow-hidden">
+      <style>{`
+        .admin-scroll::-webkit-scrollbar {
+          width: 6px;
+          height: 6px;
+        }
+        .admin-scroll::-webkit-scrollbar-track {
+          background: transparent; 
+        }
+        .admin-scroll::-webkit-scrollbar-thumb {
+          background: #cbd5e1; 
+          border-radius: 10px;
+        }
+        .admin-scroll::-webkit-scrollbar-thumb:hover {
+          background: #94a3b8; 
+        }
+      `}</style>
+      <div className="flex justify-between items-center mb-6 shrink-0">
         <h1 className="text-4xl font-black" style={{ fontFamily: "var(--font-heading)", color: "#1f1f1f" }}>Admin Dashboard</h1>
         <button
           onClick={handleLogout}
@@ -614,9 +630,9 @@ export default function AdminPage() {
         </button>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-8">
+      <div className="flex flex-col md:flex-row gap-6 flex-1 min-h-0 pb-4">
         {/* Sidebar Menu Accordion */}
-        <div className="w-full md:w-64 flex-shrink-0 bg-white rounded-2xl shadow p-4 h-fit sticky top-32 overflow-y-auto max-h-[calc(100vh-10rem)]" style={{ border: "1px solid var(--cream-white-border)" }}>
+        <div className="w-full md:w-64 flex-shrink-0 bg-white rounded-2xl shadow p-4 h-full overflow-y-auto admin-scroll" style={{ border: "1px solid var(--cream-white-border)" }}>
           <div className="flex flex-col gap-2">
             {menuGroups.map((group) => (
               <div key={group.title} className="border-b border-gray-100 last:border-0 pb-4 mb-2 last:mb-0">
@@ -644,7 +660,7 @@ export default function AdminPage() {
         </div>
 
         {/* Main Content Area */}
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 h-full overflow-y-auto admin-scroll pr-2">
 
       {activeTab === "store_hero" && (
         <StoreHeroAdmin />
