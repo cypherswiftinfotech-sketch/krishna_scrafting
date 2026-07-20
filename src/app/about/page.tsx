@@ -11,6 +11,7 @@ interface AboutSettings {
   missionText: string;
   visionTitle: string;
   visionText: string;
+  heroImageUrl?: string | null;
 }
 
 interface AboutGalleryImage {
@@ -62,32 +63,51 @@ export default function AboutPage() {
   return (
     <div className="bg-white">
       {/* ── 1. Story Section ───────────────────────────────────── */}
-      <section className="relative py-24 overflow-hidden">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-6 bg-gray-100 border border-gray-200">
-            <Sparkles className="w-4 h-4 text-amber-500" />
-            <span className="text-sm font-medium text-gray-800 uppercase tracking-wider">
+      <section className={cn("relative overflow-hidden flex flex-col justify-center", settings?.heroImageUrl ? "min-h-[50vh] py-16 md:py-24" : "py-24")}>
+        {settings?.heroImageUrl && (
+          <div className="absolute inset-0 z-0">
+            <Image 
+              src={settings.heroImageUrl} 
+              alt="About Us Hero" 
+              fill 
+              className="object-cover"
+              priority
+            />
+            <div className="absolute inset-0 bg-black/30 z-10" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
+          </div>
+        )}
+
+        <div className="relative z-20 max-w-4xl mx-auto px-4 text-center mt-12 md:mt-16">
+          <div className={cn("inline-flex items-center gap-2 rounded-full px-5 py-2 mb-6 border shadow-lg", settings?.heroImageUrl ? "bg-black/30 border-white/20 backdrop-blur-md" : "bg-gray-100 border-gray-200")}>
+            <Sparkles className="w-4 h-4" style={{ color: settings?.heroImageUrl ? "#fbbf24" : "#f59e0b" }} />
+            <span className={cn("text-sm font-bold uppercase tracking-wider", settings?.heroImageUrl ? "text-white" : "text-gray-800")}>
               {settings?.storyTitle || "Our Story"}
             </span>
           </div>
+          
           <h1
-            className="text-4xl md:text-6xl font-black mb-8 leading-tight animate-fade-in-up"
-            style={{ color: "#1f1f1f" }}
+            className={cn("text-4xl md:text-6xl font-black mb-8 leading-tight animate-fade-in-up", settings?.heroImageUrl ? "text-white drop-shadow-2xl" : "text-[#1f1f1f]")}
+            style={settings?.heroImageUrl ? { textShadow: "0px 4px 12px rgba(0,0,0,0.8)" } : undefined}
           >
             Crafting Memories,{" "}
             <span
-              style={{
-                backgroundImage:
-                  "linear-gradient(to right, rgb(15, 82, 186), #008080)",
+              style={settings?.heroImageUrl ? {
+                color: "#4fd1c5",
+                textShadow: "0px 4px 12px rgba(0,0,0,0.8)"
+              } : {
+                backgroundImage: "linear-gradient(to right, rgb(15, 82, 186), #008080)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
               }}
+              className={settings?.heroImageUrl ? "text-teal-400" : ""}
             >
               One Pour at a Time
             </span>
           </h1>
-          <p className="text-xl md:text-2xl text-gray-600 leading-relaxed animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
+          
+          <p className={cn("text-xl md:text-2xl leading-relaxed animate-fade-in-up font-medium", settings?.heroImageUrl ? "text-gray-100 drop-shadow-xl" : "text-gray-600")} style={{ animationDelay: "0.2s", textShadow: settings?.heroImageUrl ? "0px 2px 8px rgba(0,0,0,0.8)" : undefined }}>
             {settings?.storyText ||
               "Sri Krishna Crafting was born from a deep passion for handcrafted beauty. We blend timeless tradition with modern design to deliver exquisite creations that stand the test of time."}
           </p>

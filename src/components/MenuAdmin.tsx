@@ -60,7 +60,7 @@ export default function MenuAdmin() {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6 max-w-4xl">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6 w-full">
       <h2 className="text-xl font-bold text-gray-900 mb-6 font-cinzel">Navigation Menu Visibility</h2>
       
       <div className="overflow-x-auto">

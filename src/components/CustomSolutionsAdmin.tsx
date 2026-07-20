@@ -251,7 +251,7 @@ export default function CustomSolutionsAdmin({ activeSection }: { activeSection?
       )}
 
       {activeSubTab === "hero" && (
-        <div className="max-w-2xl">
+        <div className="w-full">
           <p className="text-gray-600 mb-6">Upload the background video for the Custom Services hero section.</p>
           
           {heroSettings?.heroVideoUrl && (
@@ -334,7 +334,7 @@ export default function CustomSolutionsAdmin({ activeSection }: { activeSection?
               </div>
             </>
           ) : (
-            <div className="max-w-xl bg-gray-50 border border-gray-200 rounded-2xl p-6">
+            <div className="w-full bg-gray-50 border border-gray-200 rounded-2xl p-6">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-bold">Add Service Card</h3>
                 <button onClick={() => setIsAddingSolution(false)} className="text-gray-500 hover:text-black"><X className="w-5 h-5" /></button>
@@ -399,7 +399,7 @@ export default function CustomSolutionsAdmin({ activeSection }: { activeSection?
               </div>
             </>
           ) : (
-            <div className="max-w-2xl bg-gray-50 border border-gray-200 rounded-2xl p-6">
+            <div className="w-full bg-gray-50 border border-gray-200 rounded-2xl p-6">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-bold">Add Recent Project</h3>
                 <button onClick={() => setIsAddingProject(false)} className="text-gray-500 hover:text-black"><X className="w-5 h-5" /></button>
@@ -479,7 +479,7 @@ export default function CustomSolutionsAdmin({ activeSection }: { activeSection?
               </div>
             </>
           ) : (
-            <div className="max-w-xl bg-gray-50 border border-gray-200 rounded-2xl p-6">
+            <div className="w-full bg-gray-50 border border-gray-200 rounded-2xl p-6">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-bold">Add Customer Review</h3>
                 <button onClick={() => setIsAddingReview(false)} className="text-gray-500 hover:text-black"><X className="w-5 h-5" /></button>

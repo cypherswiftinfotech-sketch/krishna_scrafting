@@ -9,6 +9,7 @@ interface AboutSettings {
   missionText: string;
   visionTitle: string;
   visionText: string;
+  heroImageUrl?: string | null;
 }
 
 interface AboutGalleryImage {
@@ -33,6 +34,7 @@ export default function AboutAdmin() {
   // Settings State
   const [settings, setSettings] = useState<AboutSettings | null>(null);
   const [settingsLoading, setSettingsLoading] = useState(false);
+  const [heroImageFile, setHeroImageFile] = useState<File | null>(null);
 
   // Gallery State
   const [gallery, setGallery] = useState<AboutGalleryImage[]>([]);
@@ -87,16 +89,16 @@ export default function AboutAdmin() {
     e.preventDefault();
     setSettingsLoading(true);
     const formData = new FormData(e.currentTarget);
-    const body = Object.fromEntries(formData.entries());
+    if (heroImageFile) formData.set("heroImage", heroImageFile);
     
     try {
       const res = await fetch("/api/about", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+        method: "POST",
+        body: formData,
       });
       if (!res.ok) throw new Error("Failed to update settings");
       toast.success("About settings updated!");
+      setHeroImageFile(null);
       fetchSettings();
     } catch (e: any) {
       toast.error(e.message || "Error");
@@ -193,7 +195,7 @@ export default function AboutAdmin() {
       {activeSubTab === "settings" && (
         <div className="p-6 rounded-2xl shadow" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
           <h2 className="text-2xl font-bold mb-6">About Page Settings</h2>
-          <form onSubmit={handleSettingsSubmit} className="space-y-6 max-w-3xl">
+          <form onSubmit={handleSettingsSubmit} className="space-y-6 w-full">
             <div className="space-y-4">
               <h3 className="text-lg font-bold border-b pb-2">Story Section</h3>
               <div>
@@ -203,6 +205,21 @@ export default function AboutAdmin() {
               <div>
                 <label className="block text-sm font-semibold mb-1">Story Text</label>
                 <textarea name="storyText" defaultValue={settings?.storyText || ""} className="w-full p-2 rounded border focus:ring-2 outline-none transition-all" style={{ borderColor: "var(--cream-white-border)" }} rows={4} />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1">Hero Image</label>
+                {settings?.heroImageUrl && (
+                  <div className="mb-2">
+                    <img src={settings.heroImageUrl} alt="Hero" className="h-32 object-cover rounded shadow" />
+                  </div>
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setHeroImageFile(e.target.files?.[0] || null)}
+                  className="w-full p-2 rounded border focus:ring-2 outline-none transition-all"
+                  style={{ borderColor: "var(--cream-white-border)" }}
+                />
               </div>
             </div>
             
@@ -257,7 +274,7 @@ export default function AboutAdmin() {
               </div>
             </>
           ) : (
-            <div className="p-6 rounded-2xl shadow max-w-xl" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
+            <div className="p-6 rounded-2xl shadow w-full" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold">Add Gallery Image</h2>
                 <button onClick={() => setIsAddingGallery(false)} className="text-gray-500 hover:text-black">Cancel</button>
@@ -310,7 +327,7 @@ export default function AboutAdmin() {
               </div>
             </>
           ) : (
-            <div className="p-6 rounded-2xl shadow max-w-2xl" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
+            <div className="p-6 rounded-2xl shadow w-full" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold">{editPartner ? "Edit Partner" : "Add Partner"}</h2>
                 <button onClick={() => { setIsAddingPartner(false); setEditPartner(null); }} className="text-gray-500 hover:text-black">Cancel</button>

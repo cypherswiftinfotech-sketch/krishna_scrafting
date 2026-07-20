@@ -605,10 +605,7 @@ export default function HomePage() {
               Have Something{" "}
               <span
                 style={{
-                  backgroundImage: "var(--blue-gradient)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
+                  color: "#fbbf24",
                 }}
               >
                 Custom?

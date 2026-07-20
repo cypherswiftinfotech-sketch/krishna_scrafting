@@ -251,7 +251,6 @@ export const studentSuccessStories = pgTable("student_success_stories", {
 export type StudentSuccessStory = typeof studentSuccessStories.$inferSelect;
 export type NewStudentSuccessStory = typeof studentSuccessStories.$inferInsert;
 
-// ─── About Page ───────────────────────────────────────────────────────────────
 export const aboutSettings = pgTable("about_settings", {
   id: serial("id").primaryKey(),
   storyTitle: varchar("story_title", { length: 255 }).default("Our Story"),
@@ -260,6 +259,8 @@ export const aboutSettings = pgTable("about_settings", {
   missionText: text("mission_text").default(""),
   visionTitle: varchar("vision_title", { length: 255 }).default("Our Vision"),
   visionText: text("vision_text").default(""),
+  heroImageUrl: text("hero_image_url"),
+  heroImagePublicId: text("hero_image_public_id"),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 

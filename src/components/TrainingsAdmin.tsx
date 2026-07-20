@@ -285,7 +285,7 @@ export default function TrainingsAdmin() {
       )}
 
       {activeSubTab === "banner" && (
-        <div className="p-6 rounded-2xl shadow max-w-2xl" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
+        <div className="p-6 rounded-2xl shadow w-full" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
           <div className="mb-6">
             <h2 className="text-2xl font-bold mb-1">Trainings Page Hero Banner</h2>
             <p className="text-gray-500 text-sm">Update the background image/video and the WhatsApp contact number for the Trainings page.</p>

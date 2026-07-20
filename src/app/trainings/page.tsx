@@ -198,7 +198,7 @@ export default function TrainingsRedesignPage() {
   };
 
   const scrollToCourses = () => {
-    const el = document.getElementById("learning-paths");
+    const el = document.getElementById("available-courses");
     el?.scrollIntoView({ behavior: "smooth" });
   };
 
@@ -206,7 +206,7 @@ export default function TrainingsRedesignPage() {
     <div className="min-h-screen bg-gray-50 pt-0" style={{ fontFamily: "var(--font-body)" }}>
       
       {/* SECTION 1: HERO SECTION */}
-      <section className="relative w-full h-screen min-h-[600px] flex flex-col justify-center overflow-hidden bg-black">
+      <section className="relative w-full min-h-screen py-24 flex flex-col justify-center overflow-hidden bg-black">
         {banner?.mediaUrl ? (
           banner.mediaUrl.match(/\.(mp4|webm)$/i) ? (
             <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover">
@@ -221,7 +221,7 @@ export default function TrainingsRedesignPage() {
         <div className="absolute inset-0 bg-black/30"></div>
         
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row items-center lg:items-start justify-between gap-12 -mt-16">
+          <div className="flex flex-col lg:flex-row items-center lg:items-start justify-between gap-12 lg:-mt-16">
             
             {/* Left Content */}
             <div className="flex-1 text-center lg:text-left">
@@ -313,7 +313,7 @@ export default function TrainingsRedesignPage() {
       </section>
 
       {/* SECTION 3: COURSE CATALOG */}
-      <section className="py-24 bg-gray-50">
+      <section className="py-24 bg-gray-50" id="available-courses">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080] mb-4" style={{ fontFamily: "var(--font-heading)" }}>
@@ -379,7 +379,7 @@ export default function TrainingsRedesignPage() {
           </div>
 
           <div className="relative max-w-5xl mx-auto py-10">
-            <div className="absolute top-0 bottom-0 left-8 md:left-1/2 w-1.5 bg-gradient-to-b from-gray-200 via-[#008080] to-[#0f52ba] md:-translate-x-1/2 rounded-full"></div>
+            <div className="absolute top-0 bottom-0 left-12 md:left-1/2 w-1.5 bg-gradient-to-b from-gray-200 via-[#008080] to-[#0f52ba] md:-translate-x-1/2 rounded-full"></div>
             
             <div className="flex flex-col gap-16">
               {JOURNEY_STEPS.map((step, i) => {
@@ -397,11 +397,11 @@ export default function TrainingsRedesignPage() {
                 return (
                   <div key={i} className={`relative flex items-center group w-full ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'} flex-row`}>
                     
-                    <div className="absolute left-8 md:left-1/2 -translate-x-1/2 w-10 h-10 md:w-14 md:h-14 rounded-full bg-gradient-to-r from-[#0f52ba] to-[#008080] z-20 flex items-center justify-center shadow-lg group-hover:scale-125 transition-transform">
+                    <div className="absolute left-12 md:left-1/2 -translate-x-1/2 w-10 h-10 md:w-14 md:h-14 rounded-full bg-gradient-to-r from-[#0f52ba] to-[#008080] z-20 flex items-center justify-center shadow-lg group-hover:scale-125 transition-transform">
                       <span className="text-white-force font-black text-sm md:text-lg">{i + 1}</span>
                     </div>
 
-                    <div className={`w-full md:w-1/2 flex pl-20 md:pl-0 ${isEven ? 'md:pr-16 md:justify-end' : 'md:pl-16 md:justify-start'}`}>
+                    <div className={`w-full md:w-1/2 flex pl-24 md:pl-0 ${isEven ? 'md:pr-16 md:justify-end' : 'md:pl-16 md:justify-start'}`}>
                       <div className={`w-full max-w-sm bg-white p-6 md:p-6 rounded-3xl shadow-[0_10px_30px_rgba(15,82,186,0.08)] border border-gray-100 group-hover:border-[#008080] group-hover:shadow-[0_20px_40px_rgba(15,82,186,0.18)] transition-all group-hover:-translate-y-2 relative z-10`}>
                         <div className={`flex items-center gap-4 md:gap-5 ${isEven ? 'md:flex-row-reverse' : 'flex-row'}`}>
                           <div className="w-14 h-14 md:w-16 md:h-16 shrink-0 bg-gray-50 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm border border-gray-100">

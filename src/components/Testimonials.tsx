@@ -75,13 +75,17 @@ export default function Testimonials({
       </div>
 
       {/* Auto-scrolling Track */}
-      <div className="relative w-full">
-        {/* Gradient Fades for smooth edges */}
-        <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-gray-50 to-transparent z-10 pointer-events-none"></div>
-        <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-gray-50 to-transparent z-10 pointer-events-none"></div>
+      <div className="relative w-full overflow-hidden">
+        {/* Gradient Fades for smooth edges - Only show if enough items to scroll */}
+        {scrollData.length > 3 && (
+          <>
+            <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-gray-50 to-transparent z-10 pointer-events-none"></div>
+            <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-gray-50 to-transparent z-10 pointer-events-none"></div>
+          </>
+        )}
 
-        <div className="animate-marquee gap-6 px-4 py-4">
-          {scrollData.map((testimonial, idx) => (
+        <div className={scrollData.length > 3 ? "animate-marquee gap-6 px-4 py-4" : "flex flex-wrap justify-center gap-6 px-4 py-4"}>
+          {(scrollData.length > 3 ? scrollData : testimonials).map((testimonial, idx) => (
             <div
               key={`${testimonial.id}-${idx}`}
               className="w-[350px] md:w-[400px] flex-shrink-0 bg-white p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 transition-transform duration-300 hover:-translate-y-2 cursor-pointer"

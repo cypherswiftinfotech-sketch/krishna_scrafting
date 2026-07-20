@@ -78,14 +78,14 @@ export default function InstagramFeed() {
         </div>
 
         {/* Feed Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+        <div className="flex flex-wrap justify-center gap-4 md:gap-6">
           {posts.map((post) => (
             <Link
               key={post.id}
               href={post.postLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative aspect-square rounded-2xl overflow-hidden bg-gray-100 shadow-sm"
+              className="group relative aspect-square rounded-2xl overflow-hidden bg-gray-100 shadow-sm w-[calc(50%-0.5rem)] md:w-[calc(25%-1.125rem)] max-w-[300px]"
             >
               {/* Image */}
               <Image

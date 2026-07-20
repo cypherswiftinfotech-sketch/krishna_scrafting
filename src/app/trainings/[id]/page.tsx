@@ -553,7 +553,7 @@ export default function TrainingDetailsPage() {
                   {details.curriculum.modules.map((mod: any) => (
                     <div key={mod.id} className="flex flex-col">
                       <button
-                        onClick={() => setActiveModule(mod.id)}
+                        onClick={() => setActiveModule(activeModule === mod.id ? "" : mod.id)}
                         className={`p-4 rounded-2xl text-left border transition-all flex items-center justify-between group ${activeModule === mod.id ? "bg-gradient-to-r from-[#0f52ba] to-[#008080] text-white border-[#0f52ba] shadow-lg shadow-blue-900/20" : "bg-white border-gray-200 hover:border-[#0f52ba] hover:shadow"}`}
                       >
                         <div>

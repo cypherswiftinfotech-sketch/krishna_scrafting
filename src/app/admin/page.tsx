@@ -603,7 +603,7 @@ export default function AdminPage() {
 
   // Admin Dashboard
   return (
-    <div className="pt-28 pb-4 w-full px-4 sm:px-6 lg:px-8 h-screen flex flex-col overflow-hidden">
+    <div className="pt-6 pb-4 w-full px-4 sm:px-6 lg:px-8 h-[calc(100vh-6rem)] flex flex-col overflow-hidden">
       <style>{`
         .admin-scroll::-webkit-scrollbar {
           width: 6px;
@@ -620,8 +620,8 @@ export default function AdminPage() {
           background: #94a3b8; 
         }
       `}</style>
-      <div className="flex justify-between items-center mb-6 shrink-0">
-        <h1 className="text-4xl font-black" style={{ fontFamily: "var(--font-heading)", color: "#1f1f1f" }}>Admin Dashboard</h1>
+      <div className="flex justify-between items-center mb-4 shrink-0">
+        <h1 className="text-2xl font-bold text-gray-900" style={{ fontFamily: "var(--font-heading)" }}>Admin Dashboard</h1>
         <button
           onClick={handleLogout}
           className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-red-600 border border-red-200 rounded-xl hover:bg-red-50 transition-colors"
@@ -630,24 +630,31 @@ export default function AdminPage() {
         </button>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-6 flex-1 min-h-0 pb-4">
+      <div className="flex flex-col md:flex-row gap-4 flex-1 min-h-0 pb-4">
         {/* Sidebar Menu Accordion */}
-        <div className="w-full md:w-64 flex-shrink-0 bg-white rounded-2xl shadow p-4 h-full overflow-y-auto admin-scroll" style={{ border: "1px solid var(--cream-white-border)" }}>
+        <div className="w-full md:w-56 flex-shrink-0 bg-white rounded-xl shadow-sm p-3 h-full overflow-y-auto admin-scroll border border-gray-100">
           <div className="flex flex-col gap-2">
             {menuGroups.map((group) => (
-              <div key={group.title} className="border-b border-gray-100 last:border-0 pb-4 mb-2 last:mb-0">
-                <div className="w-full flex items-center justify-between py-2 px-3 text-sm font-black text-gray-400 uppercase tracking-widest">
-                  <span>{group.title}</span>
-                </div>
+              <div key={group.title} className="border-b border-gray-100 last:border-0 pb-2 mb-2 last:mb-0">
+                <button 
+                  onClick={() => setExpandedCategory(expandedCategory === group.title ? "" : group.title)}
+                  className="w-full flex items-center justify-between py-1.5 px-2 text-xs font-bold text-gray-500 uppercase tracking-wider hover:text-gray-800 transition-colors"
+                >
+                  <div className="flex items-center gap-2">
+                    {group.icon && <span className="text-gray-400">{group.icon}</span>}
+                    <span>{group.title}</span>
+                  </div>
+                  <ChevronDown className={`w-4 h-4 transition-transform text-gray-400 ${expandedCategory === group.title ? "rotate-180" : ""}`} />
+                </button>
                 
-                <div className="flex flex-col gap-1 mt-2">
+                <div className={`flex-col gap-1 mt-1 overflow-hidden transition-all duration-300 ${expandedCategory === group.title ? "flex" : "hidden"}`}>
                   {group.items.map((item) => (
                     <button
                       key={item.id}
                       onClick={() => setActiveTab(item.id)}
                       className={`text-left px-3 py-2 text-sm font-medium rounded-lg transition-all ${activeTab === item.id ? "bg-[#135db6] text-white shadow" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"}`}
                     >
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 ml-2">
                         {activeTab === item.id ? <ChevronRight className="w-3 h-3 text-white" /> : <ChevronRight className="w-3 h-3 text-transparent" />}
                         {item.label}
                       </div>
@@ -912,28 +919,28 @@ export default function AdminPage() {
         <div>
           {!isAdding && !editProduct ? (
             <>
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold">Products ({products.length})</h2>
-                <button onClick={() => { setIsAdding(true); setSelectedMainCategory("Home Products"); }} className="btn-peacock">Add New Product</button>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold">Products ({products.length})</h2>
+                <button onClick={() => { setIsAdding(true); setSelectedMainCategory("Home Products"); }} className="btn-peacock px-3 py-1.5 text-sm">Add Product</button>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                 {products.map((p) => (
-                  <div key={p.id} className="p-5 rounded-2xl shadow flex flex-col" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
-                    <div className="h-40 bg-gray-100 rounded-lg mb-4 overflow-hidden flex items-center justify-center relative">
+                  <div key={p.id} className="p-3 rounded-xl shadow-sm flex flex-col border border-gray-100 bg-white hover:shadow-md transition-shadow">
+                    <div className="h-32 bg-gray-50 rounded-lg mb-3 overflow-hidden flex items-center justify-center relative">
                       {p.imageUrl ? (
                         <img src={p.imageUrl} alt={p.name} className="object-cover w-full h-full" />
                       ) : (
-                        <span className="text-gray-400">No Image</span>
+                        <span className="text-xs text-gray-400">No Image</span>
                       )}
-                      <span className="absolute top-2 left-2 bg-black text-white text-[10px] font-bold px-2 py-0.5 rounded-full">ID: {p.id}</span>
+                      <span className="absolute top-1 left-1 bg-black/70 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">ID: {p.id}</span>
                     </div>
-                    <h3 className="font-bold text-lg">{p.name}</h3>
-                    <p className="text-sm font-medium" style={{ color: "var(--peacock-blue)" }}>
-                      ₹{Number(p.price).toLocaleString("en-IN")} • {p.mainCategory} / {p.subCategory}
+                    <h3 className="font-bold text-sm line-clamp-1" title={p.name}>{p.name}</h3>
+                    <p className="text-xs font-medium mt-1 mb-3 text-gray-500">
+                      <span className="text-blue-600 font-bold">₹{Number(p.price).toLocaleString("en-IN")}</span> • {p.mainCategory}
                     </p>
-                    <div className="mt-auto pt-4 flex gap-2">
-                      <button onClick={() => { setEditProduct(p); setSelectedMainCategory(p.mainCategory); }} className="flex-1 btn-peacock-outline !text-sm !py-1.5">Edit</button>
-                      <button onClick={() => handleDeleteProduct(p.id)} className="flex-1 bg-red-50 text-red-600 font-medium rounded-lg hover:bg-red-100 transition-colors !text-sm !py-1.5">Delete</button>
+                    <div className="mt-auto pt-2 border-t border-gray-50 flex gap-2">
+                      <button onClick={() => { setEditProduct(p); setSelectedMainCategory(p.mainCategory); }} className="flex-1 py-1 border border-gray-200 rounded text-xs font-medium hover:bg-gray-50">Edit</button>
+                      <button onClick={() => handleDeleteProduct(p.id)} className="flex-1 py-1 bg-red-50 text-red-600 rounded text-xs font-medium hover:bg-red-100">Delete</button>
                     </div>
                   </div>
                 ))}

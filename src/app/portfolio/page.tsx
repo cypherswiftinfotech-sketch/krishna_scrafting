@@ -95,7 +95,7 @@ export default function PortfolioPage() {
             <div className="absolute inset-0 bg-black/60 z-10" />
           </div>
         )}
-        <div className="relative z-20 px-4 max-w-7xl mx-auto w-full flex flex-col md:flex-row justify-start items-start md:items-end gap-6 md:gap-12 -mt-16">
+        <div className="relative z-20 px-4 max-w-7xl mx-auto w-full flex flex-col md:flex-row justify-start items-start md:items-end gap-6 md:gap-12 md:-mt-16">
           <div>
             <p className="text-teal-400 uppercase tracking-[0.2em] text-xs font-semibold mb-4 flex items-center gap-4 drop-shadow-sm">
               <span className="w-8 h-[1px] bg-teal-400"></span> SELECTED WORK

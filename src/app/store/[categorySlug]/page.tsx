@@ -288,7 +288,7 @@ function StoreContent({ categorySlug }: { categorySlug: string }) {
               <Tags className="w-5 h-5" style={{ color: "var(--peacock-blue)" }} /> 
               Categories
             </h3>
-            <div className="flex flex-row lg:flex-col gap-2 overflow-x-auto pb-2 lg:pb-0">
+            <div className="flex flex-row lg:flex-col gap-2 overflow-x-auto scrollbar-hide pb-2 lg:pb-0">
               {mainCategories.map(mainCat => (
                 <button
                   key={mainCat}

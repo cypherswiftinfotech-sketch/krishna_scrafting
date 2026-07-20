@@ -246,7 +246,7 @@ export default function AccessoriesAdmin() {
       </div>
 
       {activeSubTab === "settings" && (
-        <div className="bg-gray-50 p-6 md:p-8 rounded-2xl border border-gray-100 max-w-2xl">
+        <div className="bg-gray-50 p-6 md:p-8 rounded-2xl border border-gray-100 w-full">
           <h3 className="text-xl font-bold mb-6">Hero Section Configuration</h3>
           <form onSubmit={handleSettingsSubmit} className="space-y-4">
             <div>
@@ -304,7 +304,7 @@ export default function AccessoriesAdmin() {
               </div>
             </>
           ) : (
-            <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100 max-w-2xl mx-auto">
+            <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100 w-full mx-auto">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-bold">{editKit ? "Edit Kit" : "Add New Kit"}</h3>
                 <button onClick={() => { setIsAddingKit(false); setEditKit(null); }} className="text-gray-500 hover:text-black">Cancel</button>
@@ -384,7 +384,7 @@ export default function AccessoriesAdmin() {
               </div>
             </>
           ) : (
-            <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100 max-w-2xl mx-auto">
+            <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100 w-full mx-auto">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-bold">{editGuide ? "Edit Guide" : "Add New Guide"}</h3>
                 <button onClick={() => { setIsAddingGuide(false); setEditGuide(null); }} className="text-gray-500 hover:text-black">Cancel</button>

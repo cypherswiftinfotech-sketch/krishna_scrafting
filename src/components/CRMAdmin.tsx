@@ -258,7 +258,7 @@ export default function CRMAdmin() {
         <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100 animate-in fade-in duration-300">
           <h3 className="text-xl font-bold mb-6">Targeted Category Promotions</h3>
           <p className="text-gray-500 mb-6">Notify past purchasers of a specific category about new arrivals or similar products.</p>
-          <form onSubmit={handleSendPromotion} className="max-w-2xl space-y-4">
+          <form onSubmit={handleSendPromotion} className="w-full space-y-4">
             <div>
               <label className="block text-sm font-semibold mb-1">Select Target Category</label>
               <select value={promoCategory} onChange={(e) => setPromoCategory(e.target.value)} className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 outline-none">
