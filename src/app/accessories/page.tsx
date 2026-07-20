@@ -230,7 +230,7 @@ export default function AccessoriesPage() {
       )}
 
       {/* 1. HERO SECTION */}
-      <section className="relative h-[52vh] min-h-[380px] flex items-center justify-center overflow-hidden bg-white pt-10">
+      <section className="relative min-h-[75vh] md:h-[52vh] md:min-h-[380px] flex items-center justify-center overflow-hidden bg-white py-24 md:py-0 md:pt-10">
         <div className="absolute inset-0 z-0 overflow-hidden group">
           {settings?.heroVideoUrl ? (
             settings?.heroVideoUrl?.match(/\.(mp4|webm|ogg)$/i) || settings?.heroVideoUrl?.includes("video/upload") ? (
