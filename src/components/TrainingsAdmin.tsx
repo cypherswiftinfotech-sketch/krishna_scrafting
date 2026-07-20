@@ -151,7 +151,7 @@ export default function TrainingsAdmin() {
       </div>
 
       {activeSubTab === "courses" && (
-        <div>
+        <div id="trainings-admin-top">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold">Manage Trainings</h2>
             <button 
@@ -274,7 +274,7 @@ export default function TrainingsAdmin() {
                   <p className="font-black text-gray-900 mb-4">₹{Number(training.price).toLocaleString("en-IN")}</p>
                   
                   <div className="mt-auto flex gap-2">
-                    <button onClick={() => { setEditTraining(training); setVideoUrl(training.videoUrl || ""); setIsAdding(false); window.scrollTo(0,0); }} className="flex-1 btn-peacock-outline !py-1.5 !text-sm">Edit</button>
+                    <button onClick={() => { setEditTraining(training); setVideoUrl(training.videoUrl || ""); setIsAdding(false); document.getElementById('trainings-admin-top')?.scrollIntoView({ behavior: 'smooth' }); }} className="flex-1 btn-peacock-outline !py-1.5 !text-sm">Edit</button>
                     <button onClick={() => handleDelete(training.id)} className="flex-1 bg-red-50 text-red-600 font-medium rounded-lg hover:bg-red-100 transition-colors !py-1.5 !text-sm">Delete</button>
                   </div>
                 </div>
