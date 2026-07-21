@@ -205,7 +205,7 @@ export default function TrainingsRedesignPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 pt-0" style={{ fontFamily: "var(--font-body)" }}>
-      <PopupForm delayMs={5000} source="training" title="Request For Training" subtitle="Interested in becoming a certified resin professional? Let's connect!" />
+      <PopupForm delayMs={5000} source="training" title="Request for the training Consultantion" subtitle="Interested in becoming a certified resin professional? Let's connect!" />
       
       {/* SECTION 1: HERO SECTION */}
       <section className="relative w-full min-h-screen py-24 flex flex-col justify-center overflow-hidden bg-black">

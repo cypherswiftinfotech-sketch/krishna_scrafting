@@ -97,7 +97,7 @@ export default function PopupForm({ delayMs, source, title, subtitle }: PopupFor
             <input 
               required
               type="email"
-              placeholder="e.g. you@example.com"
+              placeholder="e.g. srikrishnacrafting@gmail.com"
               value={formData.email}
               onChange={e => setFormData({ ...formData, email: e.target.value })}
               className="w-full p-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:border-[#0f52ba] outline-none transition-all"
@@ -111,7 +111,7 @@ export default function PopupForm({ delayMs, source, title, subtitle }: PopupFor
             <input 
               required
               type="tel"
-              placeholder="e.g. +91 98765 43210"
+              placeholder="e.g. +91 831 966 8016"
               value={formData.phone}
               onChange={e => setFormData({ ...formData, phone: e.target.value })}
               className="w-full p-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:border-[#0f52ba] outline-none transition-all"
