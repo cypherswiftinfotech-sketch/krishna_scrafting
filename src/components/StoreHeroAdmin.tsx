@@ -21,7 +21,7 @@ export default function StoreHeroAdmin() {
   const fetchImages = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/store-hero");
+      const res = await fetch("/api/shop-hero");
       const data = await res.json();
       setImages(data.images || []);
     } catch (e) {
@@ -43,7 +43,7 @@ export default function StoreHeroAdmin() {
       try {
         const formData = new FormData();
         formData.append("media", file);
-        const res = await fetch("/api/store-hero", { method: "POST", body: formData });
+        const res = await fetch("/api/shop-hero", { method: "POST", body: formData });
         if (!res.ok) throw new Error("Upload failed");
         successCount++;
       } catch (e: any) {
@@ -61,7 +61,7 @@ export default function StoreHeroAdmin() {
   const handleDelete = async (id: number) => {
     if (!confirm("Delete this hero image?")) return;
     try {
-      const res = await fetch(`/api/store-hero?id=${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/shop-hero?id=${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Delete failed");
       toast.success("Image deleted");
       fetchImages();

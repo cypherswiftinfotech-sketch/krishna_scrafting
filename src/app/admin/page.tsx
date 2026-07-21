@@ -18,6 +18,8 @@ import StoreHeroAdmin from "@/components/StoreHeroAdmin";
 import HeroSliderAdmin from "@/components/HeroSliderAdmin";
 import ServicesHeroAdmin from "@/components/ServicesHeroAdmin";
 import SuccessStoriesAdmin from "@/components/SuccessStoriesAdmin";
+import PortfolioCategoriesAdmin from "@/components/PortfolioCategoriesAdmin";
+import PopupLeadsAdmin from "@/components/PopupLeadsAdmin";
 
 
 interface HeroSettings {
@@ -39,6 +41,8 @@ interface Product {
   featured: boolean;
   stock: number;
   active: boolean;
+  priceDisplayType: string;
+  customPriceText: string;
 }
 
 interface PortfolioItem {
@@ -75,6 +79,7 @@ export default function AdminPage() {
       icon: <Users className="w-4 h-4" />,
       items: [
         { id: 'users_orders', label: 'Users & Orders' },
+        { id: 'popup_leads', label: 'Popup Leads' },
         { id: 'contact_requests', label: 'Form Submissions' },
         { id: 'crm', label: 'CRM' },
       ]
@@ -152,6 +157,7 @@ export default function AdminPage() {
       icon: <ImageIcon className="w-4 h-4" />,
       items: [
         { id: 'gallery', label: 'Gallery Upload' },
+        { id: 'portfolio_categories', label: 'Categories' },
         { id: 'portfolio_requests', label: 'Custom Requests' },
       ]
     },
@@ -743,6 +749,12 @@ export default function AdminPage() {
         </div>
       )}
 
+      {activeTab === "popup_leads" && (
+        <div className="p-6 rounded-2xl shadow" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
+          <PopupLeadsAdmin />
+        </div>
+      )}
+
       {activeTab === "home_categories" && (
         <div className="p-6 rounded-2xl shadow" style={{ backgroundColor: "#ffffff", border: "1px solid var(--cream-white-border)" }}>
           <HomeCategoriesAdmin />
@@ -959,8 +971,20 @@ export default function AdminPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold mb-1">Price</label>
+                    <label className="block text-sm font-semibold mb-1">Base Price</label>
                     <input name="price" type="number" step="0.01" defaultValue={editProduct?.price || ""} required className="w-full p-2 rounded border focus:ring-2 outline-none transition-all" style={{ borderColor: "var(--cream-white-border)" }} />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold mb-1">Price Display Type</label>
+                    <select name="priceDisplayType" defaultValue={editProduct?.priceDisplayType || "price"} className="w-full p-2 rounded border focus:ring-2 outline-none transition-all" style={{ borderColor: "var(--cream-white-border)" }}>
+                      <option value="price">Show Exact Price</option>
+                      <option value="custom">Show Custom Text</option>
+                      <option value="blank">Keep Blank</option>
+                    </select>
+                  </div>
+                  <div className="col-span-2">
+                    <label className="block text-sm font-semibold mb-1">Custom Price Text (if "Show Custom Text" is selected)</label>
+                    <input name="customPriceText" defaultValue={editProduct?.customPriceText || ""} placeholder="e.g. Custom Price, On Request" className="w-full p-2 rounded border focus:ring-2 outline-none transition-all" style={{ borderColor: "var(--cream-white-border)" }} />
                   </div>
                   <div>
                     <label className="block text-sm font-semibold mb-1">Main Category</label>
@@ -1027,6 +1051,10 @@ export default function AdminPage() {
             </div>
           )}
         </div>
+      )}
+
+      {activeTab === "portfolio_categories" && (
+        <PortfolioCategoriesAdmin />
       )}
 
       {activeTab === "portfolio_requests" && (

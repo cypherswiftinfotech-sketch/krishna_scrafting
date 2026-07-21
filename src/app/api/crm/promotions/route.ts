@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
     const htmlMessage = generateEmailTemplate({
       title: subject,
       message: formattedMessage,
-      linkUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/store`,
+      linkUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/shop`,
       linkText: "Shop Now"
     });
 

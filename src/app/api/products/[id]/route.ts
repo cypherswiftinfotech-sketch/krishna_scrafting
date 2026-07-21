@@ -73,6 +73,9 @@ export async function PUT(
   const relatedProductIds = formData.get("relatedProductIds") as string;
   const file = formData.get("image") as File | null;
 
+  const priceDisplayType = formData.get("priceDisplayType") as string;
+  const customPriceText = formData.get("customPriceText") as string;
+
   let imageUrl = existing[0].imageUrl;
   let imagePublicId = existing[0].imagePublicId;
 
@@ -102,6 +105,8 @@ export async function PUT(
       imageUrl,
       imagePublicId,
       relatedProductIds: relatedProductIds ?? existing[0].relatedProductIds,
+      priceDisplayType: priceDisplayType || existing[0].priceDisplayType,
+      customPriceText: customPriceText ?? existing[0].customPriceText,
       updatedAt: new Date(),
     })
     .where(eq(products.id, parseInt(id)))

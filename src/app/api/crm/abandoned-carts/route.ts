@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
                     ${userCart.items.join('<br>')}
                   </div>
                   <p>Hurry back before they sell out!</p>`,
-        linkUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/store`,
+        linkUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/shop`,
         linkText: "Return to Cart"
       });
 

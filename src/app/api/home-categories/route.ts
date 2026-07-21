@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     const formData = await req.formData();
     const label = formData.get("label") as string;
     const description = formData.get("description") as string;
-    const storeQuery = (formData.get("storeQuery") as string) || "/store";
+    const storeQuery = (formData.get("storeQuery") as string) || "/shop";
     const sortOrder = parseInt((formData.get("sortOrder") as string) || "0", 10);
     const active = formData.get("active") !== "false";
     const imageFile = formData.get("image") as File | null;

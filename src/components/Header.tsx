@@ -10,7 +10,7 @@ import toast from "react-hot-toast";
 
 const defaultNavLinks = [
   { key: "home", label: "Home", href: "/" },
-  { key: "store", label: "Store", href: "/store" },
+  { key: "shop", label: "Shop", href: "/shop" },
   { key: "portfolio", label: "Portfolio", href: "/portfolio" },
   { key: "custom_services", label: "Custom Services", href: "/customservices" },
   { key: "training_academy", label: "Training Academy", href: "/trainings" },

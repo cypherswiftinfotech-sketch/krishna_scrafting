@@ -36,7 +36,7 @@ export default function CartPage() {
         <h2 className="text-3xl font-black text-white">Your cart is empty</h2>
         <p className="text-gray-400">Looks like you haven&apos;t added anything yet.</p>
         <Link
-          href="/store"
+          href="/shop"
           className="flex items-center gap-2 px-8 py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-xl transition-all"
         >
           <ShoppingBag className="w-5 h-5" /> Browse Store
@@ -173,7 +173,7 @@ export default function CartPage() {
               </button>
 
               <Link
-                href="/store"
+                href="/shop"
                 className="block text-center mt-4 text-amber-400 hover:text-amber-300 text-sm font-medium"
               >
                 Continue Shopping

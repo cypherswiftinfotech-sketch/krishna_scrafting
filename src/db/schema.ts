@@ -61,6 +61,8 @@ export const products = pgTable("products", {
   stock: integer("stock").default(0).notNull(),
   featured: boolean("featured").default(false).notNull(),
   active: boolean("active").default(true).notNull(),
+  priceDisplayType: varchar("price_display_type", { length: 50 }).default("price").notNull(),
+  customPriceText: varchar("custom_price_text", { length: 255 }).default(""),
   relatedProductIds: text("related_product_ids").default(""),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
@@ -550,3 +552,26 @@ export const servicesHeroImages = pgTable("services_hero_images", {
 
 export type ServicesHeroImage = typeof servicesHeroImages.$inferSelect;
 export type NewServicesHeroImage = typeof servicesHeroImages.$inferInsert;
+
+export const portfolioCategories = pgTable('portfolio_categories', {
+  id: serial('id').primaryKey(),
+  name: varchar('name', { length: 255 }).notNull(),
+  type: varchar('type', { length: 50 }).notNull(),
+  sortOrder: integer('sort_order').default(0).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export type PortfolioCategory = typeof portfolioCategories.$inferSelect;
+export type NewPortfolioCategory = typeof portfolioCategories.$inferInsert;
+
+export const popupLeads = pgTable('popup_leads', {
+  id: serial('id').primaryKey(),
+  name: varchar('name', { length: 255 }).notNull(),
+  email: varchar('email', { length: 255 }).notNull(),
+  phone: varchar('phone', { length: 50 }),
+  source: varchar('source', { length: 100 }).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export type PopupLead = typeof popupLeads.;
+export type NewPopupLead = typeof popupLeads.;

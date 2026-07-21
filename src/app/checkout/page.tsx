@@ -132,7 +132,7 @@ Thank you! 🙏`;
               View My Orders
             </Link>
             <Link
-              href="/store"
+              href="/shop"
               className="py-3 border border-gray-300 text-gray-700 hover:text-black font-bold rounded-xl transition-all"
             >
               Continue Shopping

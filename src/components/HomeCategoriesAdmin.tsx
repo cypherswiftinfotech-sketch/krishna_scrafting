@@ -23,7 +23,7 @@ export default function HomeCategoriesAdmin() {
   const [form, setForm] = useState({
     label: "",
     description: "",
-    storeQuery: "/store",
+    storeQuery: "/shop",
     sortOrder: "0",
     active: "true",
   });
@@ -41,7 +41,7 @@ export default function HomeCategoriesAdmin() {
   };
 
   const openAdd = () => {
-    setForm({ label: "", description: "", storeQuery: "/store", sortOrder: String(categories.length + 1), active: "true" });
+    setForm({ label: "", description: "", storeQuery: "/shop", sortOrder: String(categories.length + 1), active: "true" });
     setImageFile(null);
     setEditItem(null);
     setIsAdding(true);
@@ -51,7 +51,7 @@ export default function HomeCategoriesAdmin() {
     setForm({
       label: cat.label,
       description: cat.description || "",
-      storeQuery: cat.storeQuery || "/store",
+      storeQuery: cat.storeQuery || "/shop",
       sortOrder: String(cat.sortOrder),
       active: cat.active ? "true" : "false",
     });
@@ -98,7 +98,7 @@ export default function HomeCategoriesAdmin() {
     const fd = new FormData();
     fd.append("label", cat.label);
     fd.append("description", cat.description || "");
-    fd.append("storeQuery", cat.storeQuery || "/store");
+    fd.append("storeQuery", cat.storeQuery || "/shop");
     fd.append("sortOrder", String(cat.sortOrder));
     fd.append("active", cat.active ? "false" : "true");
     try {
@@ -152,7 +152,7 @@ export default function HomeCategoriesAdmin() {
                   type="text"
                   value={form.storeQuery}
                   onChange={e => setForm({ ...form, storeQuery: e.target.value })}
-                  placeholder="/store?category=river-table"
+                  placeholder="/shop?category=river-table"
                   className="w-full px-4 py-3 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
                 />
               </div>

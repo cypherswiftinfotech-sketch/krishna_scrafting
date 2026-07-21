@@ -18,7 +18,7 @@ function StoreHeroSlider() {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    fetch("/api/store-hero")
+    fetch("/api/shop-hero")
       .then((r) => r.json())
       .then((d) => {
         setImages(d.images || []);
@@ -52,7 +52,7 @@ function StoreHeroSlider() {
             <span className="font-semibold text-sm tracking-wide">Premium Handcrafted Products</span>
           </div>
           <h1 className="text-5xl md:text-6xl font-black mb-4 drop-shadow-sm text-transparent bg-clip-text bg-gradient-to-r from-[#0f52ba] to-[#008080]">
-            Our Store
+            Our Shop
           </h1>
           <p className="text-xl text-gray-700 max-w-xl mx-auto font-medium">
             Discover premium handcrafted products made with passion and precision.
@@ -71,7 +71,7 @@ function StoreHeroSlider() {
           <div>
             <h1 className="text-5xl md:text-6xl font-black mb-4">
               <span className="inline-block bg-gradient-to-r from-[#0f52ba] to-[#008493] text-white-force-force px-6 py-2 rounded-2xl shadow-lg">
-                Our Store
+                Our Shop
               </span>
             </h1>
             <p className="text-lg text-gray-200 max-w-md font-medium">
@@ -121,7 +121,7 @@ function StoreHeroSlider() {
           </div>
           <h1 className="text-5xl md:text-6xl font-black mb-6">
             <span className="inline-block bg-gradient-to-r from-[#0f52ba] to-[#008493] text-white-force-force px-6 py-2 rounded-2xl shadow-lg">
-              Our Store
+              Our Shop
             </span>
           </h1>
           <p className="text-lg text-gray-200 max-w-lg font-medium leading-relaxed">
@@ -230,7 +230,7 @@ function StoreContent({ categorySlug }: { categorySlug: string }) {
       "Accessories": "accessories"
     };
     const slug = slugMap[main] || "homeproducts";
-    router.push(`/store/${slug}`, { scroll: false });
+    router.push(`/shop/${slug}`, { scroll: false });
   };
 
   const handleSubCatChange = (sub: string) => {
@@ -245,7 +245,7 @@ function StoreContent({ categorySlug }: { categorySlug: string }) {
       "Accessories": "accessories"
     };
     const slug = slugMap[activeMainCat] || "homeproducts";
-    router.push(`/store/${slug}?${params.toString()}`, { scroll: false });
+    router.push(`/shop/${slug}?${params.toString()}`, { scroll: false });
   };
 
   const handleAddToCart = (product: Product) => {
@@ -407,7 +407,7 @@ function StoreContent({ categorySlug }: { categorySlug: string }) {
                   className="group bg-white border rounded-2xl overflow-hidden transition-all hover:shadow-xl relative flex flex-col"
                   style={{ borderColor: "var(--cream-white-border)" }}
                 >
-                  <Link href={`/store/${categorySlug}/${encodeURIComponent(product.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'))}-${product.id}`} className="block relative h-56 bg-gray-50 overflow-hidden">
+                  <Link href={`/shop/${categorySlug}/${encodeURIComponent(product.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'))}-${product.id}`} className="block relative h-56 bg-gray-50 overflow-hidden">
                     {product.imageUrl ? (
                       <Image
                         src={product.imageUrl}
@@ -433,27 +433,22 @@ function StoreContent({ categorySlug }: { categorySlug: string }) {
                   </Link>
 
                   <div className="p-5 flex flex-col flex-1">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">
-                      {product.subCategory}
-                    </span>
-                    <Link href={`/store/${categorySlug}/${encodeURIComponent(product.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'))}-${product.id}`}>
+                    <Link href={`/shop/${categorySlug}/${encodeURIComponent(product.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'))}-${product.id}`}>
                       <h3 className="text-gray-900 font-black text-lg hover:text-amber-600 transition-colors line-clamp-1">
                         {product.name}
                       </h3>
                     </Link>
-                    {product.description && (
-                      <p className="text-gray-500 text-sm mt-1.5 line-clamp-2 leading-relaxed">
-                        {product.description}
-                      </p>
-                    )}
                     <div className="flex items-end justify-between mt-auto pt-5">
                       <div>
                         <span className="text-xl font-black text-gray-900">
-                          Custom Price
+                          {product.priceDisplayType === 'blank' ? (
+                            <>&nbsp;</>
+                          ) : product.priceDisplayType === 'custom' ? (
+                            product.customPriceText || "Custom Price"
+                          ) : (
+                            `₹${product.price}`
+                          )}
                         </span>
-                        <p className="text-xs font-semibold text-green-600 mt-0.5">
-                          {product.stock > 0 ? `${product.stock} in stock` : "Unavailable"}
-                        </p>
                       </div>
                       <button
                         onClick={() => handleAddToCart(product)}

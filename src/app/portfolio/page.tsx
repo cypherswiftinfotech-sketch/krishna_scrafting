@@ -19,15 +19,7 @@ interface PortfolioItem {
   review?: string | null;
 }
 
-const MAIN_CATEGORIES = [
-  "All",
-  "Epoxy Table",
-  "Epoxy Flooring",
-  "Epoxy Clock",
-  "Epoxy Wall Art",
-];
 
-const SUB_CATEGORIES = ["All", "Home", "Residential"];
 
 
 
@@ -40,16 +32,26 @@ export default function PortfolioPage() {
   const [activeSubCategory, setActiveSubCategory] = useState("All");
   const [visibleCount, setVisibleCount] = useState(6);
 
+  const [mainCategories, setMainCategories] = useState<string[]>(["All"]);
+  const [subCategories, setSubCategories] = useState<string[]>(["All"]);
   const [settings, setSettings] = useState<any>(null);
 
   useEffect(() => {
     Promise.all([
       fetch("/api/portfolio").then((r) => r.json()),
-      fetch("/api/portfolio/settings").then((r) => r.json())
+      fetch("/api/portfolio/settings").then((r) => r.json()),
+      fetch("/api/portfolio-categories").then((r) => r.json())
     ])
-    .then(([portfolioData, settingsData]) => {
+    .then(([portfolioData, settingsData, categoriesData]) => {
       setItems(portfolioData.portfolio || []);
       setSettings(settingsData.settings || null);
+      
+      const cats = categoriesData.categories || [];
+      const fetchedMains = cats.filter((c: any) => c.type === "main").map((c: any) => c.name);
+      const fetchedSubs = cats.filter((c: any) => c.type === "sub").map((c: any) => c.name);
+      
+      setMainCategories(["All", ...fetchedMains]);
+      setSubCategories(["All", ...fetchedSubs]);
     })
     .catch(() => {})
     .finally(() => setLoading(false));
@@ -115,7 +117,7 @@ export default function PortfolioPage() {
       {/* Category Filter Tabs */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
         <div className="flex gap-8 overflow-x-auto pb-4 scrollbar-hide border-b border-gray-200">
-          {SUB_CATEGORIES.map((cat) => (
+          {subCategories.map((cat) => (
             <button
               key={cat}
               onClick={() => setActiveSubCategory(cat)}
@@ -137,7 +139,7 @@ export default function PortfolioPage() {
       {/* Sub Category Filter Tabs */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
         <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
-          {MAIN_CATEGORIES.map((sub) => (
+          {mainCategories.map((sub) => (
             <button
               key={sub}
               onClick={() => setActiveMainCategory(sub)}

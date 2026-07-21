@@ -21,6 +21,8 @@ interface Product {
   stock: number;
   featured: boolean;
   relatedProductIds: string | null;
+  priceDisplayType: string;
+  customPriceText: string;
 }
 
 const categoryLabels: Record<string, string> = {
@@ -61,7 +63,7 @@ export default function ProductDetailPage() {
         setProduct(d.product);
         setRelated(d.related || []);
       })
-      .catch(() => router.push("/store"))
+      .catch(() => router.push("/shop"))
       .finally(() => setLoading(false));
   }, [id, router]);
 
@@ -100,8 +102,8 @@ export default function ProductDetailPage() {
     return (
       <div className="pt-24 min-h-screen bg-white flex flex-col items-center justify-center gap-4">
         <p className="text-gray-500 text-lg">Product not found</p>
-        <Link href={`/store/${categorySlug}`} className="text-amber-600 hover:underline font-medium">
-          Back to Store
+        <Link href={`/shop/${categorySlug}`} className="text-amber-600 hover:underline font-medium">
+          Back to Shop
         </Link>
       </div>
     );
@@ -114,7 +116,7 @@ export default function ProductDetailPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-2 text-sm text-gray-500">
           <Link href="/" className="hover:text-black transition-colors">Home</Link>
           <span>/</span>
-          <Link href={`/store/${categorySlug}`} className="hover:text-black transition-colors">Store</Link>
+          <Link href={`/shop/${categorySlug}`} className="hover:text-black transition-colors">Shop</Link>
           <span>/</span>
           <span className="text-gray-900 font-medium truncate">{product.name}</span>
         </div>
@@ -125,7 +127,7 @@ export default function ProductDetailPage() {
           onClick={() => router.back()}
           className="flex items-center gap-2 text-gray-500 hover:text-black mb-8 transition-colors text-sm font-medium"
         >
-          <ArrowLeft className="w-4 h-4" /> Back to Store
+          <ArrowLeft className="w-4 h-4" /> Back to Shop
         </button>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
@@ -177,7 +179,13 @@ export default function ProductDetailPage() {
             {/* Price */}
             <div className="flex items-baseline gap-3 mb-6">
               <span className="text-4xl font-black" style={{ color: "#b45309" }}>
-                Custom Price
+                {product.priceDisplayType === 'blank' ? (
+                  <>&nbsp;</>
+                ) : product.priceDisplayType === 'custom' ? (
+                  product.customPriceText || "Custom Price"
+                ) : (
+                  `₹${product.price}`
+                )}
               </span>
               <span className="text-sm text-green-600 font-medium bg-green-50 px-2 py-1 rounded-full">
                 Free Shipping
@@ -315,7 +323,7 @@ export default function ProductDetailPage() {
               {related.map((rp) => (
                 <Link
                   key={rp.id}
-                  href={`/store/${rp.category ? rp.category.toLowerCase().replace(/[^a-z0-9]+/g, '') : categorySlug}/${encodeURIComponent(rp.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'))}-${rp.id}`}
+                  href={`/shop/${rp.category ? rp.category.toLowerCase().replace(/[^a-z0-9]+/g, '') : categorySlug}/${encodeURIComponent(rp.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'))}-${rp.id}`}
                   className="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-lg hover:border-gray-200 transition-all"
                 >
                   <div className="relative aspect-square bg-gray-50 overflow-hidden">
@@ -336,7 +344,13 @@ export default function ProductDetailPage() {
                     <p className="text-gray-900 font-semibold text-sm line-clamp-2 mb-1">{rp.name}</p>
                     <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">{rp.category}</p>
                     <p className="font-black text-amber-700">
-                      Custom Price
+                      {rp.priceDisplayType === 'blank' ? (
+                        <>&nbsp;</>
+                      ) : rp.priceDisplayType === 'custom' ? (
+                        rp.customPriceText || "Custom Price"
+                      ) : (
+                        `₹${rp.price}`
+                      )}
                     </p>
                   </div>
                 </Link>

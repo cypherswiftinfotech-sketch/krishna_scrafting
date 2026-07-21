@@ -19,6 +19,7 @@ import OurProcess from "@/components/OurProcess";
 import TrainingBanner from "@/components/TrainingBanner";
 import Testimonials from "@/components/Testimonials";
 import InstagramFeed from "@/components/InstagramFeed";
+import PopupForm from "@/components/PopupForm";
 import { cn } from "@/lib/utils";
 
 interface HeroSettings {
@@ -60,7 +61,7 @@ const featuredCategories = [
     key: "epoxy-tables",
     label: "Epoxy Tables",
     desc: "Stunning river tables & live-edge resin masterpieces for your home",
-    storeQuery: "/store?category=river-table",
+    storeQuery: "/shop?category=river-table",
     icon: (
       <svg viewBox="0 0 64 64" className="w-14 h-14" fill="none">
         <rect x="8" y="28" width="48" height="8" rx="4" fill="#b8860b" opacity="0.9"/>
@@ -77,7 +78,7 @@ const featuredCategories = [
     key: "epoxy-flooring",
     label: "Epoxy Flooring",
     desc: "High-gloss 3D floor coatings that transform any space beautifully",
-    storeQuery: "/store?category=flooring",
+    storeQuery: "/shop?category=flooring",
     icon: (
       <svg viewBox="0 0 64 64" className="w-14 h-14" fill="none">
         <rect x="4" y="40" width="56" height="16" rx="3" fill="#a0522d" opacity="0.4"/>
@@ -94,7 +95,7 @@ const featuredCategories = [
     key: "wall-art",
     label: "Wall Art",
     desc: "Unique epoxy wall panels and abstract art pieces for bold interiors",
-    storeQuery: "/store?category=wall-art",
+    storeQuery: "/shop?category=wall-art",
     icon: (
       <svg viewBox="0 0 64 64" className="w-14 h-14" fill="none">
         <rect x="6" y="8" width="52" height="40" rx="5" fill="#f3f4f6" stroke="#d1d5db" strokeWidth="2"/>
@@ -111,7 +112,7 @@ const featuredCategories = [
     key: "home-decor",
     label: "Home Decor",
     desc: "Coasters, trays, bowls & centrepieces to elevate every room",
-    storeQuery: "/store?category=coasters",
+    storeQuery: "/shop?category=coasters",
     icon: (
       <svg viewBox="0 0 64 64" className="w-14 h-14" fill="none">
         <circle cx="32" cy="32" r="24" fill="url(#hgr)" opacity="0.3"/>
@@ -130,7 +131,7 @@ const featuredCategories = [
     key: "custom-gifts",
     label: "Custom Gifts",
     desc: "Personalised resin keepsakes, name plaques & corporate gifting",
-    storeQuery: "/store?category=jewelry",
+    storeQuery: "/shop?category=jewelry",
     icon: (
       <svg viewBox="0 0 64 64" className="w-14 h-14" fill="none">
         <rect x="10" y="28" width="44" height="28" rx="4" fill="url(#ggr)" opacity="0.7"/>
@@ -147,7 +148,7 @@ const featuredCategories = [
     key: "accessories",
     label: "Accessories",
     desc: "Resin jewellery, keychains, hair clips & wearable art pieces",
-    storeQuery: "/store?category=jewelry",
+    storeQuery: "/shop?category=jewelry",
     icon: (
       <svg viewBox="0 0 64 64" className="w-14 h-14" fill="none">
         <circle cx="32" cy="20" r="10" fill="none" stroke="url(#agr)" strokeWidth="3"/>
@@ -250,6 +251,8 @@ export default function HomePage() {
         <p className="text-gray-500 font-medium animate-pulse tracking-wide uppercase text-sm">Preparing Your Experience...</p>
       </div>
 
+      <PopupForm delayMs={6000} source="home" title="Join Our Community" subtitle="Get updates on our latest handcrafted creations and exclusive offers." />
+
       {/* ── Hero Section ─────────────────────────────────────── */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         {/* Video / Fallback background */}
@@ -311,7 +314,7 @@ export default function HomePage() {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/store"
+              href="/shop"
               className="inline-flex items-center gap-2 px-8 py-4 font-bold rounded-xl transition-all hover:scale-105"
               style={{
                 background: "var(--blue-gradient)",
@@ -480,7 +483,7 @@ export default function HomePage() {
                     </p>
                     
                     <Link
-                      href={cat.storeQuery || "/store"}
+                      href={cat.storeQuery || "/shop"}
                       onClick={e => e.stopPropagation()}
                       className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full font-bold text-sm transition-all hover:scale-105 mt-auto w-full justify-center"
                       style={{

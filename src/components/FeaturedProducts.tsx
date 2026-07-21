@@ -11,6 +11,8 @@ interface Product {
   imageUrl: string | null;
   category: string;
   subCategory?: string;
+  priceDisplayType: string;
+  customPriceText: string;
 }
 
 type Tab = "latest" | "bestsellers" | "trending";
@@ -49,9 +51,9 @@ export default function FeaturedProducts() {
   })();
 
   const storeHref =
-    tab === "latest"      ? "/store?sort=newest" :
-    tab === "bestsellers" ? "/store?sort=popular" :
-    "/store?sort=trending";
+    tab === "latest"      ? "/shop?sort=newest" :
+    tab === "bestsellers" ? "/shop?sort=popular" :
+    "/shop?sort=trending";
 
   return (
     <section className="py-20 border-t" style={{ backgroundColor: "#f9fafb", borderColor: "#e5e7eb" }}>
@@ -145,7 +147,7 @@ export default function FeaturedProducts() {
               {(showAllFeatured ? displayed : displayed.slice(0, displayed.length >= 4 ? displayed.length - (displayed.length % 4) : displayed.length)).map((product) => (
                 <Link
                 key={product.id}
-                href={`/store/${product.id}`}
+                href={`/shop/${product.id}`}
                 className="group rounded-2xl overflow-hidden bg-white transition-all duration-300 hover:-translate-y-1"
                 style={{
                   border: "1px solid #e5e7eb",
@@ -169,19 +171,7 @@ export default function FeaturedProducts() {
                       <ShoppingBag className="w-10 h-10 text-gray-300" />
                     </div>
                   )}
-                  {/* Category pill */}
-                  <div className="absolute top-3 left-3">
-                    <span
-                      className="text-xs font-semibold px-2.5 py-1 rounded-full"
-                      style={{
-                        background: "rgba(0,95,115,0.85)",
-                        color: "#fff",
-                        backdropFilter: "blur(4px)",
-                      }}
-                    >
-                      {product.subCategory || product.category}
-                    </span>
-                  </div>
+
                 </div>
 
                 {/* Info */}
@@ -193,7 +183,13 @@ export default function FeaturedProducts() {
                     {product.name}
                   </h3>
                   <p className="font-black text-base" style={{ color: "var(--peacock-blue)" }}>
-                    ₹{product.price.toLocaleString("en-IN")}
+                    {product.priceDisplayType === 'blank' ? (
+                      <>&nbsp;</>
+                    ) : product.priceDisplayType === 'custom' ? (
+                      product.customPriceText || "Custom Price"
+                    ) : (
+                      `₹${product.price.toLocaleString("en-IN")}`
+                    )}
                   </p>
                 </div>
               </Link>

@@ -65,6 +65,9 @@ export async function POST(req: NextRequest) {
   const relatedProductIds = formData.get("relatedProductIds") as string;
   const file = formData.get("image") as File | null;
 
+  const priceDisplayType = formData.get("priceDisplayType") as string;
+  const customPriceText = formData.get("customPriceText") as string;
+
   if (!name || !price) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
@@ -94,6 +97,8 @@ export async function POST(req: NextRequest) {
       imageUrl,
       imagePublicId,
       relatedProductIds: relatedProductIds || "",
+      priceDisplayType: priceDisplayType || "price",
+      customPriceText: customPriceText || "",
     })
     .returning();
 

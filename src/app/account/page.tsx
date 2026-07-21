@@ -259,7 +259,7 @@ export default function AccountPage() {
                 <h2 className="text-xl font-black text-white flex items-center gap-2">
                   <Package className="w-6 h-6 text-amber-400" /> My Orders
                 </h2>
-                <Link href="/store" className="text-amber-400 text-sm hover:text-amber-300 flex items-center gap-1">
+                <Link href="/shop" className="text-amber-400 text-sm hover:text-amber-300 flex items-center gap-1">
                   <ShoppingBag className="w-4 h-4" /> Shop More
                 </Link>
               </div>
@@ -274,7 +274,7 @@ export default function AccountPage() {
                 <div className="text-center py-12">
                   <ShoppingBag className="w-12 h-12 text-gray-700 mx-auto mb-3" />
                   <p className="text-gray-400">No orders yet</p>
-                  <Link href="/store" className="mt-4 inline-block text-amber-400 hover:underline text-sm">
+                  <Link href="/shop" className="mt-4 inline-block text-amber-400 hover:underline text-sm">
                     Start shopping
                   </Link>
                 </div>
@@ -380,7 +380,7 @@ export default function AccountPage() {
                                   )}
                                   {item.productId ? (
                                     <Link
-                                      href={`/store/${item.productId}`}
+                                      href={`/shop/${item.productId}`}
                                       className="font-semibold text-white text-sm hover:text-amber-400 transition-colors line-clamp-1"
                                     >
                                       {item.productName}

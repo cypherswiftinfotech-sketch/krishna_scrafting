@@ -294,7 +294,7 @@ export default function AccessoriesPage() {
             const imageUrl = dbCat?.imageUrl;
             
             return (
-              <Link key={idx} href={`/store?mainCategory=Accessories&subCategory=${encodeURIComponent(cat.name)}`} className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all group cursor-pointer flex flex-col">
+              <Link key={idx} href={`/shop?mainCategory=Accessories&subCategory=${encodeURIComponent(cat.name)}`} className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all group cursor-pointer flex flex-col">
                 <div className="h-36 flex items-center justify-center relative overflow-hidden bg-gray-100">
                   {imageUrl ? (
                     <img src={imageUrl} alt={cat.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
