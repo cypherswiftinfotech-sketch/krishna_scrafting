@@ -163,6 +163,8 @@ interface Product {
   id: number;
   name: string;
   price: string;
+  priceDisplayType: string | null;
+  customPriceText: string | null;
   imageUrl: string | null;
   mainCategory: string;
   subCategory: string;

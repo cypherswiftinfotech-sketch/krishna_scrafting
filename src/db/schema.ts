@@ -573,5 +573,5 @@ export const popupLeads = pgTable('popup_leads', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
-export type PopupLead = typeof popupLeads.;
-export type NewPopupLead = typeof popupLeads.;
+export type PopupLead = typeof popupLeads.$inferSelect;
+export type NewPopupLead = typeof popupLeads.$inferInsert;
