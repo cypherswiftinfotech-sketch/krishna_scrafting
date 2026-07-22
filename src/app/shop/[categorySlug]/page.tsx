@@ -434,15 +434,15 @@ function StoreContent({ categorySlug }: { categorySlug: string }) {
                     )}
                   </Link>
 
-                  <div className="p-5 flex flex-col flex-1">
+                  <div className="p-4 sm:p-5 flex flex-col">
                     <Link href={`/shop/${categorySlug}/${encodeURIComponent(product.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'))}-${product.id}`}>
-                      <h3 className="text-gray-900 font-black text-lg hover:text-amber-600 transition-colors line-clamp-1">
+                      <h3 className="text-[#135db6] font-bold text-lg hover:text-amber-600 transition-colors line-clamp-1">
                         {product.name}
                       </h3>
                     </Link>
-                    <div className="flex items-end justify-between mt-auto pt-5">
+                    <div className="flex items-center justify-between mt-3">
                       <div>
-                        <span className="text-xl font-black text-gray-900">
+                        <span className="text-lg font-black text-gray-900">
                           {product.priceDisplayType === 'blank' ? (
                             <>&nbsp;</>
                           ) : product.priceDisplayType === 'custom' ? (
