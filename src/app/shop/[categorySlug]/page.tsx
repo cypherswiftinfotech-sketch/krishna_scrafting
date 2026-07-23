@@ -406,7 +406,7 @@ function StoreContent({ categorySlug }: { categorySlug: string }) {
                 {(showAllStore ? filtered : filtered.slice(0, filtered.length >= 3 ? filtered.length - (filtered.length % 3) : filtered.length)).map((product) => (
                   <div
                   key={product.id}
-                  className="group bg-white border rounded-2xl overflow-hidden transition-all hover:shadow-xl relative flex flex-col"
+                  className="group bg-white border rounded-2xl overflow-hidden transition-all hover:shadow-xl relative flex flex-col h-fit"
                   style={{ borderColor: "var(--cream-white-border)" }}
                 >
                   <Link href={`/shop/${categorySlug}/${encodeURIComponent(product.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'))}-${product.id}`} className="block relative h-56 bg-gray-50 overflow-hidden">
@@ -434,33 +434,51 @@ function StoreContent({ categorySlug }: { categorySlug: string }) {
                     )}
                   </Link>
 
-                  <div className="p-4 sm:p-5 flex flex-col">
-                    <Link href={`/shop/${categorySlug}/${encodeURIComponent(product.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'))}-${product.id}`}>
-                      <h3 className="text-[#135db6] font-bold text-lg hover:text-amber-600 transition-colors line-clamp-1">
-                        {product.name}
-                      </h3>
-                    </Link>
-                    <div className="flex items-center justify-between mt-3">
-                      <div>
-                        <span className="text-lg font-black text-gray-900">
-                          {product.priceDisplayType === 'blank' ? (
-                            <>&nbsp;</>
-                          ) : product.priceDisplayType === 'custom' ? (
-                            product.customPriceText || "Custom Price"
-                          ) : (
-                            `₹${product.price}`
-                          )}
-                        </span>
+                  <div className="px-4 pb-4 pt-2 sm:px-5 sm:pb-5 sm:pt-3 flex flex-col flex-1 justify-end">
+                    {product.priceDisplayType === 'blank' ? (
+                      <div className="flex items-center justify-between gap-3 w-full">
+                        <Link href={`/shop/${categorySlug}/${encodeURIComponent(product.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'))}-${product.id}`} className="flex-1">
+                          <h3 className="text-[#135db6] font-bold text-lg hover:text-amber-600 transition-colors line-clamp-2 leading-tight py-1">
+                            {product.name}
+                          </h3>
+                        </Link>
+                        <button
+                          onClick={() => handleAddToCart(product)}
+                          disabled={product.stock === 0}
+                          className="p-3 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed text-white-force rounded-xl transition-all hover:-translate-y-0.5 hover:shadow-lg shrink-0"
+                          style={{ background: product.stock !== 0 ? "var(--blue-gradient)" : undefined }}
+                        >
+                          <Plus className="w-5 h-5" />
+                        </button>
                       </div>
-                      <button
-                        onClick={() => handleAddToCart(product)}
-                        disabled={product.stock === 0}
-                        className="p-3 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed text-white-force rounded-xl transition-all hover:-translate-y-0.5 hover:shadow-lg"
-                        style={{ background: product.stock !== 0 ? "var(--blue-gradient)" : undefined }}
-                      >
-                        <Plus className="w-5 h-5" />
-                      </button>
-                    </div>
+                    ) : (
+                      <>
+                        <Link href={`/shop/${categorySlug}/${encodeURIComponent(product.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'))}-${product.id}`}>
+                          <h3 className="text-[#135db6] font-bold text-lg hover:text-amber-600 transition-colors line-clamp-1 py-1">
+                            {product.name}
+                          </h3>
+                        </Link>
+                        <div className="flex items-center justify-between mt-0">
+                          <div>
+                            <span className="text-lg font-black text-gray-900">
+                              {product.priceDisplayType === 'custom' ? (
+                                product.customPriceText || "Custom Price"
+                              ) : (
+                                `₹${product.price}`
+                              )}
+                            </span>
+                          </div>
+                          <button
+                            onClick={() => handleAddToCart(product)}
+                            disabled={product.stock === 0}
+                            className="p-3 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed text-white-force rounded-xl transition-all hover:-translate-y-0.5 hover:shadow-lg"
+                            style={{ background: product.stock !== 0 ? "var(--blue-gradient)" : undefined }}
+                          >
+                            <Plus className="w-5 h-5" />
+                          </button>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
               ))}
